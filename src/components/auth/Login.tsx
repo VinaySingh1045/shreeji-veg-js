@@ -1,16 +1,34 @@
-import { Button, Card, Form, Input } from "antd"
+import { Button, Card, Form, Input, message } from "antd"
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { LoginApi } from "../../services/authAPI"
 
 const Login = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (values: string) => {
-        setLoading(true);
-        console.log(values);
-        setLoading(false);
+    const handleSubmit = async (values: string) => {
+        try {
+            setLoading(true);
+            // console.log(values);
+            const res = await LoginApi(values);
+            console.log("res: ", res);
+            if(res.success){
+                message.success(res.message);
+                // navigate('/');
+            }
+            setLoading(false);
+        } catch (error) {
+            console.error('Error While Login2:', error);
+            if (error instanceof Error && (error as any).response?.data?.message) {
+                message.error((error as any).response.data.message);
+            } else {
+                message.error('An unexpected error occurred.');
+            }
+        } finally{
+            setLoading(false);
+        }
     }
 
     return (
@@ -33,23 +51,22 @@ const Login = () => {
                         layout="vertical"
                     >
                         <Form.Item
-                            label="E-Mail"
-                            name="email"
+                            label="UserName"
+                            name="Ac_Name"
                             rules={[
-                                { required: true, message: 'Please enter your email!' },
-                                { type: 'email', message: 'Please enter a valid email!' },
+                                { required: true, message: 'Please enter your userName!' },
                             ]}
                         >
                             <Input
                                 prefix={<UserOutlined />}
-                                placeholder="E-Mail"
+                                placeholder="User Name"
                                 size="large"
                             />
                         </Form.Item>
 
                         <Form.Item
                             label="Password"
-                            name="password"
+                            name="Book_Pass"
                             rules={[{ required: true, message: 'Please enter your password!' }]}
                         >
                             <Input.Password
