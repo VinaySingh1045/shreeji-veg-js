@@ -3,22 +3,33 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../services/authAPI"
+import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import { setUser } from "../../redux/slice/authSlice";
 
 const Login = () => {
+
+    const { user } = useSelector((state: RootState) => state.auth)
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (values: string) => {
+        setLoading(true);
         try {
-            setLoading(true);
             // console.log(values);
-            const res = await LoginApi(values);
-            console.log("res: ", res);
-            if(res.success){
-                message.success(res.message);
-                // navigate('/');
+            const response = await LoginApi(values);
+            console.log("res: ", response.data);
+            message.success('Login successful!');
+            Cookies.set('Shreeji_Veg', response.data.token, { expires: 15 })
+            dispatch(setUser(response.data.user))
+            if (response.data.user.isAdmin === true) {
+                navigate("/user/List");
             }
-            setLoading(false);
+            else {
+                navigate("/");
+            }
         } catch (error) {
             console.error('Error While Login2:', error);
             if (error instanceof Error && (error as any).response?.data?.message) {

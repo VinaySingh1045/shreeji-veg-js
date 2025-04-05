@@ -7,6 +7,9 @@ import Layout from './components/Layout'
 import Home from './components/home/Home'
 import { ConfigProvider } from 'antd'
 import Register from './components/auth/Register'
+import UserListToApprove from './components/admin/UserListToApprove'
+import { Provider } from 'react-redux'
+import { store } from './redux/store'
 
 const router = createBrowserRouter([
 
@@ -18,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />
+      },
+      {
+        path: "/user/list",
+        element: <UserListToApprove />
       },
     ]
   },
@@ -33,18 +40,20 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#46cb4c',
-          borderRadius: 16,
-          fontFamily: "Rubik",
-          colorPrimaryBg: "#ebf2ed",
-          colorBgLayout: "White",
-        },
-      }}
-    >
-      <RouterProvider router={router} />
-    </ConfigProvider>
+    <Provider store={store}>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: '#46cb4c',
+            borderRadius: 16,
+            fontFamily: "Rubik",
+            colorPrimaryBg: "#ebf2ed",
+            colorBgLayout: "White",
+          },
+        }}
+      >
+        <RouterProvider router={router} />
+      </ConfigProvider>
+    </Provider >
   </StrictMode>,
 )
