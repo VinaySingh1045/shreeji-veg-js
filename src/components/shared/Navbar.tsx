@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message } from 'antd';
 import { LogoutOutlined, MenuOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -19,11 +19,6 @@ const Navbar = () => {
   const location = useLocation();
   const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string } | null };
 
-  useEffect(() => {
-    if (!user) navigate("/login");
-  }, [user, navigate])
-
-
   // Map path to key
   const pathToKey: { [key: string]: string } = {
     '/': '1',
@@ -33,7 +28,11 @@ const Navbar = () => {
 
   const selectedKey = pathToKey[location.pathname] || '1';
 
-  const handleMenuClick = (e) => {
+  interface MenuClickEvent {
+    key: string;
+  }
+
+  const handleMenuClick = (e: MenuClickEvent) => {
     const key = e.key;
     if (key === '1') navigate('/');
     else if (key === '2') navigate('/products');

@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { setUser } from "../../redux/slice/authSlice";
+import { ILogin } from "../../types/ILogin";
 
 const Login = () => {
     // const { user } = useSelector((state: RootState) => state.auth);
@@ -21,7 +22,7 @@ const Login = () => {
         };
     }
 
-    const handleSubmit = async (values: any) => {
+    const handleSubmit = async (values: ILogin) => {
         setLoading(true);
         try {
             const response = await LoginApi(values);
@@ -34,12 +35,6 @@ const Login = () => {
                 navigate("/");
             }
         } catch (error) {
-            console.error("Login Error:", error);
-            // if (error instanceof Error && (error as any).response?.data?.message) {
-            //     message.error((error as any).response.data.message);
-            // } else {
-            //     message.error("An unexpected error occurred.");
-            // }
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
                 message.error(apiError.response.data.message);

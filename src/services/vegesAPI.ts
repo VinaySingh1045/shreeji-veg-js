@@ -35,7 +35,6 @@ export const GetFavorites = async () => {
 
 
 export const AddToFavorite = async (userData: string) => {
-    console.log("userData", userData);
     try {
         const res = await axios.post(`${API_END_POINT}/addToFavorites`, userData, {
             headers: getAuthHeaders(),
@@ -43,6 +42,19 @@ export const AddToFavorite = async (userData: string) => {
         return res.data
     } catch (error) {
         console.error('Error While Adding the Favorites:', error)
+        throw error;
+    }
+}
+
+export const RemoveFavorite = async (userData: string) => {
+    console.log("userData", userData);
+    try {
+        const res = await axios.post(`${API_END_POINT}/deleteFavorites`, userData, {
+            headers: getAuthHeaders(),
+        })
+        return res.data
+    } catch (error) {
+        console.error('Error While Deleting the Favorites:', error)
         throw error;
     }
 }

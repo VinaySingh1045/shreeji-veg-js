@@ -30,12 +30,6 @@ const Register = () => {
             const res = await RegisterApi(values);
             console.log("res: ", res);
         } catch (error) {
-            console.error('Error While Register:', error);
-            // if (error instanceof Error && (error as any).response?.data?.message) {
-            //     message.error((error as any).response.data.message);
-            // } else {
-            //     message.error('An unexpected error occurred.');
-            // }
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
                 message.error(apiError.response.data.message);

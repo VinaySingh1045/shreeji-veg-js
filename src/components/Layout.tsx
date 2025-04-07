@@ -14,7 +14,6 @@ const Layout = () => {
     const [loading, setLoading] = useState(false);
 
     const token = Cookies.get("Shreeji_Veg");
-
     useEffect(() => {
         const fetchData = async () => {
             if (!token) {
@@ -24,7 +23,6 @@ const Layout = () => {
             try {
                 setLoading(true);
                 const userInfo = await GetCurrentUser();
-                console.log("User info:", userInfo);
                 dispatch(setUser(userInfo.data));
             } catch (error) {
                 console.error("Invalid token:", error);
@@ -34,13 +32,17 @@ const Layout = () => {
         fetchData();
         setLoading(false);
     }, [navigate, dispatch, token]);
+
+    if (loading) {
+        return <Spin />
+    }
+
     return (
-        loading ? Spin :
-            <>
-                <Navbar />
-                <Outlet />
-                <Footer />
-            </>
+        <>
+            <Navbar />
+            <Outlet />
+            <Footer />
+        </>
     )
 }
 

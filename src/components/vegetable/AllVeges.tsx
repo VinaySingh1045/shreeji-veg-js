@@ -44,7 +44,6 @@ const AllVeges = () => {
     }, [searchText, allVeges]);
 
     const handleAddToFav = async (vege: Vegetable) => {
-        console.log("vege: ", vege.Itm_ID);
         try {
             const res = await AddToFavorite({ itemId: vege.Itm_ID });
             console.log("res: ", res);

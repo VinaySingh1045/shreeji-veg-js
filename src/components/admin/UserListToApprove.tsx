@@ -28,7 +28,7 @@ const UserListToApprove = () => {
                 <Select
                     defaultValue="pending"
                     style={{ width: 120 }}
-                    onChange={(value) => handleStatusChange(record.Id, value)}
+                    onChange={(value) => record.Id && handleStatusChange(record.Id, value)}
                     options={[
                         { value: "pending", label: "Pending" },
                         { value: "approve", label: "Approved" },
