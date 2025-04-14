@@ -5,8 +5,9 @@ import {
     fetchFavoriteVegetables,
 } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
-import { Table, Input, Space, Button, message } from "antd";
-import { AddToFavorite } from "../../services/vegesAPI";
+import { Table, Input, Space, Button, message, theme } from "antd";
+import { AddToFavorite, RemoveFavorite } from "../../services/vegesAPI";
+import { useNavigate } from "react-router-dom";
 
 interface Vegetable {
     Itm_ID: string;
@@ -24,8 +25,9 @@ interface APIError {
 
 const AllVeges = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { all, loading } = useSelector((state: RootState) => state.vegetables);
-
+    const navigate = useNavigate();
+    const { token } = theme.useToken();
+    const { favorites, all, loading } = useSelector((state: RootState) => state.vegetables);
     const [searchText, setSearchText] = useState<string>("");
     const [filteredVeges, setFilteredVeges] = useState<Vegetable[]>([]);
 
@@ -43,10 +45,11 @@ const AllVeges = () => {
         setFilteredVeges(filtered);
     }, [searchText, allVeges]);
 
+    const favoriteIds = favorites?.data?.map((f) => f.Itm_Id) || [];
+
     const handleAddToFav = async (vege: Vegetable) => {
         try {
-            const res = await AddToFavorite({ itemId: vege.Itm_ID });
-            console.log("res: ", res);
+            await AddToFavorite({ itemId: vege.Itm_ID });
             dispatch(fetchFavoriteVegetables());
             message.success("Added vege to favorites Successfully!");
         } catch (error) {
@@ -78,18 +81,38 @@ const AllVeges = () => {
         {
             title: "Action",
             key: "action",
-            render: (_: unknown, record: Vegetable) => (
-                <Button type="primary" onClick={() => handleAddToFav(record)}>
-                    Add to Favorite
-                </Button>
-            ),
+            render: (_: unknown, record: Vegetable) => {
+                const isFavorite = favoriteIds.includes(record.Itm_ID);
+
+                return isFavorite ? (
+                    <Button danger onClick={() => handleRemoveFav(record)}>
+                        Remove Favorite
+                    </Button>
+                ) : (
+                    <Button type="primary" onClick={() => handleAddToFav(record)}>
+                        Add Favorite
+                    </Button>
+                );
+            },
         },
     ];
 
+    const handleRemoveFav = async (vege: Vegetable) => {
+        try {
+            await RemoveFavorite({ itemId: vege.Itm_ID });
+            dispatch(fetchFavoriteVegetables());
+            message.success("Removed from favorites!");
+        } catch {
+            message.error("Error removing from favorites");
+        }
+    };
+
     return (
         <div className="p-4">
-            <h2 className="text-xl font-semibold mb-4">All Vegetables</h2>
-
+            <div className="flex justify-between items-center mb-4">
+                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>All Vegetables</h2>
+                <Button onClick={() => navigate("/")} type="primary">View Favorite</Button>
+            </div>
             <Space direction="vertical" style={{ width: "100%" }}>
                 <Input.Search
                     placeholder="Search by vegetable name"

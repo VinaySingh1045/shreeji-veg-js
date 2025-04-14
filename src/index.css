@@ -1,1 +1,44 @@
 @import "tailwindcss";
+
+.BgText {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffff;
+}
+
+.BgTextBefore {
+    color: black;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.custom-menu .ant-menu-item-selected {
+    background-color: transparent !important;
+    border-bottom: 2px solid #46cb4c;
+    color: #46cb4c !important;
+}
+
+.custom-menu .ant-menu-item:hover {
+    color: #46cb4c;
+}
+
+.custom-menu-light .ant-menu-item-selected {
+    background-color: transparent !important;
+    border-bottom: 2px solid #46cb4c;
+    /* or whatever highlight you want */
+    color: black !important;
+}
+
+.custom-menu-light .ant-menu-item:hover {
+    color: white !important;
+}
+
+.custom-drawer-menu .ant-menu-item {
+    color: black !important;
+}
+
+@media (max-width: 767px) {
+    .custom-footer {
+        display: none !important;
+    }
+}

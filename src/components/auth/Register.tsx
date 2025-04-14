@@ -9,8 +9,9 @@ const Register = () => {
     const [loading, setLoading] = useState(false);
     const [otpLoading, setOtpLoading] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
+    const [timer, setTimer] = useState(0);
+    const [intervalId, setIntervalId] = useState<number | null>(null);
     const [form] = Form.useForm();
-
     interface APIError {
         response?: {
             data?: {
@@ -26,9 +27,9 @@ const Register = () => {
         }
         try {
             setLoading(true);
-            console.log("Registering user:", values);
-            const res = await RegisterApi(values);
-            console.log("res: ", res);
+            await RegisterApi(values);
+            navigate("/login");
+            message.success("Registration successful! Please login.");
         } catch (error) {
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
@@ -43,7 +44,6 @@ const Register = () => {
 
     const handleOTPSubmit = async () => {
         const values = await form.validateFields(["Mobile_No"]);
-        console.log("Requesting OTP for:", values);
         if (!values.Mobile_No) {
             message.warning("Please enter your mobile number!");
             return;
@@ -53,6 +53,22 @@ const Register = () => {
             await RequestOTP({ mobileNo: values.Mobile_No });
             message.success("OTP sent successfully!");
             setOtpSent(true);
+            setTimer(300);
+
+            // clear old interval if any
+            if (intervalId) clearInterval(intervalId);
+
+            const id = setInterval(() => {
+                setTimer(prev => {
+                    if (prev <= 1) {
+                        clearInterval(id);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+
+            setIntervalId(id);
         } catch {
             message.error("Failed to send OTP. Try again!");
         }
@@ -159,7 +175,16 @@ const Register = () => {
                             <Row gutter={16}>
                                 <Col span={24}>
                                     <Form.Item
-                                        label="OTP"
+                                        label={
+                                            <>
+                                                OTP{" "}
+                                                {timer > 0 && (
+                                                    <span style={{ color: "green", fontSize: 20, marginLeft: 12 }}>
+                                                        ({Math.floor(timer / 60)}:{String(timer % 60).padStart(2, "0")})
+                                                    </span>
+                                                )}
+                                            </>
+                                        }
                                         name="otp"
                                         rules={[
                                             { required: true, message: "Please enter OTP!" },

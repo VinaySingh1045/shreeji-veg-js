@@ -51,7 +51,7 @@ createRoot(document.getElementById('root')!).render(
           token: {
             colorPrimary: '#46cb4c',
             borderRadius: 16,
-            fontFamily: "Rubik",
+            fontFamily: "Rubik, sans-serif",
             colorPrimaryBg: "#ebf2ed",
             colorBgLayout: "White",
           },

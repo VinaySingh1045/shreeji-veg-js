@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message } from 'antd';
-import { LogoutOutlined, MenuOutlined } from '@ant-design/icons';
+import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message, theme } from 'antd';
+import { LogoutOutlined, MenuOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -11,9 +11,15 @@ import { LogoutApi } from '../../services/authAPI';
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
 
-const Navbar = () => {
+interface NavbarProps {
+  onToggleTheme: () => void;
+  currentTheme: 'light' | 'dark';
+}
+
+const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const [visible, setVisible] = useState(false);
   const screens = useBreakpoint();
+  const { token } = theme.useToken();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
@@ -96,12 +102,13 @@ const Navbar = () => {
   return (
     <Header
       style={{
-        background: '#22c55e',
+        background: token.colorPrimaryBg,
+        borderBottom: "1px solid #fafafa",
         padding: '0 16px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '64px',
+        height: '56px',
       }}
     >
       {/* Logo on the left */}
@@ -131,8 +138,13 @@ const Navbar = () => {
               background: 'transparent',
               color: '#fff',
               borderBottom: 'none',
+              lineHeight: '56px',
             }}
+            className={token.colorBgLayout === "White" ? "custom-menu-light" : "custom-menu"}
           />
+          <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
+            {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
+          </Button>
           <Popover content={popoverContent} trigger="click">
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
               <span style={{ color: '#fff' }}>{user?.Ac_Name}</span>
@@ -145,6 +157,9 @@ const Navbar = () => {
       ) : (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
+              {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
+            </Button>
             <span style={{ color: '#fff' }}>{user?.Ac_Name}</span>
             <Avatar size="small" style={{ backgroundColor: '#bbf7d0', color: '#000' }}>
               {initials}
@@ -163,13 +178,14 @@ const Navbar = () => {
             open={visible}
           >
             <Menu
+              className={token.colorBgLayout === "White" ? "custom-menu-light" : "custom-menu"}
               mode="vertical"
               items={menuItems.slice(0, 3)} // Only Home, Products, Contact
               onClick={handleMenuClick}
               selectedKeys={[selectedKey]}
             />
 
-            {/* 👇 Logout button for mobile only */}
+            {/* Logout button for mobile only */}
             {!screens.md && (
               <div style={{ marginTop: 16 }}>
                 <Button

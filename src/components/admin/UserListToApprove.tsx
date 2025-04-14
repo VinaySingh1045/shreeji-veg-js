@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { message, Select, Table, TableProps } from 'antd';
+import { message, Select, Table, TableProps, theme } from 'antd';
 import { IColumns } from '../../types/IUserList';
 import { ApproveUser, getUsersToApprove } from '../../services/adminAPI';
 
@@ -7,6 +7,7 @@ import { ApproveUser, getUsersToApprove } from '../../services/adminAPI';
 const UserListToApprove = () => {
     const [users, setUsers] = useState<IColumns[]>([]);
     const [loading, setLoading] = useState(false);
+    const { token } = theme.useToken();
 
     const columns: TableProps<IColumns>['columns'] = [
         {
@@ -39,21 +40,15 @@ const UserListToApprove = () => {
     ];
 
     const handleStatusChange = async (id: string, status: string) => {
-        console.log(`User ID: ${id}, New Status: ${status}`);
 
         try {
             const payload = {
                 userId: id,
                 approvalCode: status,
             };
-            const response = await ApproveUser(payload);
-            console.log("Fetched Users:", response);
-            setUsers(prevUsers =>
-                prevUsers.map(user =>
-                    user.Id === id ? { ...user, approvalCode: status } : user
-                )
-            );
+            await ApproveUser(payload);
             message.success('Status updated successfully');
+            fetchUsers();
         } catch (error) {
             console.error('Error updating status:', error);
             message.error('Error updating status');
@@ -61,30 +56,30 @@ const UserListToApprove = () => {
 
     };
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            setLoading(true);
-            try {
-                const response = await getUsersToApprove();
-                console.log("Fetched Users:", response);
-                setUsers(response.data); // assuming API returns an array in `data`
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
 
+    const fetchUsers = async () => {
+        setLoading(true);
+        try {
+            const response = await getUsersToApprove();
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchUsers();
     }, []);
 
     return (
         <div style={{ padding: '20px' }}>
-            <h2>Users Pending Approval</h2>
+            <h2 style={{marginBottom:"10px"}} className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>Users Pending Approval</h2>
             <Table
                 columns={columns}
                 dataSource={users}
-                rowKey="_id" // ensures correct row rendering
+                rowKey="_id"
                 loading={loading}
                 pagination={{ pageSize: 5 }}
                 bordered

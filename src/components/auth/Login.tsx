@@ -1,6 +1,6 @@
 import { Button, Card, Checkbox, Form, Input, message, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../services/authAPI";
 import Cookies from "js-cookie";
@@ -10,10 +10,11 @@ import { setUser } from "../../redux/slice/authSlice";
 import { ILogin } from "../../types/ILogin";
 
 const Login = () => {
-    // const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [form] = Form.useForm();
+
     interface APIError {
         response?: {
             data?: {
@@ -22,13 +23,37 @@ const Login = () => {
         };
     }
 
-    const handleSubmit = async (values: ILogin) => {
+    useEffect(() => {
+        const savedUser = localStorage.getItem("rememberedUser");
+        if (savedUser) {
+            const parsed = JSON.parse(savedUser);
+            form.setFieldsValue({
+                Ac_Name: parsed.Ac_Name,
+                Book_Pass: parsed.Book_Pass,
+                remember: true,
+            });
+        }
+    }, [form]);
+
+    const handleSubmit = async (values: ILogin & { remember?: boolean }) => {
         setLoading(true);
         try {
             const response = await LoginApi(values);
             message.success("Login successful!");
+
             Cookies.set('Shreeji_Veg', response.data.token, { expires: 15 })
             dispatch(setUser(response.data.user));
+
+            if (values.remember) {
+                localStorage.setItem("rememberedUser", JSON.stringify({
+                    Ac_Name: values.Ac_Name,
+                    Book_Pass: values.Book_Pass,
+                }));
+            } else {
+                localStorage.removeItem("rememberedUser");
+            }
+
+
             if (response.data.user.isAdmin === true) {
                 navigate("/user/List");
             } else {
@@ -74,6 +99,7 @@ const Login = () => {
 
                     <Col xs={24} md={12}>
                         <Form
+                            form={form}
                             name="loginForm"
                             layout="vertical"
                             onFinish={handleSubmit}

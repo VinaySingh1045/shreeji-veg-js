@@ -47,7 +47,6 @@ export const AddToFavorite = async (userData: string) => {
 }
 
 export const RemoveFavorite = async (userData: string) => {
-    console.log("userData", userData);
     try {
         const res = await axios.post(`${API_END_POINT}/deleteFavorites`, userData, {
             headers: getAuthHeaders(),

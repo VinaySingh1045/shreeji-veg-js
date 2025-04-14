@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFavoriteVegetables } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
-import { Table, Input, Space, Button, message } from "antd";
+import { Table, Input, Space, Button, message, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 import { RemoveFavorite } from "../../services/vegesAPI";
 import { MinusCircleOutlined } from "@ant-design/icons";
@@ -15,8 +15,8 @@ interface Vegetable {
 const FavoriteVeges = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const { token } = theme.useToken();
     const { favorites, loading } = useSelector((state: RootState) => state.vegetables);
-
     const [searchText, setSearchText] = useState("");
     const [filteredVeges, setFilteredVeges] = useState([]);
 
@@ -58,17 +58,15 @@ const FavoriteVeges = () => {
             title: "Action",
             key: "action",
             render: (_: unknown, record: Vegetable) => (
-                <Button style={{ backgroundColor: "#fc5e5e" }} onClick={() => handleAddToFav(record)}>
-                    Remove Favorite   <MinusCircleOutlined />
+                <Button danger onClick={() => handleRemoveFav(record)}>
+                    Remove Favorite
                 </Button>
             ),
         },
     ];
 
-    const handleAddToFav = async (record: Vegetable) => {
-        console.log("record: ", record.Itm_Id);
-        const res = await RemoveFavorite({ itemId: record.Itm_Id });
-        console.log("res: ", res);
+    const handleRemoveFav = async (record: Vegetable) => {
+        await RemoveFavorite({ itemId: record.Itm_Id });
         dispatch(fetchFavoriteVegetables());
         message.success("Removed vege from favorites Successfully!");
     }
@@ -76,8 +74,8 @@ const FavoriteVeges = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Favorite Vegetables</h2>
-                <Button onClick={() => navigate("/all/veges")} type="primary">Add More Favorite</Button>
+                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>Favorite Vegetables</h2>
+                <Button onClick={() => navigate("/all/veges")} type="primary">Add/View Favorite</Button>
             </div>
 
             <Space direction="vertical" style={{ width: "100%" }}>
