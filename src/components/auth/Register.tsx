@@ -1,17 +1,46 @@
-import { Button, Card, Col, Form, Input, message, Row } from "antd"
+import { Button, Card, Col, Form, Input, message, Row } from "antd";
 import { UserOutlined, LockOutlined, SafetyOutlined, MobileOutlined } from '@ant-design/icons';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { RegisterApi, RequestOTP } from "../../services/authAPI";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [otpLoading, setOtpLoading] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
-    const [timer, setTimer] = useState(0);
-    const [intervalId, setIntervalId] = useState<number | null>(null);
     const [form] = Form.useForm();
+    const { t, i18n } = useTranslation();
+
+    const normalizePhoneNumber = (input: string): string => {
+        const hindiNums = "०१२३४५६७८९";
+        const gujaratiNums = "૦૧૨૩૪૫૬૭૮૯";
+        return input
+            .split("")
+            .map(char => {
+                if (hindiNums.includes(char)) {
+                    return hindiNums.indexOf(char).toString();
+                }
+                if (gujaratiNums.includes(char)) {
+                    return gujaratiNums.indexOf(char).toString();
+                }
+                return char;
+            })
+            .join("");
+    };
+
+    useEffect(() => {
+        const lang = localStorage.getItem("appLanguage") || "en";
+        i18n.changeLanguage(lang);
+    }, [i18n]);
+
+    const handleLanguageChange = (e: any) => {
+        const lang = e.target.value;
+        i18n.changeLanguage(lang);
+        localStorage.setItem("appLanguage", lang);
+    };
+
     interface APIError {
         response?: {
             data?: {
@@ -20,22 +49,22 @@ const Register = () => {
         };
     }
 
-    const handleSubmit = async (values: string) => {
+    const handleSubmit = async (values: any) => {
         if (!otpSent) {
-            message.warning("Please request OTP first!");
+            message.warning(t("otpRequestWarning"));
             return;
         }
+        values.Mobile_No = normalizePhoneNumber(values.Mobile_No);
         try {
             setLoading(true);
-            await RegisterApi(values);
-            navigate("/login");
-            message.success("Registration successful! Please login.");
+            const res = await RegisterApi(values);
+            console.log("res: ", res);
         } catch (error) {
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
                 message.error(apiError.response.data.message);
             } else {
-                message.error("An unexpected error occurred.");
+                message.error(t("unexpectedError"));
             }
         } finally {
             setLoading(false);
@@ -45,32 +74,16 @@ const Register = () => {
     const handleOTPSubmit = async () => {
         const values = await form.validateFields(["Mobile_No"]);
         if (!values.Mobile_No) {
-            message.warning("Please enter your mobile number!");
+            message.warning(t("enterMobileWarning"));
             return;
         }
         setOtpLoading(true);
         try {
             await RequestOTP({ mobileNo: values.Mobile_No });
-            message.success("OTP sent successfully!");
+            message.success(t("otpSentSuccess"));
             setOtpSent(true);
-            setTimer(300);
-
-            // clear old interval if any
-            if (intervalId) clearInterval(intervalId);
-
-            const id = setInterval(() => {
-                setTimer(prev => {
-                    if (prev <= 1) {
-                        clearInterval(id);
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
-
-            setIntervalId(id);
         } catch {
-            message.error("Failed to send OTP. Try again!");
+            message.error(t("otpSendFail"));
         }
         setOtpLoading(false);
     };
@@ -87,6 +100,13 @@ const Register = () => {
             }}
         >
             <Card style={{ width: '100%', maxWidth: 1000, padding: 20 }}>
+                <div style={{ textAlign: "right", marginBottom: 16 }}>
+                    <select onChange={handleLanguageChange} defaultValue={i18n.language}>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="gu">ગુજરાતી</option>
+                    </select>
+                </div>
                 <Row gutter={[32, 16]} align="middle" justify="center">
                     <Col xs={24} md={12}>
                         <img
@@ -101,7 +121,6 @@ const Register = () => {
                         />
                     </Col>
 
-                    {/* Right side form */}
                     <Col xs={24} md={12}>
                         <Form
                             name="registerForm"
@@ -113,61 +132,77 @@ const Register = () => {
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label="User Name"
+                                        label={t("userName")}
                                         name="Ac_Name"
-                                        rules={[{ required: true, message: "Please enter your User Name!" }]}
+                                        rules={[{ required: true, message: t("userName") + t(" is required") }]}
                                     >
-                                        <Input prefix={<UserOutlined />} placeholder="User Name" size="large" />
+                                        <Input prefix={<UserOutlined />} placeholder={t("userName")} size="large" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
-                                        label="Mobile Number"
+                                        label={t("mobileNumber")}
                                         name="Mobile_No"
                                         rules={[
-                                            { required: true, message: "Please enter your mobile number!" },
-                                            { pattern: /^\d{10}$/, message: "Please enter a valid 10-digit mobile number!" }
+                                            {
+                                                required: true,
+                                                message: t("mobileNumber") + " " + t(" is required"),
+                                            },
+                                            {
+                                                validator: (_, value) => {
+                                                    const normalized = normalizePhoneNumber(value || "");
+                                                    if (/^\d{10}$/.test(normalized)) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error(t("Mobile Number Should be 10 Digits")));
+                                                }
+                                            }
                                         ]}
                                     >
-                                        <Input prefix={<MobileOutlined />} placeholder="Mobile Number" size="large" />
+                                        <Input
+                                            prefix={<MobileOutlined />}
+                                            placeholder={t("mobileNumber")}
+                                            size="large"
+                                        />
                                     </Form.Item>
+
                                 </Col>
                             </Row>
 
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label="Password"
+                                        label={t("password")}
                                         name="Book_Pass"
                                         rules={[
-                                            { required: true, message: "Please enter your password!" },
+                                            { required: true, message: t("password") + t(" is required") },
                                             {
                                                 pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{5,20}$/,
-                                                message: "Password: 5-20 chars, 1 upper, 1 lower & 1 special!"
+                                                message: t("Password: 5-20 chars, 1 upper, 1 lower & 1 special!")
                                             }
                                         ]}
                                     >
-                                        <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
+                                        <Input.Password prefix={<LockOutlined />} placeholder={t("password")} size="large" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
-                                        label="Confirm Password"
+                                        label={t("confirmPassword")}
                                         name="confirmPassword"
                                         dependencies={["Book_Pass"]}
                                         rules={[
-                                            { required: true, message: "Please confirm your password!" },
+                                            { required: true, message: t("confirmPassword") + t(" is required") },
                                             ({ getFieldValue }) => ({
                                                 validator(_, value) {
                                                     if (!value || getFieldValue("Book_Pass") === value) {
                                                         return Promise.resolve();
                                                     }
-                                                    return Promise.reject(new Error("Passwords do not match!"));
+                                                    return Promise.reject(new Error(t("Passwords do not match!")));
                                                 },
                                             })
                                         ]}
                                     >
-                                        <Input.Password prefix={<LockOutlined />} placeholder="Confirm Password" size="large" />
+                                        <Input.Password prefix={<LockOutlined />} placeholder={t("confirmPassword")} size="large" />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -175,26 +210,17 @@ const Register = () => {
                             <Row gutter={16}>
                                 <Col span={24}>
                                     <Form.Item
-                                        label={
-                                            <>
-                                                OTP{" "}
-                                                {timer > 0 && (
-                                                    <span style={{ color: "green", fontSize: 20, marginLeft: 12 }}>
-                                                        ({Math.floor(timer / 60)}:{String(timer % 60).padStart(2, "0")})
-                                                    </span>
-                                                )}
-                                            </>
-                                        }
+                                        label={t("otp")}
                                         name="otp"
                                         rules={[
-                                            { required: true, message: "Please enter OTP!" },
-                                            { pattern: /^\d{6}$/, message: "OTP must be a 6-digit number!" }
+                                            { required: true, message: t("otpRequired") },
+                                            { pattern: /^\d{6}$/, message: t("otpPattern") }
                                         ]}
                                     >
                                         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                                             <Input
                                                 prefix={<SafetyOutlined />}
-                                                placeholder="Enter OTP"
+                                                placeholder={t("otp")}
                                                 size="large"
                                                 style={{ flex: 1 }}
                                             />
@@ -203,7 +229,7 @@ const Register = () => {
                                                 loading={otpLoading}
                                                 onClick={handleOTPSubmit}
                                             >
-                                                Send OTP
+                                                {t("sendOTP")}
                                             </Button>
                                         </div>
                                     </Form.Item>
@@ -218,13 +244,13 @@ const Register = () => {
                                     size="large"
                                     loading={loading}
                                 >
-                                    Register
+                                    {t("register")}
                                 </Button>
                             </Form.Item>
                         </Form>
 
                         <div style={{ textAlign: 'center', marginTop: 10 }}>
-                            <span>Already have an account? </span>
+                            <span>{t("alreadyAccount")} </span>
                             <span
                                 style={{
                                     color: '#1890ff',
@@ -234,14 +260,14 @@ const Register = () => {
                                 }}
                                 onClick={() => navigate('/login')}
                             >
-                                Login Now
+                                {t("loginNow")}
                             </span>
                         </div>
                     </Col>
                 </Row>
             </Card>
         </div>
-    )
+    );
 };
 
 export default Register;

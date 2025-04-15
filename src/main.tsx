@@ -11,7 +11,7 @@ import { Provider } from 'react-redux'
 import { store } from './redux/store'
 import AllVeges from './components/vegetable/AllVeges'
 import AllFavorites from './components/vegetable/AllFavorites'
-
+import './i18n';
 const router = createBrowserRouter([
 
   {
@@ -51,7 +51,7 @@ createRoot(document.getElementById('root')!).render(
           token: {
             colorPrimary: '#46cb4c',
             borderRadius: 16,
-            fontFamily: "Rubik, sans-serif",
+            fontFamily: "Rubik",
             colorPrimaryBg: "#ebf2ed",
             colorBgLayout: "White",
           },
