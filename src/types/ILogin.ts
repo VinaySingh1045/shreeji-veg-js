@@ -4,4 +4,6 @@ export interface ILogin {
     Book_Pass?: string;
     otp?: string;
     Mobile_No?: string;
+    remember?: boolean;
+    isAdmin?: boolean;
   }

@@ -11,6 +11,8 @@ const Register = () => {
     const [otpLoading, setOtpLoading] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
     const [form] = Form.useForm();
+    const [timer, setTimer] = useState(0);
+    const [intervalId, setIntervalId] = useState<number | null>(null);
     const { t, i18n } = useTranslation();
 
     const normalizePhoneNumber = (input: string): string => {
@@ -34,12 +36,6 @@ const Register = () => {
         const lang = localStorage.getItem("appLanguage") || "en";
         i18n.changeLanguage(lang);
     }, [i18n]);
-
-    const handleLanguageChange = (e: any) => {
-        const lang = e.target.value;
-        i18n.changeLanguage(lang);
-        localStorage.setItem("appLanguage", lang);
-    };
 
     interface APIError {
         response?: {
@@ -78,6 +74,23 @@ const Register = () => {
             return;
         }
         setOtpLoading(true);
+        setTimer(300);
+
+        // clear old interval if any
+        if (intervalId) clearInterval(intervalId);
+
+        const id = setInterval(() => {
+            setTimer(prev => {
+                if (prev <= 1) {
+                    clearInterval(id);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        setIntervalId(id);
+
         try {
             await RequestOTP({ mobileNo: values.Mobile_No });
             message.success(t("otpSentSuccess"));
@@ -100,22 +113,15 @@ const Register = () => {
             }}
         >
             <Card style={{ width: '100%', maxWidth: 1000, padding: 20 }}>
-                <div style={{ textAlign: "right", marginBottom: 16 }}>
-                    <select onChange={handleLanguageChange} defaultValue={i18n.language}>
-                        <option value="en">English</option>
-                        <option value="hi">हिन्दी</option>
-                        <option value="gu">ગુજરાતી</option>
-                    </select>
-                </div>
                 <Row gutter={[32, 16]} align="middle" justify="center">
                     <Col xs={24} md={12}>
                         <img
-                            src="/Shreeji_img.avif"
+                            src="/01.png"
                             alt="Register"
                             style={{
                                 width: '100%',
                                 maxHeight: 300,
-                                objectFit: 'cover',
+                                objectFit: "contain",
                                 borderRadius: 8,
                             }}
                         />
@@ -210,7 +216,16 @@ const Register = () => {
                             <Row gutter={16}>
                                 <Col span={24}>
                                     <Form.Item
-                                        label={t("otp")}
+                                        label={
+                                            <>
+                                                {t("otp") + " "}
+                                                {timer > 0 && (
+                                                    <span style={{ color: "green", fontSize: 20, marginLeft: 12 }}>
+                                                        ({Math.floor(timer / 60)}:{String(timer % 60).padStart(2, "0")})
+                                                    </span>
+                                                )}
+                                            </>
+                                        }
                                         name="otp"
                                         rules={[
                                             { required: true, message: t("otpRequired") },

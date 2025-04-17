@@ -42,3 +42,21 @@
         display: none !important;
     }
 }
+
+@media (max-width: 767px) {
+    .logo-text {
+        font-size: 18px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .logo-img {
+       height: 38px !important;    
+
+    }
+}
+
+/* .ant-menu-overflow-item-rest {
+    display: none !important;
+  } */
+  

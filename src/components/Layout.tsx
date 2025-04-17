@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import Footer from "./shared/Footer"
 import Navbar from "./shared/Navbar"
 import { AppDispatch } from "../redux/store";
@@ -35,8 +35,20 @@ const Layout = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [loading, setLoading] = useState(false);
     const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light")
-
     const token = Cookies.get("Shreeji_Veg");
+
+    const location = useLocation();
+  
+    const lang = localStorage.getItem("appLanguage");
+  
+    useEffect(() => {
+      if (!lang) {
+        navigate("/select-language");
+      } else if (!token && location.pathname !== "/login") {
+        navigate("/login");
+      }
+    }, [lang, token, location.pathname, navigate]);
+
     useEffect(() => {
         const fetchData = async () => {
             if (!token) {

@@ -23,16 +23,20 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
-  const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string } | null };
+  const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
 
   // Map path to key
   const pathToKey: { [key: string]: string } = {
-    '/': '1',
-    '/products': '2',
-    '/contact': '3',
+    '/': 'orders',
+    '/favourites': 'favourites',
+    '/contact': 'contact',
+    '/user/list': 'admin-users',
+    '/all/veges': 'admin-veges',
   };
 
-  const selectedKey = pathToKey[location.pathname] || '1';
+  const selectedKey = Object.entries(pathToKey).find(([path]) =>
+    location.pathname === path || location.pathname.startsWith(path + '/')
+  )?.[1] || '1';
 
   interface MenuClickEvent {
     key: string;
@@ -40,9 +44,11 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
 
   const handleMenuClick = (e: MenuClickEvent) => {
     const key = e.key;
-    if (key === '1') navigate('/');
-    else if (key === '2') navigate('/products');
-    else if (key === '3') navigate('/contact');
+    if (key === 'orders') navigate('/');
+    else if (key === 'favourites') navigate('/favourites');
+    else if (key === 'contact') navigate('/contact');
+    else if (key === 'admin-users') navigate('/user/list');
+    else if (key === 'admin-veges') navigate('/all/veges');
     setVisible(false);
   };
 
@@ -80,13 +86,30 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
 
   const initials = getInitials(fullName);
 
-
   const menuItems = [
-    { key: '1', label: 'Home' },
-    { key: '2', label: 'Products' },
-    { key: '3', label: 'Contact' },
+    ...(user && user.isAdmin
+      ? [
+        { key: 'admin-users', label: 'User List' },
+        { key: 'admin-veges', label: 'All Vegetables' },
+      ]
+      : []),
+    ...(user && !user.isAdmin
+      ? [
+        { key: 'orders', label: 'Orders' },
+        { key: 'favourites', label: 'Favourites' },
+        { key: 'contact', label: 'Contact' },
+      ]
+      : []),
     {
-      key: '4',
+      key: '4', label:
+        (
+          <a onClick={onToggleTheme} style={{ border: "none", background: "transparent", marginTop: "0px" }}>
+            {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "19px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "19px", color: "#fff" }} />}
+          </a>
+        )
+    },
+    {
+      key: '5',
       label: (
         <Popover content={popoverContent} trigger="click">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -97,6 +120,10 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       ),
     },
   ];
+
+  console.log("Current path:", location.pathname);
+  console.log("Selected key:", selectedKey);
+  // console.log("Last saved path:", localStorage.getItem("lastPath"));
 
 
   return (
@@ -114,35 +141,51 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       {/* Logo on the left */}
       <div
         className="logo"
-        onClick={() => navigate('/')}
+        onClick={() => {
+          if (!user) {
+            navigate('/login');
+          } else if (!user.isAdmin) {
+            navigate('/');
+          } else {
+            navigate('/user/list');
+          }
+        }}
         style={{
-          color: '#fff',
-          fontSize: '24px',
-          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
           cursor: 'pointer',
+          color: '#fff',
+          fontSize: '20px',
+          fontWeight: 'bold',
         }}
       >
-        ShreejiVeg
+        <img className='logo-img' src="/01.png" alt="logo" style={{ height: '44px' }} />
+        <span style={{ fontSize: "20px" }} className='logo-text'>ShreejiVeg</span>
       </div>
+
 
       {/* Menu + Profile on the right */}
       {screens.md ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexGrow: 1 }}>
           <Menu
             mode="horizontal"
-            items={menuItems.slice(0, 3)} // Only nav items here
+            items={menuItems.slice(0, 5)} // Only nav items here
             theme="dark"
             onClick={handleMenuClick}
-            selectedKeys={[selectedKey]}
+            selectedKeys={selectedKey ? [selectedKey] : []}
             style={{
               background: 'transparent',
               color: '#fff',
               borderBottom: 'none',
               lineHeight: '56px',
+              // minWidth: 300,
+              flexGrow: 1,
+              justifyContent: 'flex-end',
             }}
             className={token.colorBgLayout === "White" ? "custom-menu-light" : "custom-menu"}
           />
-          <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
+          {/* <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
             {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
           </Button>
           <Popover content={popoverContent} trigger="click">
@@ -152,11 +195,11 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
                 {initials}
               </Avatar>
             </div>
-          </Popover>
+          </Popover> */}
         </div>
       ) : (
         <>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
               {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
             </Button>
@@ -172,7 +215,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
           </div>
 
           <Drawer
-            title="Menu"
+            title=""
             placement="right"
             onClose={() => setVisible(false)}
             open={visible}
@@ -182,7 +225,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
               mode="vertical"
               items={menuItems.slice(0, 3)} // Only Home, Products, Contact
               onClick={handleMenuClick}
-              selectedKeys={[selectedKey]}
+              selectedKeys={selectedKey ? [selectedKey] : []}
             />
 
             {/* Logout button for mobile only */}

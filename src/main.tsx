@@ -12,8 +12,10 @@ import { store } from './redux/store'
 import AllVeges from './components/vegetable/AllVeges'
 import AllFavorites from './components/vegetable/AllFavorites'
 import './i18n';
-const router = createBrowserRouter([
+import SelectLanguage from './components/auth/SelectLanguage'
+import AllOrders from './orders/AllOrders'
 
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
@@ -21,6 +23,10 @@ const router = createBrowserRouter([
 
       {
         path: "/",
+        element: <AllOrders />
+      },
+      {
+        path: "/favourites",
         element: <AllFavorites />
       },
       {
@@ -41,6 +47,11 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />
   },
+  {
+    path: "/select-language",
+    element: <SelectLanguage />
+  }
+
 ])
 
 createRoot(document.getElementById('root')!).render(

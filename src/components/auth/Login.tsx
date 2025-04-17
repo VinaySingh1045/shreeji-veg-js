@@ -14,6 +14,7 @@ const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const { t, i18n } = useTranslation();
 
   interface APIError {
@@ -29,13 +30,37 @@ const Login = () => {
     i18n.changeLanguage(lang);
   }, [i18n]);
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem("rememberedUser");
+    if (savedUser) {
+      const parsed = JSON.parse(savedUser);
+      form.setFieldsValue({
+        Ac_Name: parsed.Ac_Name,
+        Book_Pass: parsed.Book_Pass,
+        remember: true,
+      });
+    }
+  }, [form]);
+
   const handleSubmit = async (values: ILogin) => {
+
     setLoading(true);
     try {
       const response = await LoginApi(values);
       message.success(t("loginSuccess"));
       Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
       dispatch(setUser(response.data.user));
+
+      if (values.remember) {
+        localStorage.setItem("rememberedUser", JSON.stringify({
+          Ac_Name: values.Ac_Name,
+          Book_Pass: values.Book_Pass,
+        }));
+      } else {
+        localStorage.removeItem("rememberedUser");
+      }
+
+
       if (response.data.user.isAdmin === true) {
         navigate("/user/List");
       } else {
@@ -90,12 +115,12 @@ const Login = () => {
         <Row gutter={[32, 16]} align="middle" justify="center">
           <Col xs={24} md={12}>
             <img
-              src="/Shreeji_img.avif"
+              src="/01.png"
               alt="Login Visual"
               style={{
                 width: "100%",
                 maxHeight: 300,
-                objectFit: "cover",
+                objectFit: "contain",
                 borderRadius: 8,
               }}
             />
@@ -103,6 +128,7 @@ const Login = () => {
 
           <Col xs={24} md={12}>
             <Form
+              form={form}
               name="loginForm"
               layout="vertical"
               onFinish={handleSubmit}
