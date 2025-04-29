@@ -53,8 +53,9 @@ const Register = () => {
         values.Mobile_No = normalizePhoneNumber(values.Mobile_No);
         try {
             setLoading(true);
-            const res = await RegisterApi(values);
-            console.log("res: ", res);
+            await RegisterApi(values);
+            message.success(t("registrationSuccess"));
+            navigate("/login");
         } catch (error) {
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
@@ -92,7 +93,7 @@ const Register = () => {
         setIntervalId(id);
 
         try {
-            await RequestOTP({ mobileNo: values.Mobile_No });
+            await RequestOTP(values.Mobile_No);
             message.success(t("otpSentSuccess"));
             setOtpSent(true);
         } catch {

@@ -5,10 +5,9 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { Table, Input, Space, Button, message, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 import { RemoveFavorite } from "../../services/vegesAPI";
-import { MinusCircleOutlined } from "@ant-design/icons";
-
+import { DeleteOutlined } from "@ant-design/icons";
 interface Vegetable {
-    Itm_Id: string;
+    Itm_Id: number;
     Itm_Name: string;
     Sale_Rate: number;
 }
@@ -20,7 +19,7 @@ const FavoriteVeges = () => {
     const [searchText, setSearchText] = useState("");
     const [filteredVeges, setFilteredVeges] = useState([]);
 
-    const favoriteVeges = favorites?.data || [];
+    const favoriteVeges = favorites || [];
 
     useEffect(() => {
         dispatch(fetchFavoriteVegetables());
@@ -31,7 +30,6 @@ const FavoriteVeges = () => {
             veg.Itm_Name.toLowerCase().includes(searchText.toLowerCase())
         );
 
-        // Only update state if filtered result has changed
         if (JSON.stringify(filtered) !== JSON.stringify(filteredVeges)) {
             setFilteredVeges(filtered);
         }
@@ -50,23 +48,18 @@ const FavoriteVeges = () => {
             key: "Itm_Name",
         },
         {
-            title: "Sale Rate (₹)",
-            dataIndex: "Sale_Rate",
-            key: "Sale_Rate",
-        },
-        {
             title: "Action",
             key: "action",
             render: (_: unknown, record: Vegetable) => (
                 <Button danger onClick={() => handleRemoveFav(record)}>
-                    Remove Favorite
+                    <DeleteOutlined />
                 </Button>
             ),
         },
     ];
 
     const handleRemoveFav = async (record: Vegetable) => {
-        await RemoveFavorite({ itemId: record.Itm_Id });
+        await RemoveFavorite(record.Itm_Id);
         dispatch(fetchFavoriteVegetables());
         message.success("Removed vege from favorites Successfully!");
     }
@@ -92,7 +85,7 @@ const FavoriteVeges = () => {
                     dataSource={filteredVeges}
                     rowKey={(record) => record.Itm_Id}
                     loading={loading}
-                    pagination={{ pageSize: 5 }}
+                    pagination={{ pageSize: 20 }}
                     scroll={{ x: true }}
                     bordered
                 />

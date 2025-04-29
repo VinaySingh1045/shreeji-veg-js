@@ -56,6 +56,12 @@
     }
 }
 
+.custom-input{
+    /* w-14 text-center */
+    width: 90px !important;
+    text-align: center !important;
+}
+
 /* .ant-menu-overflow-item-rest {
     display: none !important;
   } */

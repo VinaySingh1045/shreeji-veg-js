@@ -26,5 +26,6 @@
     " is required": " आवश्यक है",
     "Mobile Number Should be 10 Digits": "मोबाइल नंबर १० अंकों का होना चाहिए",
     "Password: 5-20 chars, 1 upper, 1 lower & 1 special!": "पासवर्ड: 5-20 वर्ण, 1 बड़ा, 1 छोटा और 1 विशेष!",
-    "Passwords do not match!": "पासवर्ड मेल नहीं खाते!"
+    "Passwords do not match!": "पासवर्ड मेल नहीं खाते!",
+    "registrationSuccess": "पंजीकरण सफल!"
   }

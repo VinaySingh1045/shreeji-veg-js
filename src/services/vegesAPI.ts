@@ -34,9 +34,9 @@ export const GetFavorites = async () => {
 }
 
 
-export const AddToFavorite = async (userData: string) => {
+export const AddToFavorite = async (userData: number) => {
     try {
-        const res = await axios.post(`${API_END_POINT}/addToFavorites`, userData, {
+        const res = await axios.post(`${API_END_POINT}/addToFavorites`, { Itm_Id: userData }, {
             headers: getAuthHeaders(),
         })
         return res.data
@@ -46,9 +46,9 @@ export const AddToFavorite = async (userData: string) => {
     }
 }
 
-export const RemoveFavorite = async (userData: string) => {
+export const RemoveFavorite = async (userData: number) => {
     try {
-        const res = await axios.post(`${API_END_POINT}/deleteFavorites`, userData, {
+        const res = await axios.post(`${API_END_POINT}/deleteFavorites`, { Itm_Id: userData }, {
             headers: getAuthHeaders(),
         })
         return res.data

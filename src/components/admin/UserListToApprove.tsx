@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { message, Select, Table, TableProps, theme } from 'antd';
+import { Button, Input, message, Table, TableProps, theme } from 'antd';
 import { IColumns } from '../../types/IUserList';
 import { ApproveUser, getUsersToApprove } from '../../services/adminAPI';
 
@@ -21,20 +21,27 @@ const UserListToApprove = () => {
             key: 'Mobile_No',
         },
         {
-            title: 'Status',
+            title: 'Code',
             dataIndex: 'approvalCode',
             key: 'approvalCode',
             render: (_, record) => (
-
-                <Select
-                    defaultValue="pending"
+                <Input
+                    defaultValue={record.approvalCode || ''}
                     style={{ width: 120 }}
-                    onChange={(value) => record.Id && handleStatusChange(record.Id, value)}
-                    options={[
-                        { value: "pending", label: "Pending" },
-                        { value: "approve", label: "Approved" },
-                    ]}
+                    onChange={(e) => record.approvalCode = e.target.value}
                 />
+            ),
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Button
+                    type="primary"
+                    onClick={() => record.Id && handleStatusChange(record.Id, record.approvalCode || '')}
+                >
+                    Approve
+                </Button>
             ),
         },
     ];
@@ -43,7 +50,7 @@ const UserListToApprove = () => {
 
         try {
             const payload = {
-                userId: id,
+                Ac_Id: id,
                 approvalCode: status,
             };
             await ApproveUser(payload);
@@ -53,7 +60,6 @@ const UserListToApprove = () => {
             console.error('Error updating status:', error);
             message.error('Error updating status');
         }
-
     };
 
 
@@ -75,13 +81,13 @@ const UserListToApprove = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <h2 style={{marginBottom:"10px"}} className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>Users Pending Approval</h2>
+            <h2 style={{ marginBottom: "10px" }} className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>Users Pending Approval</h2>
             <Table
                 columns={columns}
                 dataSource={users}
                 rowKey="_id"
                 loading={loading}
-                pagination={{ pageSize: 5 }}
+                pagination={{ pageSize: 20 }}
                 bordered
                 scroll={{ x: 'max-content' }}
             />

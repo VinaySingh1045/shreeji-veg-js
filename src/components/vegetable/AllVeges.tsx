@@ -5,13 +5,14 @@ import {
     fetchFavoriteVegetables,
 } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
-import { Table, Input, Space, Button, message, theme, Card, Row, Col } from "antd";
+import { Table, Input, Button, message, theme, Space } from "antd";
 import { AddToFavorite, RemoveFavorite } from "../../services/vegesAPI";
 import { useNavigate } from "react-router-dom";
-import Title from "antd/es/typography/Title";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 interface Vegetable {
-    Itm_ID: string;
+    Itm_ID: number;
+    Itm_Id?: number;
     Itm_Name: string;
     Sale_Rate: number;
 }
@@ -33,11 +34,11 @@ const AllVeges = () => {
     const [filteredVeges, setFilteredVeges] = useState<Vegetable[]>([]);
     const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
 
-    const allVeges: Vegetable[] = all?.data || [];
+    const allVeges: Vegetable[] = all || [];
 
     useEffect(() => {
         dispatch(fetchAllVegetables());
-        
+
         if (user && !user.isAdmin) {
             dispatch(fetchFavoriteVegetables());
         }
@@ -50,11 +51,11 @@ const AllVeges = () => {
         setFilteredVeges(filtered);
     }, [searchText, allVeges]);
 
-    const favoriteIds = favorites?.data?.map((f) => f.Itm_Id) || [];
+    const favoriteIds = favorites?.map((f: Vegetable) => f.Itm_Id) || [];
 
     const handleAddToFav = async (vege: Vegetable) => {
         try {
-            await AddToFavorite({ itemId: vege.Itm_ID });
+            await AddToFavorite(vege.Itm_ID);
             dispatch(fetchFavoriteVegetables());
             message.success("Added vege to favorites Successfully!");
         } catch (error) {
@@ -78,28 +79,6 @@ const AllVeges = () => {
             dataIndex: "Itm_Name",
             key: "Itm_Name",
         },
-        {
-            title: "Sale Rate (₹)",
-            dataIndex: "Sale_Rate",
-            key: "Sale_Rate",
-        },
-        // {
-        //     title: "Action",
-        //     key: "action",
-        //     render: (_: unknown, record: Vegetable) => {
-        //         const isFavorite = favoriteIds.includes(record.Itm_ID);
-
-        //         return isFavorite ? (
-        //             <Button danger onClick={() => handleRemoveFav(record)}>
-        //                 Remove Favorite
-        //             </Button>
-        //         ) : (
-        //             <Button type="primary" onClick={() => handleAddToFav(record)}>
-        //                 Add Favorite
-        //             </Button>
-        //         );
-        //     },
-        // },
     ];
 
     if (user && !user.isAdmin) {
@@ -111,11 +90,11 @@ const AllVeges = () => {
 
                 return isFavorite ? (
                     <Button danger onClick={() => handleRemoveFav(record)}>
-                        Remove Favorite
+                        <DeleteOutlined />
                     </Button>
                 ) : (
                     <Button type="primary" onClick={() => handleAddToFav(record)}>
-                        Add Favorite
+                        <PlusOutlined />
                     </Button>
                 );
             },
@@ -124,7 +103,7 @@ const AllVeges = () => {
 
     const handleRemoveFav = async (vege: Vegetable) => {
         try {
-            await RemoveFavorite({ itemId: vege.Itm_ID });
+            await RemoveFavorite(vege.Itm_ID);
             dispatch(fetchFavoriteVegetables());
             message.success("Removed from favorites!");
         } catch {
@@ -133,56 +112,33 @@ const AllVeges = () => {
     };
 
     return (
-        <div style={{ minHeight: "100vh", background: "#f0f2f5", padding: "2rem 1rem" }}>
-            <Card
-                style={{
-                    maxWidth: 1200,
-                    margin: "0 auto",
-                    borderRadius: "12px",
-                    boxShadow: "0 15px 40px rgba(0,0,0,0.05)",
-                }}
-                bodyStyle={{ padding: "2rem" }}
-            >
-                <Row gutter={[16, 16]} align="middle" justify="space-between">
-                    <Col xs={24} md={12}>
-                        <Title level={3} style={{ margin: 0 }}>
-                            All Vegetables
-                        </Title>
-                    </Col>
-                    <Col xs={24} md={12} style={{ textAlign: "right" }}>
-                        {user && !user.isAdmin && (
-                            <Button type="primary" onClick={() => navigate("/favourites")}>
-                                View Favorites
-                            </Button>
-                        )}
-                    </Col>
-                </Row>
+        <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>All Vegetables</h2>
+                {
+                    user && !user.isAdmin &&
+                    <Button onClick={() => navigate("/favourites")} type="primary">View Favorite</Button>
+                }
+            </div>
+            <Space direction="vertical" style={{ width: "100%" }}>
+                <Input.Search
+                    placeholder="Search by vegetable name"
+                    allowClear
+                    onChange={(e) => setSearchText(e.target.value)}
+                    value={searchText}
+                    enterButton
+                />
 
-                <Row style={{ marginTop: "1.5rem" }}>
-                    <Col xs={24} sm={16} md={12} lg={8}>
-                        <Input.Search
-                            placeholder="Search by vegetable name"
-                            allowClear
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                            enterButton
-                            size="large"
-                        />
-                    </Col>
-                </Row>
-
-                <div style={{ marginTop: "2rem" }}>
-                    <Table
-                        columns={columns}
-                        dataSource={filteredVeges}
-                        rowKey={(record) => record.Itm_ID}
-                        loading={loading}
-                        pagination={{ pageSize: 5, showSizeChanger: false }}
-                        scroll={{ x: true }}
-                        bordered
-                    />
-                </div>
-            </Card>
+                <Table
+                    columns={columns}
+                    dataSource={filteredVeges}
+                    rowKey={(record) => record.Itm_ID}
+                    loading={loading}
+                    pagination={{ pageSize: 20 }}
+                    scroll={{ x: true }}
+                    bordered
+                />
+            </Space>
         </div>
     );
 };

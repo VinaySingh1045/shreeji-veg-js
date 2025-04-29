@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message, theme } from 'antd';
-import { LogoutOutlined, MenuOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
+import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message, theme, DatePicker } from 'antd';
+import { GlobalOutlined, LogoutOutlined, MenuOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { setUser } from '../../redux/slice/authSlice';
 import Cookies from 'js-cookie';
 import { LogoutApi } from '../../services/authAPI';
+import dayjs from 'dayjs';
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -63,6 +64,9 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const popoverContent = (
     <div>
       <Space direction="vertical">
+        <Button onClick={() => navigate('/select-language')} type="text" icon={<GlobalOutlined />}>
+          Language
+        </Button>
         <Button onClick={handleLogout} type="text" icon={<LogoutOutlined />}>
           Logout
         </Button>
@@ -121,11 +125,6 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     },
   ];
 
-  console.log("Current path:", location.pathname);
-  console.log("Selected key:", selectedKey);
-  // console.log("Last saved path:", localStorage.getItem("lastPath"));
-
-
   return (
     <Header
       style={{
@@ -162,6 +161,12 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       >
         <img className='logo-img' src="/01.png" alt="logo" style={{ height: '44px' }} />
         <span style={{ fontSize: "20px" }} className='logo-text'>ShreejiVeg</span>
+        <span> <DatePicker
+        width={10}
+            value={dayjs()}
+            // disabled
+             format="DD-MM-YYYY"
+          /></span>
       </div>
 
 
@@ -227,6 +232,19 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
               onClick={handleMenuClick}
               selectedKeys={selectedKey ? [selectedKey] : []}
             />
+
+            {!screens.md && (
+              <Button
+                onClick={() => {
+                  navigate('/select-language');
+                  setVisible(false);
+                }}
+                type="text"
+                style={{ marginLeft: '7px' }}
+              >
+                Language
+              </Button>
+            )}
 
             {/* Logout button for mobile only */}
             {!screens.md && (

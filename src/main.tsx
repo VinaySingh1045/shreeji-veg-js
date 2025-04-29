@@ -37,6 +37,10 @@ const router = createBrowserRouter([
         path: "/all/veges",
         element: <AllVeges />
       },
+      {
+        path: "/select-language",
+        element: <SelectLanguage />
+      },
     ]
   },
   {
@@ -47,10 +51,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />
   },
-  {
-    path: "/select-language",
-    element: <SelectLanguage />
-  }
+
 
 ])
 

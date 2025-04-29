@@ -6,7 +6,7 @@ export const fetchAllVegetables = createAsyncThunk(
     'vegetables/fetchAll',
     async () => {
         const response = await GetAllItems();
-        return response;
+        return response.data;
     }
 );
 
@@ -15,6 +15,6 @@ export const fetchFavoriteVegetables = createAsyncThunk(
     'vegetables/fetchFavorites',
     async () => {
         const response = await GetFavorites();
-        return response;
+        return response.data;
     }
 );

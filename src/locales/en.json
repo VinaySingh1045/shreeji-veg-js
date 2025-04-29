@@ -26,6 +26,6 @@
     " is required": " is required",
     "Mobile Number Should be 10 Digits": "Mobile Number Should be 10 Digits",
     "Password: 5-20 chars, 1 upper, 1 lower & 1 special!": "Password: 5-20 characters, 1 uppercase letter, 1 lowercase letter & 1 special character!",
-    "Passwords do not match!": "Passwords do not match!"                                                   
-    
+    "Passwords do not match!": "Passwords do not match!",                                                   
+    "registrationSuccess": "Registration successful!"
   }

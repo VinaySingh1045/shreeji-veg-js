@@ -24,7 +24,7 @@ export const LoginApi = async (userData: ILogin) => {
 
 export const RequestOTP = async (userData: string) => {
     try {
-        const res = await axios.post(`${API_END_POINT}/requestOTP`, userData, {
+        const res = await axios.post(`${API_END_POINT}/requestOTP`, { mobileNo: userData }, {
             headers: getAuthHeaders(),
         })
         return res.data

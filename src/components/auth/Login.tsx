@@ -1,5 +1,5 @@
-import { Button, Card, Checkbox, Form, Input, message, Row, Col, Dropdown, MenuProps } from "antd";
-import { UserOutlined, LockOutlined, GlobalOutlined } from "@ant-design/icons";
+import { Button, Card, Checkbox, Form, Input, message, Row, Col } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../services/authAPI";
@@ -15,8 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const { t, i18n } = useTranslation();
-
+  const { t } = useTranslation();
   interface APIError {
     response?: {
       data?: {
@@ -24,11 +23,6 @@ const Login = () => {
       };
     };
   }
-
-  useEffect(() => {
-    const lang = localStorage.getItem("appLanguage") || "en";
-    i18n.changeLanguage(lang);
-  }, [i18n]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("rememberedUser");
@@ -78,20 +72,6 @@ const Login = () => {
     }
   };
 
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-    localStorage.setItem("appLanguage", lang);
-  };
-
-  const languageMenu: MenuProps = {
-    onClick: (e) => handleLanguageChange(e.key),
-    items: [
-      { key: "en", label: "English" },
-      { key: "hi", label: "हिन्दी" },
-      { key: "gu", label: "ગુજરાતી" },
-    ],
-  };
-
   return (
     <div
       style={{
@@ -104,13 +84,6 @@ const Login = () => {
         position: "relative",
       }}
     >
-      {/* Language Dropdown in Top Right */}
-      <div style={{ position: "absolute", top: 16, right: 16 }}>
-        <Dropdown menu={languageMenu} placement="bottomRight" trigger={["click"]}>
-          <Button icon={<GlobalOutlined />} />
-        </Dropdown>
-      </div>
-
       <Card style={{ maxWidth: 900, width: "100%" }}>
         <Row gutter={[32, 16]} align="middle" justify="center">
           <Col xs={24} md={12}>
