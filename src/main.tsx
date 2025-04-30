@@ -13,7 +13,7 @@ import AllVeges from './components/vegetable/AllVeges'
 import AllFavorites from './components/vegetable/AllFavorites'
 import './i18n';
 import SelectLanguage from './components/auth/SelectLanguage'
-import AllOrders from './orders/AllOrders'
+import AllOrders from './components/orders/AllOrders'
 
 const router = createBrowserRouter([
   {
