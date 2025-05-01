@@ -14,6 +14,7 @@ import AllFavorites from './components/vegetable/AllFavorites'
 import './i18n';
 import SelectLanguage from './components/auth/SelectLanguage'
 import AllOrders from './components/orders/AllOrders'
+import ViewOrders from './components/orders/ViewOrders'
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "/select-language",
         element: <SelectLanguage />
+      },
+      {
+        path: "/view-orders",
+        element: <ViewOrders/>
       },
     ]
   },

@@ -5,6 +5,7 @@ import { fetchAllVegetables, fetchFavoriteVegetables } from "../../redux/actions
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
+import { useNavigate } from "react-router-dom";
 
 interface Vegetable {
   Itm_Id: number;
@@ -25,6 +26,7 @@ const AllOrders = () => {
   const [filteredData, setFilteredData] = useState<Vegetable[]>([]);
   const [mergedData, setMergedData] = useState<Vegetable[]>([]);
   const [addLoding, setAddLoding] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Normalize 'all' data to match 'favorites' shape
@@ -171,7 +173,13 @@ const AllOrders = () => {
           className="custom-input"
         />
       ),
-    }
+    },
+    {
+      title: "Unit",
+      dataIndex: "Uni_Name",
+      key: "Uni_Name",
+    },
+
 
   ];
 
@@ -183,39 +191,42 @@ const AllOrders = () => {
         </div>
       ) : (
         <>
-          <Row gutter={16}>
-            <Col xs={24} sm={12} md={8} lg={6}>
-              <DatePicker
-                value={billDate}
-                onChange={handleDateChange}
-                format="dddd, DD-MM-YYYY"
-                size="middle"
+          <div className="flex flex-wrap gap-2 mb-4">
+            <DatePicker
+              value={billDate}
+              onChange={handleDateChange}
+              format="dddd, DD-MM-YYYY"
+              size="small"
+            />
+
+            <Form.Item label="Order No." colon={false} style={{ marginBottom: 0 }}>
+              <Input
+                placeholder="Order Number"
+                value={billNo || ""}
+                size="small"
+                disabled
               />
-            </Col>
+            </Form.Item>
 
-            <Col xs={24} sm={12} md={8} lg={6}>
-              <Form.Item label="Order Number" colon={false}>
-                <Input
-                  placeholder="Order Number"
-                  value={billNo || ""}
-                  size="small"
-                  disabled
-                />
-              </Form.Item>
-            </Col>
+            <Form.Item label="Order Count" colon={false} style={{ marginBottom: 0 }}>
+              <Input
+                placeholder="Order Count"
+                value={lrNo || ""}
+                size="small"
+                disabled
+              />
+            </Form.Item>
 
-            <Col xs={24} sm={12} md={8} lg={6}>
-              <Form.Item label="Order Count" colon={false}>
-                <Input
-                  placeholder="Order Count"
-                  value={lrNo || ""}
-                  size="small"
-                  disabled
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+            <Button type="primary" onClick={() => navigate("/view-orders")}>
+              View Orders
+            </Button>
+          </div>
 
+          <div className="flex flex-wrap gap-3 justify-start mt-4 mb-4">
+            <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
+            <Button type="primary">Modify Order</Button>
+            <Button type="primary">Delete Order</Button>
+          </div>
           <Space direction="vertical" style={{ width: "100%" }}>
             <Input.Search
               placeholder="Search by vegetable name"
@@ -234,13 +245,13 @@ const AllOrders = () => {
               scroll={{ x: true }}
               bordered
             />
-
-            <div className="flex justify-start gap-7 items-center mt-4">
-              <Button onClick={handleAddOrder}>Add</Button>
-              <Button>Modify</Button>
-              <Button>Delete</Button>
-            </div>
           </Space>
+          
+          {/* <div className="flex flex-wrap gap-3 justify-start mt-4">
+              <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
+              <Button type="primary">Modify Order</Button>
+              <Button type="primary">Delete Order</Button>
+            </div> */}
         </>
       )}
     </div>

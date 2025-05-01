@@ -45,3 +45,17 @@ export const AddOrder = async (payload: any) => {
         throw error;
     }
 };
+
+export const GetOrder = async (payload: any) => {
+    console.log("payload", payload);
+    try {
+        const res = await axios.get(`${API_END_POINT}/OrderData`, {
+            headers: getAuthHeaders(),
+            params: payload,
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error while Getting orders:", error);
+        throw error;
+    }
+};
