@@ -137,6 +137,7 @@ const AllVeges = () => {
                     pagination={{ pageSize: 20 }}
                     scroll={{ x: true }}
                     bordered
+                    size="small"
                 />
             </Space>
         </div>

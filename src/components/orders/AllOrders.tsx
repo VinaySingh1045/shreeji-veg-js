@@ -142,8 +142,9 @@ const AllOrders = () => {
       await handleGetBillNo();
       message.success("Order added successfully");
 
-    } catch {
+    } catch (error) {
       message.error("Failed to add order");
+      console.error("Error while adding order: ", error);
     } finally {
       setAddLoding(false);
     }
@@ -244,9 +245,10 @@ const AllOrders = () => {
               pagination={{ pageSize: 20 }}
               scroll={{ x: true }}
               bordered
+              size="small"
             />
           </Space>
-          
+
           {/* <div className="flex flex-wrap gap-3 justify-start mt-4">
               <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
               <Button type="primary">Modify Order</Button>

@@ -1,9 +1,12 @@
 import { Button, Card, Row, Col, message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const SelectLanguage = () => {
+    const navigate = useNavigate();
     const setLang = (lang: string) => {
         localStorage.setItem("appLanguage", lang);
         message.success("Language changed successfully!");
+        navigate("/");
     };
 
     return (

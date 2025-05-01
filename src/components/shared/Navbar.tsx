@@ -160,13 +160,15 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
         }}
       >
         <img className='logo-img' src="/01.png" alt="logo" style={{ height: '44px' }} />
-        <span style={{ fontSize: "20px" }} className='logo-text'>ShreejiVeg</span>
+        <span className="hidden md:inline text-[20px] logo-text">
+          ShreejiVeg
+        </span>
         <span> <DatePicker
-        width={10}
-            value={dayjs()}
-            // disabled
-             format="DD-MM-YYYY"
-          /></span>
+          width={10}
+          value={dayjs()}
+          // disabled
+          format="DD-MM-YYYY"
+        /></span>
       </div>
 
 

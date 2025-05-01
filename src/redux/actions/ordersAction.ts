@@ -13,6 +13,6 @@ export const fetchOrders = createAsyncThunk("fetchOrders",
         console.log("payload fetch", payload);
         const res = await GetOrder(payload);
         console.log("orders", res);
-        return res;
+        return res.data;
     }
 );

@@ -90,6 +90,7 @@ const UserListToApprove = () => {
                 pagination={{ pageSize: 20 }}
                 bordered
                 scroll={{ x: 'max-content' }}
+                size='small'
             />
         </div>
     );
