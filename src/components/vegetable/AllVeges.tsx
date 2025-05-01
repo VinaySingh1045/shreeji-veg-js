@@ -9,13 +9,15 @@ import { Table, Input, Button, message, theme, Space } from "antd";
 import { AddToFavorite, RemoveFavorite } from "../../services/vegesAPI";
 import { useNavigate } from "react-router-dom";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Vegetable } from "../../redux/slice/vegesSlice";
 
-interface Vegetable {
-    Itm_ID: number;
-    Itm_Id?: number;
-    Itm_Name: string;
-    Sale_Rate: number;
-}
+
+// interface Vegetable {
+//     Itm_ID: number;
+//     Itm_Id?: number;
+//     Itm_Name: string;
+//     Sale_Rate: number;
+// }
 
 interface APIError {
     response?: {
@@ -55,7 +57,11 @@ const AllVeges = () => {
 
     const handleAddToFav = async (vege: Vegetable) => {
         try {
-            await AddToFavorite(vege.Itm_ID);
+            if (vege.Itm_ID !== undefined) {
+                await AddToFavorite(vege.Itm_ID);
+            } else {
+                message.error("Invalid vegetable ID.");
+            }
             dispatch(fetchFavoriteVegetables());
             message.success("Added vege to favorites Successfully!");
         } catch (error) {
@@ -103,7 +109,11 @@ const AllVeges = () => {
 
     const handleRemoveFav = async (vege: Vegetable) => {
         try {
-            await RemoveFavorite(vege.Itm_ID);
+            if (vege.Itm_ID !== undefined) {
+                await RemoveFavorite(vege.Itm_ID);
+            } else {
+                message.error("Invalid vegetable ID.");
+            }
             dispatch(fetchFavoriteVegetables());
             message.success("Removed from favorites!");
         } catch {
@@ -132,7 +142,6 @@ const AllVeges = () => {
                 <Table
                     columns={columns}
                     dataSource={filteredVeges}
-                    rowKey={(record) => record.Itm_ID}
                     loading={loading}
                     pagination={{ pageSize: 20 }}
                     scroll={{ x: true }}

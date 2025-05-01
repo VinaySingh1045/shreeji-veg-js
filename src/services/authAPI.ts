@@ -34,7 +34,7 @@ export const RequestOTP = async (userData: string) => {
     }
 }
 
-export const RegisterApi = async (userData) => {
+export const RegisterApi = async (userData: any) => {
     try {
         const res = await axios.post(`${API_END_POINT}/register`, userData, {
             headers: getAuthHeaders(),

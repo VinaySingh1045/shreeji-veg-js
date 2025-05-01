@@ -6,18 +6,21 @@ import { Table, Input, Space, Button, message, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 import { RemoveFavorite } from "../../services/vegesAPI";
 import { DeleteOutlined } from "@ant-design/icons";
-interface Vegetable {
-    Itm_Id: number;
-    Itm_Name: string;
-    Sale_Rate: number;
-}
+import { Vegetable } from "../../redux/slice/vegesSlice";
+
+// interface Vegetable {
+//     Itm_Id: number;
+//     Itm_Name: string;
+//     Sale_Rate: number;
+// }
 const FavoriteVeges = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { token } = theme.useToken();
     const { favorites, loading } = useSelector((state: RootState) => state.vegetables);
     const [searchText, setSearchText] = useState("");
-    const [filteredVeges, setFilteredVeges] = useState([]);
+    const [filteredVeges, setFilteredVeges] = useState<Vegetable[]>([]);
+
 
     const favoriteVeges = favorites || [];
 
@@ -59,7 +62,11 @@ const FavoriteVeges = () => {
     ];
 
     const handleRemoveFav = async (record: Vegetable) => {
-        await RemoveFavorite(record.Itm_Id);
+        if (record.Itm_Id !== undefined) {
+            await RemoveFavorite(record.Itm_Id);
+        } else {
+            message.error("Invalid vegetable ID.");
+        }
         dispatch(fetchFavoriteVegetables());
         message.success("Removed vege from favorites Successfully!");
     }
@@ -83,7 +90,7 @@ const FavoriteVeges = () => {
                 <Table
                     columns={columns}
                     dataSource={filteredVeges}
-                    rowKey={(record) => record.Itm_Id}
+                    rowKey={(record) => record.Itm_Id ?? ``}
                     loading={loading}
                     pagination={{ pageSize: 20 }}
                     scroll={{ x: true }}

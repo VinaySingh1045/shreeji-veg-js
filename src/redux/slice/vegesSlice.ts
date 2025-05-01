@@ -1,14 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchAllVegetables, fetchFavoriteVegetables } from "../actions/vegesAction";
 
+interface Vegetable {
+    Itm_ID?: number;
+    Itm_Id?: number;
+    Itm_Name: string;
+    Sale_Rate: number;
+    Uni_ID?: number;
+    Uni_Name?: string;
+}
+
+interface VegetablesState {
+    all: Vegetable[];
+    favorites: Vegetable[];
+    loading: boolean;
+    error: string | null;
+}
+
+const initialState: VegetablesState = {
+    all: [],
+    favorites: [],
+    loading: false,
+    error: null,
+  };
+  
+
 const vegetableSlice = createSlice({
     name: 'vegetables',
-    initialState: {
-        all: [],
-        favorites: [],
-        loading: false,
-        error: null as string | null,
-    },
+    initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
@@ -42,4 +61,5 @@ const vegetableSlice = createSlice({
     },
 });
 
+export type { Vegetable, VegetablesState };
 export default vegetableSlice.reducer;

@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Spin } from "antd";
+import { Table, Input, Space, DatePicker, Form, Button, message, Spin } from "antd";
 import { fetchAllVegetables, fetchFavoriteVegetables } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
 import { useNavigate } from "react-router-dom";
-
-interface Vegetable {
-  Itm_Id: number;
-  Itm_Name: string;
-  Sale_Rate: number;
-  data?: Vegetable[];
-  Uni_ID?: number;
-}
+import { Vegetable } from "../../redux/slice/vegesSlice";
 
 const AllOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,15 +22,14 @@ const AllOrders = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Normalize 'all' data to match 'favorites' shape
     const normalizedAll = all.map(item => ({
       ...item,
-      Itm_Id: item.Itm_ID, // convert to match favorites
+      Itm_Id: item.Itm_ID,
     }));
 
     const map = new Map<number, Vegetable>();
     favorites.forEach(item => map.set(item.Itm_Id, item));
-    normalizedAll.forEach(item => map.set(item.Itm_Id, item)); // Now keys match
+    normalizedAll.forEach(item => map.set(item.Itm_Id, item));
 
     const merged = Array.from(map.values());
     setMergedData(merged);
@@ -117,10 +109,10 @@ const AllOrders = () => {
   const handleAddOrder = async () => {
 
     const details = mergedData
-      .filter((item) => quantities[item.Itm_Id]) // include only if quantity exists
+      .filter((item) => item.Itm_Id !== undefined && quantities[item.Itm_Id]) // include only if Itm_Id exists and quantity exists
       .map((item) => ({
         Itm_Id: item.Itm_Id,
-        Inward: parseFloat(quantities[item.Itm_Id]),
+        Inward: item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0,
         Uni_ID: item.Uni_ID, // Assuming Uni_ID is fixed; update if dynamic
         Itm_Name: item.Itm_Name,
       }));
@@ -168,8 +160,8 @@ const AllOrders = () => {
       render: (_: unknown, record: Vegetable) => (
         <Input
           placeholder="0"
-          value={quantities[record.Itm_Id] || ""}
-          onChange={(e) => handleManualInput(record.Itm_Id, e.target.value)}
+          value={quantities[record.Itm_Id ?? ""] || ""}
+          onChange={(e) => record.Itm_Id !== undefined && handleManualInput(record.Itm_Id, e.target.value)}
           size="small"
           className="custom-input"
         />
@@ -240,7 +232,6 @@ const AllOrders = () => {
             <Table
               columns={columns}
               dataSource={filteredData}
-              rowKey={(record) => record.Itm_Id}
               loading={loading}
               pagination={{ pageSize: 20 }}
               scroll={{ x: true }}

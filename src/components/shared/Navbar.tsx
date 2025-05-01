@@ -33,6 +33,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     '/contact': 'contact',
     '/user/list': 'admin-users',
     '/all/veges': 'admin-veges',
+    '/view-orders': 'admin-view-order',
   };
 
   const selectedKey = Object.entries(pathToKey).find(([path]) =>
@@ -50,6 +51,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     else if (key === 'contact') navigate('/contact');
     else if (key === 'admin-users') navigate('/user/list');
     else if (key === 'admin-veges') navigate('/all/veges');
+    else if (key === 'admin-view-order') navigate('/view-orders');
     setVisible(false);
   };
 
@@ -95,6 +97,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       ? [
         { key: 'admin-users', label: 'User List' },
         { key: 'admin-veges', label: 'All Vegetables' },
+        { key: 'admin-view-order', label: 'View Orders' }, 
       ]
       : []),
     ...(user && !user.isAdmin

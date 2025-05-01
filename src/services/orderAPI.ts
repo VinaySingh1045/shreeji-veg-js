@@ -59,3 +59,17 @@ export const GetOrder = async (payload: any) => {
         throw error;
     }
 };
+
+
+export const Deleteorder = async (id: string) => {
+    try {
+        const res = await axios.delete(`${API_END_POINT}/deleteOrder`, {
+            headers: getAuthHeaders(),
+            data: { Bill_No: id },
+        });
+        return res.data;
+    } catch (error) {
+        console.error('Error while Deleting Order:', error);
+        throw error;
+    }
+}
