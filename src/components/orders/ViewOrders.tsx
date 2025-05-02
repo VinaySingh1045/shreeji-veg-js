@@ -4,7 +4,7 @@ import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Modal
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { fetchOrders } from "../../redux/actions/ordersAction";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Deleteorder } from "../../services/orderAPI";
 import { useNavigate } from "react-router-dom";
 
@@ -74,24 +74,41 @@ const ViewOrders = () => {
         },
         ...(user && !user.isAdmin
             ? [
-                  {
-                      title: "Action",
-                      key: "action",
-                      render: (_: unknown, record: OrderRecord) => (
-                          <div className="flex items-center gap-1">
-                              <Button
-                                  size="small"
-                                  danger
-                                  onClick={() => handleDelete(record)}
-                              >
-                                  <DeleteOutlined style={{ fontSize: "14px" }} />
-                              </Button>
-                          </div>
-                      ),
-                  },
-              ]
+                {
+                    title: "Action",
+                    key: "action",
+                    render: (_: unknown, record: OrderRecord) => (
+                        <div className="flex items-center gap-3">
+                            <Button
+                                size="small"
+                                onClick={() => handleEdit(record)}
+                            >
+                                <EditOutlined style={{ fontSize: "14px" }} />
+                            </Button>
+                            <Button
+                                size="small"
+                                danger
+                                onClick={() => handleDelete(record)}
+                            >
+                                <DeleteOutlined style={{ fontSize: "14px" }} />
+                            </Button>
+                        </div>
+                    ),
+                },
+            ]
             : []),
     ];
+
+
+    const handleEdit = (record: any) => {
+        if (record.Bill_No) {
+            // Passing data via state
+            navigate("/add-orders", { state: { orderData: record } });
+        } else {
+            message.error("Invalid Bill Number");
+        }
+    };
+    
 
     const handleDelete = async (record: OrderRecord) => {
         if (!record?.Bill_No) {

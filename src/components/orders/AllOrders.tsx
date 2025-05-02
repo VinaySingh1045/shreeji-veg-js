@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
 import { Vegetable } from "../../redux/slice/vegesSlice";
+import { useLocation } from "react-router-dom";
 
 const AllOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,6 +19,56 @@ const AllOrders = () => {
   const [filteredData, setFilteredData] = useState<Vegetable[]>([]);
   const [mergedData, setMergedData] = useState<Vegetable[]>([]);
   const [addLoding, setAddLoding] = useState(false);
+  const location = useLocation();
+  const { orderData } = location.state || {};
+
+  // useEffect(() => {
+  //   if (orderData) {
+  //     console.log("orderData", orderData);
+  //     const quantitiesFromOrder = orderData.details?.reduce((acc: Record<string, string>, item: any) => {
+  //       acc[item.Itm_Id] = String(item.Inward);
+  //       return acc;
+  //     }, {});
+  //     setQuantities(quantitiesFromOrder || {});
+  //     setBillDate(dayjs(orderData.Bill_Date));
+  //     SetBillNo(orderData.Bill_No || null);
+  //     setLrNo(orderData.Order_Count || null);
+  //   }
+  // }, [orderData]);
+
+  useEffect(() => {
+    console.log("orderData", orderData);
+    if (orderData && Array.isArray(orderData.Details)) {
+      const initialQuantities: Record<string, string> = {};
+      const updatedData: any[] = [];
+
+      orderData.Details.forEach((item: any) => {
+        if (item.Itm_Id !== undefined) {
+          initialQuantities[item.Itm_Id] = item.Qty;
+          updatedData.push({
+            Itm_Id: item.Itm_Id,
+            Itm_Name: item.Itm_Name,
+            Uni_ID: item.Uni_ID,
+            Uni_Name: item.Uni_Name,
+          });
+        }
+      });
+      console.log("initialQuantities", initialQuantities);
+      console.log("updatedData", updatedData);
+
+
+      setQuantities(initialQuantities);
+      setFilteredData(updatedData);
+      if (orderData.Bill_Date) {
+        const formattedDate = dayjs(orderData.Bill_Date).format("DD-MM-YYYY");
+        setBillDate(dayjs(formattedDate, "DD-MM-YYYY"));
+      }
+      SetBillNo(orderData.Bill_No || null);
+      setLrNo(orderData.Order_Count || null);
+    }
+  }, [orderData]);
+
+
 
   useEffect(() => {
     const normalizedAll = all.map(item => ({
@@ -219,6 +270,51 @@ const AllOrders = () => {
 
   ];
 
+  const handleUpdateOrder = async () => {
+    const details = [
+      ...favorites
+        .filter(item => item.Itm_Id !== undefined)
+        .map(item => ({
+          Itm_Id: item.Itm_Id!,
+          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+          Uni_ID: item.Uni_ID,
+          Itm_Name: item.Itm_Name,
+        })),
+      ...mergedData
+        .filter(item =>
+          item.Itm_Id !== undefined &&
+          !favorites.some(fav => fav.Itm_Id === item.Itm_Id) &&
+          parseFloat(quantities[item.Itm_Id!] || "0") > 0
+        )
+        .map(item => ({
+          Itm_Id: item.Itm_Id!,
+          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+          Uni_ID: item.Uni_ID,
+          Itm_Name: item.Itm_Name,
+        })),
+    ];
+
+    const payload = {
+      mode: "edit",
+      details,
+      Bill_No: billNo,
+      Order_Count: lrNo,
+      Bill_Date: billDate.format("YYYY-MM-DD"),
+    };
+    console.log("payload update", payload);
+    try {
+      setAddLoding(true);
+      await AddOrder(payload);
+      message.success("Order updated successfully");
+    } catch (error) {
+      message.error("Failed to update order");
+      console.error("Error while updating order: ", error);
+    } finally {
+      setAddLoding(false);
+    }
+  };
+
+
   return (
     <div className="p-4">
       {addLoding ? (
@@ -255,9 +351,10 @@ const AllOrders = () => {
           </div>
 
           <div className="flex flex-wrap gap-3 justify-start mt-4 mb-4">
-            <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
-            <Button type="primary">Modify Order</Button>
-            <Button type="primary">Delete Order</Button>
+            <Button type="primary" onClick={orderData ? handleUpdateOrder : handleAddOrder}>
+              {orderData ? "Update Order" : "Add Order"}
+            </Button>
+
           </div>
           <Space direction="vertical" style={{ width: "100%" }}>
             <Input.Search
@@ -278,12 +375,6 @@ const AllOrders = () => {
               size="small"
             />
           </Space>
-
-          {/* <div className="flex flex-wrap gap-3 justify-start mt-4">
-              <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
-              <Button type="primary">Modify Order</Button>
-              <Button type="primary">Delete Order</Button>
-            </div> */}
         </>
       )}
     </div>
