@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { fetchOrders } from "../../redux/actions/ordersAction";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Deleteorder } from "../../services/orderAPI";
+import { useNavigate } from "react-router-dom";
 
 
 interface OrderRecord {
@@ -19,7 +20,19 @@ const ViewOrders = () => {
     const { RangePicker } = DatePicker;
     // const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
     const today = dayjs();
-    const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>([today.startOf("day"), today.endOf("day")]);
+    // If current month is before April (i.e., Jan–Mar), we're in the *last* financial year
+    const fiscalYearStart = today.month() < 3
+        ? dayjs(`${today.year() - 1}-04-01`).startOf("day")
+        : dayjs(`${today.year()}-04-01`).startOf("day");
+
+    const fiscalYearEnd = fiscalYearStart.add(1, "year").subtract(1, "day").endOf("day");
+
+    const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>([
+        fiscalYearStart,
+        fiscalYearEnd
+    ]);
+
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedOrderItems, setSelectedOrderItems] = useState<any[]>([]);
 
@@ -37,7 +50,7 @@ const ViewOrders = () => {
 
     const columns = [
         {
-            title: "Sr No.",
+            title: "Order Id",
             key: "serial",
             render: (_: unknown, __: unknown, index: number) => index + 1,
         },
@@ -47,7 +60,7 @@ const ViewOrders = () => {
             key: "Ac_Name",
         },
         {
-            title: "Order Number",
+            title: "Bill Number",
             dataIndex: "Bill_No",
             key: "Bill_No",
         },
@@ -63,14 +76,6 @@ const ViewOrders = () => {
             render: (_: unknown, record: unknown) => (
                 <>
                     <div className="flex items-center gap-1">
-                        <Button type="link"
-                            onClick={() => {
-                                console.log("Show details for", record);
-                                setSelectedOrderItems((record as any).Details || []);
-                            }}
-                        >
-                            Details
-                        </Button>
                         {user && !user.isAdmin && (
                             <Button size="small" danger
                                 onClick={() => {
@@ -128,7 +133,7 @@ const ViewOrders = () => {
     return (
         <div className="p-4">
             <>
-                <Row gutter={[16, 16]}>
+                <Row>
                     {
                         user && user.isAdmin && (
                             <Col xs={24} sm={12} md={8} lg={6}>
@@ -147,7 +152,7 @@ const ViewOrders = () => {
                         )}
 
                     <Col xs={24} sm={12} md={8} lg={6}>
-                        <Form.Item label="Select Date" colon={false}>
+                        <Form.Item label="Select Date" colon={false} className={user && user.isAdmin ? "date-select" : ""}>
                             <RangePicker size="small" style={{ width: '100%' }}
                                 value={selectedDates}
                                 onChange={(dates) => {
@@ -160,6 +165,13 @@ const ViewOrders = () => {
                             />
                         </Form.Item>
                     </Col>
+                    {user && !user.isAdmin && (
+                        <Col xs={24} sm={12} md={8} lg={6}>
+                            <Button className="ml-0 md:ml-3" type="primary" onClick={() => navigate("/add-orders")}>
+                                Add Orders
+                            </Button>
+                        </Col>
+                    )}
                 </Row>
 
                 <Space direction="vertical" style={{ width: "100%" }}>
@@ -172,6 +184,9 @@ const ViewOrders = () => {
                                 order.Ac_Name?.toLowerCase().includes(searchTerm.toLowerCase())
                             ) || []
                         }
+                        onRow={(record) => ({
+                            onClick: () => setSelectedOrderItems((record as any).Details || []), // Add row click functionality
+                        })}
                         loading={loading}
                         scroll={{ x: true }}
                         pagination={false}

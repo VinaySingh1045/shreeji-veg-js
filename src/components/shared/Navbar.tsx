@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message, theme, DatePicker } from 'antd';
+import { useEffect, useState } from 'react';
+import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message, theme, Input } from 'antd';
 import { GlobalOutlined, LogoutOutlined, MenuOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +25,12 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    const formattedDate = dayjs().format('DD-MM-YYYY'); // Format as DD-MM-YYYY
+    setCurrentDate(formattedDate);
+  }, []);
 
   // Map path to key
   const pathToKey: { [key: string]: string } = {
@@ -33,7 +39,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     '/contact': 'contact',
     '/user/list': 'admin-users',
     '/all/veges': 'admin-veges',
-    '/view-orders': 'admin-view-order',
+    // '/add-orders': 'admin-view-order',
   };
 
   const selectedKey = Object.entries(pathToKey).find(([path]) =>
@@ -51,7 +57,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     else if (key === 'contact') navigate('/contact');
     else if (key === 'admin-users') navigate('/user/list');
     else if (key === 'admin-veges') navigate('/all/veges');
-    else if (key === 'admin-view-order') navigate('/view-orders');
+    // else if (key === 'admin-view-order') navigate('/orders');
     setVisible(false);
   };
 
@@ -96,8 +102,10 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     ...(user && user.isAdmin
       ? [
         { key: 'admin-users', label: 'User List' },
+        { key: 'orders', label: 'Orders' },
         { key: 'admin-veges', label: 'All Vegetables' },
-        { key: 'admin-view-order', label: 'View Orders' }, 
+        // { key: 'admin-view-order', label: 'View Orders' }, 
+
       ]
       : []),
     ...(user && !user.isAdmin
@@ -166,12 +174,14 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
         <span className="hidden md:inline text-[20px] logo-text">
           ShreejiVeg
         </span>
-        <span> <DatePicker
-          width={10}
-          value={dayjs()}
-          // disabled
-          format="DD-MM-YYYY"
-        /></span>
+        <span>
+          <Input
+            style={{ width: 120, height: 30, backgroundColor: "#fff", color: "#000" }}
+            value={currentDate}
+            disabled
+          >
+          </Input>
+        </span>
       </div>
 
 

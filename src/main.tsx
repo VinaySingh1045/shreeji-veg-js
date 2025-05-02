@@ -24,7 +24,7 @@ const router = createBrowserRouter([
 
       {
         path: "/",
-        element: <AllOrders />
+        element: <ViewOrders />
       },
       {
         path: "/favourites",
@@ -43,8 +43,8 @@ const router = createBrowserRouter([
         element: <SelectLanguage />
       },
       {
-        path: "/view-orders",
-        element: <ViewOrders/>
+        path: "/add-orders",
+        element: <AllOrders />
       },
     ]
   },

@@ -51,12 +51,12 @@
 
 @media (max-width: 767px) {
     .logo-img {
-       height: 38px !important;    
+        height: 38px !important;
 
     }
 }
 
-.custom-input{
+.custom-input {
     /* w-14 text-center */
     width: 90px !important;
     text-align: center !important;
@@ -65,4 +65,20 @@
 /* .ant-menu-overflow-item-rest {
     display: none !important;
   } */
-  
+.date-select {
+    margin-left: 20px;
+}
+
+@media (max-width: 767px) {
+    .date-select {
+        margin-left: 0px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ant-picker-dropdown .ant-picker-panel-container .ant-picker-panels {
+        flex-wrap: wrap !important;
+        width: min-content !important;
+        max-width: 100% !important;
+    }
+}

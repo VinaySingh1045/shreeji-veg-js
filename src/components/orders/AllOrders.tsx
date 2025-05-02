@@ -5,7 +5,6 @@ import { fetchAllVegetables, fetchFavoriteVegetables } from "../../redux/actions
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
-import { useNavigate } from "react-router-dom";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 
 const AllOrders = () => {
@@ -19,7 +18,6 @@ const AllOrders = () => {
   const [filteredData, setFilteredData] = useState<Vegetable[]>([]);
   const [mergedData, setMergedData] = useState<Vegetable[]>([]);
   const [addLoding, setAddLoding] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const normalizedAll = all.map(item => ({
@@ -28,8 +26,16 @@ const AllOrders = () => {
     }));
 
     const map = new Map<number, Vegetable>();
-    favorites.forEach(item => map.set(item.Itm_Id, item));
-    normalizedAll.forEach(item => map.set(item.Itm_Id, item));
+    favorites.forEach(item => {
+      if (item.Itm_Id !== undefined) {
+        map.set(item.Itm_Id, item);
+      }
+    });
+    normalizedAll.forEach(item => {
+      if (item.Itm_Id !== undefined) {
+        map.set(item.Itm_Id, item);
+      }
+    });
 
     const merged = Array.from(map.values());
     setMergedData(merged);
@@ -38,22 +44,43 @@ const AllOrders = () => {
     setFilteredData(favorites);
   }, [favorites, all]);
 
-
   useEffect(() => {
-    if (searchText.trim() === "") {
-      // If no search, show only favorites
-      setFilteredData(favorites);
+    const lowerSearch = searchText.trim().toLowerCase();
+    console.log("lowerSearch", lowerSearch);
+  
+    const searchMatched = mergedData.filter(item =>
+      item.Itm_Name.toLowerCase().includes(lowerSearch)
+    );
+    const quantityItems = mergedData.filter(item => {
+      const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
+      return quantity > 0;
+    });
+    const favoriteWithQuantity = favorites.filter(item => {
+      const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
+      return quantity > 0 || item.Itm_Id === item.Itm_Id;;
+    });
+  
+    let merged = [];
+  
+    if (lowerSearch) {
+      // When user types something, show search matched, favorites and quantity > 0 items
+      merged = [
+        ...searchMatched,
+        ...quantityItems.filter(
+          item => !searchMatched.some(i => i.Itm_Id === item.Itm_Id)
+        ),
+      ];
     } else {
-      const lowerSearch = searchText.toLowerCase();
-      const filtered = mergedData.filter(item =>
-        item.Itm_Name.toLowerCase().includes(lowerSearch)
-      );
-      setFilteredData(filtered);
+      // No search: show only favorites and quantity items
+      merged = [
+        ...favoriteWithQuantity,
+        ...quantityItems.filter(item => !favoriteWithQuantity.some(i => i.Itm_Id === item.Itm_Id))
+      ];
     }
-  }, [searchText, mergedData, favorites]);
-
-
-
+  
+    setFilteredData(merged);
+  }, [searchText, mergedData, favorites, quantities]);
+  
   useEffect(() => {
     dispatch(fetchFavoriteVegetables());
     dispatch(fetchAllVegetables());
@@ -160,7 +187,7 @@ const AllOrders = () => {
       render: (_: unknown, record: Vegetable) => (
         <Input
           placeholder="0"
-          value={quantities[record.Itm_Id ?? ""] || ""}
+          value={quantities[record.Itm_Id ?? ""] || "0"}
           onChange={(e) => record.Itm_Id !== undefined && handleManualInput(record.Itm_Id, e.target.value)}
           size="small"
           className="custom-input"
@@ -209,10 +236,6 @@ const AllOrders = () => {
                 disabled
               />
             </Form.Item>
-
-            <Button type="primary" onClick={() => navigate("/view-orders")}>
-              View Orders
-            </Button>
           </div>
 
           <div className="flex flex-wrap gap-3 justify-start mt-4 mb-4">
