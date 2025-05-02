@@ -56,6 +56,10 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />
   },
+  {
+    path: "/select-language1",
+    element: <SelectLanguage />
+  },
 
 
 ])

@@ -8,6 +8,7 @@ const SelectLanguage = () => {
         message.success("Language changed successfully!");
         navigate("/");
     };
+    
 
     return (
         <div

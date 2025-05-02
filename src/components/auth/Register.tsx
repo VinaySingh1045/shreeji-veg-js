@@ -47,21 +47,21 @@ const Register = () => {
 
     const handleSubmit = async (values: any) => {
         if (!otpSent) {
-            message.warning(t("otpRequestWarning"));
+            message.warning(t("Regester.otpRequestWarning"));
             return;
         }
         values.Mobile_No = normalizePhoneNumber(values.Mobile_No);
         try {
             setLoading(true);
             await RegisterApi(values);
-            message.success(t("registrationSuccess"));
+            message.success(t("Regester.registrationSuccess"));
             navigate("/login");
         } catch (error) {
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
                 message.error(apiError.response.data.message);
             } else {
-                message.error(t("unexpectedError"));
+                message.error(t("Regester.unexpectedError"));
             }
         } finally {
             setLoading(false);
@@ -71,7 +71,7 @@ const Register = () => {
     const handleOTPSubmit = async () => {
         const values = await form.validateFields(["Mobile_No"]);
         if (!values.Mobile_No) {
-            message.warning(t("enterMobileWarning"));
+            message.warning(t("Regester.enterMobileWarning"));
             return;
         }
         setOtpLoading(true);
@@ -94,10 +94,10 @@ const Register = () => {
 
         try {
             await RequestOTP(values.Mobile_No);
-            message.success(t("otpSentSuccess"));
+            message.success(t("Regester.otpSentSuccess"));
             setOtpSent(true);
         } catch {
-            message.error(t("otpSendFail"));
+            message.error(t("Regester.otpSendFail"));
         }
         setOtpLoading(false);
     };
@@ -139,21 +139,21 @@ const Register = () => {
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label={t("userName")}
+                                        label={t("Regester.userName")}
                                         name="Ac_Name"
-                                        rules={[{ required: true, message: t("userName") + t(" is required") }]}
+                                        rules={[{ required: true, message: t("Regester.userName") + t("Regester.is required") }]}
                                     >
-                                        <Input prefix={<UserOutlined />} placeholder={t("userName")} size="large" />
+                                        <Input prefix={<UserOutlined />} placeholder={t("Regester.userName")} size="large" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
-                                        label={t("mobileNumber")}
+                                        label={t("Regester.mobileNumber")}
                                         name="Mobile_No"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: t("mobileNumber") + " " + t(" is required"),
+                                                message: t("Regester.mobileNumber") + " " + t("Regester.is required"),
                                             },
                                             {
                                                 validator: (_, value) => {
@@ -161,14 +161,14 @@ const Register = () => {
                                                     if (/^\d{10}$/.test(normalized)) {
                                                         return Promise.resolve();
                                                     }
-                                                    return Promise.reject(new Error(t("Mobile Number Should be 10 Digits")));
+                                                    return Promise.reject(new Error(t("Regester.Mobile Number Should be 10 Digits")));
                                                 }
                                             }
                                         ]}
                                     >
                                         <Input
                                             prefix={<MobileOutlined />}
-                                            placeholder={t("mobileNumber")}
+                                            placeholder={t("Regester.mobileNumber")}
                                             size="large"
                                         />
                                     </Form.Item>
@@ -179,37 +179,37 @@ const Register = () => {
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label={t("password")}
+                                        label={t("Regester.password")}
                                         name="Book_Pass"
                                         rules={[
-                                            { required: true, message: t("password") + t(" is required") },
+                                            { required: true, message: t("Regester.password") + t("Regester.is required") },
                                             {
                                                 pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{5,20}$/,
-                                                message: t("Password: 5-20 chars, 1 upper, 1 lower & 1 special!")
+                                                message: t("Regester.Password: 5-20 chars, 1 upper, 1 lower & 1 special!")
                                             }
                                         ]}
                                     >
-                                        <Input.Password prefix={<LockOutlined />} placeholder={t("password")} size="large" />
+                                        <Input.Password prefix={<LockOutlined />} placeholder={t("Regester.password")} size="large" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
-                                        label={t("confirmPassword")}
+                                        label={t("Regester.confirmPassword")}
                                         name="confirmPassword"
                                         dependencies={["Book_Pass"]}
                                         rules={[
-                                            { required: true, message: t("confirmPassword") + t(" is required") },
+                                            { required: true, message: t("Regester.confirmPassword") + t("Regester.is required") },
                                             ({ getFieldValue }) => ({
                                                 validator(_, value) {
                                                     if (!value || getFieldValue("Book_Pass") === value) {
                                                         return Promise.resolve();
                                                     }
-                                                    return Promise.reject(new Error(t("Passwords do not match!")));
+                                                    return Promise.reject(new Error(t("Regester.Passwords do not match!")));
                                                 },
                                             })
                                         ]}
                                     >
-                                        <Input.Password prefix={<LockOutlined />} placeholder={t("confirmPassword")} size="large" />
+                                        <Input.Password prefix={<LockOutlined />} placeholder={t("Regester.confirmPassword")} size="large" />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -219,7 +219,7 @@ const Register = () => {
                                     <Form.Item
                                         label={
                                             <>
-                                                {t("otp") + " "}
+                                                {t("Regester.otp") + " "}
                                                 {timer > 0 && (
                                                     <span style={{ color: "green", fontSize: 20, marginLeft: 12 }}>
                                                         ({Math.floor(timer / 60)}:{String(timer % 60).padStart(2, "0")})
@@ -229,14 +229,14 @@ const Register = () => {
                                         }
                                         name="otp"
                                         rules={[
-                                            { required: true, message: t("otpRequired") },
-                                            { pattern: /^\d{6}$/, message: t("otpPattern") }
+                                            { required: true, message: t("Regester.otpRequired") },
+                                            { pattern: /^\d{6}$/, message: t("Regester.otpPattern") }
                                         ]}
                                     >
                                         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                                             <Input
                                                 prefix={<SafetyOutlined />}
-                                                placeholder={t("otp")}
+                                                placeholder={t("Regester.otp")}
                                                 size="large"
                                                 style={{ flex: 1 }}
                                             />
@@ -245,7 +245,7 @@ const Register = () => {
                                                 loading={otpLoading}
                                                 onClick={handleOTPSubmit}
                                             >
-                                                {t("sendOTP")}
+                                                {t("Regester.sendOTP")}
                                             </Button>
                                         </div>
                                     </Form.Item>
@@ -260,13 +260,13 @@ const Register = () => {
                                     size="large"
                                     loading={loading}
                                 >
-                                    {t("register")}
+                                    {t("Regester.register")}
                                 </Button>
                             </Form.Item>
                         </Form>
 
                         <div style={{ textAlign: 'center', marginTop: 10 }}>
-                            <span>{t("alreadyAccount")} </span>
+                            <span>{t("Regester.alreadyAccount")} </span>
                             <span
                                 style={{
                                     color: '#1890ff',
@@ -276,7 +276,7 @@ const Register = () => {
                                 }}
                                 onClick={() => navigate('/login')}
                             >
-                                {t("loginNow")}
+                                {t("Regester.loginNow")}
                             </span>
                         </div>
                     </Col>

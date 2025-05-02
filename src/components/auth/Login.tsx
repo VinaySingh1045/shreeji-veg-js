@@ -15,7 +15,17 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const { t } = useTranslation();
+  const { t,i18n } = useTranslation();
+
+  useEffect(() => {
+    const lang = localStorage.getItem("appLanguage");
+    if (!lang) {
+          navigate("/select-language1");
+          return;
+        }
+    i18n.changeLanguage(lang);
+}, [i18n,navigate]);
+
   interface APIError {
     response?: {
       data?: {
@@ -41,7 +51,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await LoginApi(values);
-      message.success(t("loginSuccess"));
+      message.success(t("login.loginSuccess"));
       Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
       dispatch(setUser(response.data.user));
 
@@ -65,7 +75,7 @@ const Login = () => {
       if (apiError.response?.data?.message) {
         message.error(apiError.response.data.message);
       } else {
-        message.error(t("unexpectedError"));
+        message.error(t("login.unexpectedError"));
       }
     } finally {
       setLoading(false);
@@ -109,31 +119,31 @@ const Login = () => {
               initialValues={{ remember: true }}
             >
               <Form.Item
-                label={t("userName")}
+                label={t("login.userName")}
                 name="Ac_Name"
-                rules={[{ required: true, message: t("enterUsername") }]}
+                rules={[{ required: true, message: t("login.enterUsername") }]}
               >
                 <Input
                   prefix={<UserOutlined />}
-                  placeholder={t("usernamePlaceholder")}
+                  placeholder={t("login.usernamePlaceholder")}
                   size="large"
                 />
               </Form.Item>
 
               <Form.Item
-                label={t("password")}
+                label={t("login.password")}
                 name="Book_Pass"
-                rules={[{ required: true, message: t("enterPassword") }]}
+                rules={[{ required: true, message: t("login.enterPassword") }]}
               >
                 <Input.Password
                   prefix={<LockOutlined />}
-                  placeholder={t("passwordPlaceholder")}
+                  placeholder={t("login.passwordPlaceholder")}
                   size="large"
                 />
               </Form.Item>
 
               <Form.Item name="remember" valuePropName="checked">
-                <Checkbox>{t("rememberMe")}</Checkbox>
+                <Checkbox>{t("login.rememberMe")}</Checkbox>
               </Form.Item>
 
               <Form.Item>
@@ -144,13 +154,13 @@ const Login = () => {
                   size="large"
                   loading={loading}
                 >
-                  {t("login")}
+                  {t("login.login")}
                 </Button>
               </Form.Item>
             </Form>
 
             <div style={{ textAlign: "center", marginTop: 10 }}>
-              <span>{t("noAccount")} </span>
+              <span>{t("login.noAccount")} </span>
               <span
                 style={{
                   color: "#1890ff",
@@ -160,7 +170,7 @@ const Login = () => {
                 }}
                 onClick={() => navigate("/register")}
               >
-                {t("registerNow")}
+                {t("login.registerNow")}
               </span>
             </div>
           </Col>
