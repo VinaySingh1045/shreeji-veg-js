@@ -85,27 +85,27 @@ const AllVeges = () => {
             dataIndex: "Itm_Name",
             key: "Itm_Name",
         },
+        ...(user && !user.isAdmin
+            ? [
+                {
+                    title: "Action",
+                    key: "action",
+                    render: (_: unknown, record: Vegetable) => {
+                        const isFavorite = favoriteIds.includes(record.Itm_ID);
+                        return isFavorite ? (
+                            <Button danger onClick={() => handleRemoveFav(record)}>
+                                <DeleteOutlined />
+                            </Button>
+                        ) : (
+                            <Button type="primary" onClick={() => handleAddToFav(record)}>
+                                <PlusOutlined />
+                            </Button>
+                        );
+                    },
+                },
+            ]
+            : []),
     ];
-
-    if (user && !user.isAdmin) {
-        columns.push({
-            title: "Action",
-            key: "action",
-            render: (_: unknown, record: Vegetable) => {
-                const isFavorite = favoriteIds.includes(record.Itm_ID);
-
-                return isFavorite ? (
-                    <Button danger onClick={() => handleRemoveFav(record)}>
-                        <DeleteOutlined />
-                    </Button>
-                ) : (
-                    <Button type="primary" onClick={() => handleAddToFav(record)}>
-                        <PlusOutlined />
-                    </Button>
-                );
-            },
-        });
-    }
 
     const handleRemoveFav = async (vege: Vegetable) => {
         try {

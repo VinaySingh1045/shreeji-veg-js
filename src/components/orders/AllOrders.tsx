@@ -46,8 +46,7 @@ const AllOrders = () => {
 
   useEffect(() => {
     const lowerSearch = searchText.trim().toLowerCase();
-    console.log("lowerSearch", lowerSearch);
-  
+
     const searchMatched = mergedData.filter(item =>
       item.Itm_Name.toLowerCase().includes(lowerSearch)
     );
@@ -59,9 +58,9 @@ const AllOrders = () => {
       const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
       return quantity > 0 || item.Itm_Id === item.Itm_Id;;
     });
-  
+
     let merged = [];
-  
+
     if (lowerSearch) {
       // When user types something, show search matched, favorites and quantity > 0 items
       merged = [
@@ -77,10 +76,10 @@ const AllOrders = () => {
         ...quantityItems.filter(item => !favoriteWithQuantity.some(i => i.Itm_Id === item.Itm_Id))
       ];
     }
-  
+
     setFilteredData(merged);
   }, [searchText, mergedData, favorites, quantities]);
-  
+
   useEffect(() => {
     dispatch(fetchFavoriteVegetables());
     dispatch(fetchAllVegetables());
@@ -110,7 +109,6 @@ const AllOrders = () => {
   const handleGetBillNo = async () => {
     try {
       const res = await GetBillNo();
-      console.log("res", res);
       SetBillNo(res?.data?.Bill_No);
     } catch {
       SetBillNo(null);
@@ -123,27 +121,46 @@ const AllOrders = () => {
     handleGetBillNo();
   }, []);
 
-  // const handleAddOrder = () => {
-  //   const orderDetails = favorites.map((item) => ({
-  //     Itm_Id: item.Itm_Id,
-  //     Itm_Name: item.Itm_Name,
-  //     Sale_Rate: item.Sale_Rate,
-  //     Quantity: quantities[item.Itm_Id] || "",
-  //   }));
-  //   console.log("Order Details:", orderDetails);
-  // };
-
   const handleAddOrder = async () => {
 
-    const details = mergedData
-      .filter((item) => item.Itm_Id !== undefined && quantities[item.Itm_Id]) // include only if Itm_Id exists and quantity exists
-      .map((item) => ({
-        Itm_Id: item.Itm_Id,
-        Inward: item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0,
-        Uni_ID: item.Uni_ID, // Assuming Uni_ID is fixed; update if dynamic
-        Itm_Name: item.Itm_Name,
-      }));
+    // const details = mergedData
+    //   .filter((item) => item.Itm_Id !== undefined) // include only if Itm_Id exists and quantity exists
+    //   .map((item) => ({
+    //     Itm_Id: item.Itm_Id,
+    //     // Inward: item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0,
+    //     Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+    //     Uni_ID: item.Uni_ID, // Assuming Uni_ID is fixed; update if dynamic
+    //     Itm_Name: item.Itm_Name,
+    //   }));
 
+    const details = [
+      // 1. All favorites (quantity 0 or more)
+      ...favorites
+        .filter(item => item.Itm_Id !== undefined)
+        .map(item => {
+          const quantity = parseFloat(quantities[item.Itm_Id!] || "0");
+          return {
+            Itm_Id: item.Itm_Id!,
+            Inward: quantity,
+            Uni_ID: item.Uni_ID,
+            Itm_Name: item.Itm_Name,
+          };
+        }),
+
+      // 2. Any searched/merged item with quantity > 0 that is NOT already in favorites
+      ...mergedData
+        .filter(item =>
+          item.Itm_Id !== undefined &&
+          !favorites.some(fav => fav.Itm_Id === item.Itm_Id) &&
+          parseFloat(quantities[item.Itm_Id!] || "0") > 0
+        )
+        .map(item => ({
+          Itm_Id: item.Itm_Id!,
+          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+          Uni_ID: item.Uni_ID,
+          Itm_Name: item.Itm_Name,
+        })),
+    ];
 
     const payload = {
       mode: "add",
@@ -187,7 +204,7 @@ const AllOrders = () => {
       render: (_: unknown, record: Vegetable) => (
         <Input
           placeholder="0"
-          value={quantities[record.Itm_Id ?? ""] || "0"}
+          value={quantities[record.Itm_Id ?? ""] || ""}
           onChange={(e) => record.Itm_Id !== undefined && handleManualInput(record.Itm_Id, e.target.value)}
           size="small"
           className="custom-input"
@@ -199,7 +216,6 @@ const AllOrders = () => {
       dataIndex: "Uni_Name",
       key: "Uni_Name",
     },
-
 
   ];
 

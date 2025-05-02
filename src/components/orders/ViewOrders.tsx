@@ -54,11 +54,13 @@ const ViewOrders = () => {
             key: "serial",
             render: (_: unknown, __: unknown, index: number) => index + 1,
         },
-        {
-            title: "Account Name",
-            dataIndex: "Ac_Name",
-            key: "Ac_Name",
-        },
+        ...(user && user.isAdmin
+            ? [{
+                title: "Account Name",
+                dataIndex: "Ac_Name",
+                key: "Ac_Name",
+            }]
+            : []),
         {
             title: "Bill Number",
             dataIndex: "Bill_No",
@@ -70,34 +72,26 @@ const ViewOrders = () => {
             key: "Bill_Date",
             render: (date: string) => dayjs(date).format("DD-MM-YYYY"),
         },
-        {
-            title: "Action",
-            key: "action",
-            render: (_: unknown, record: unknown) => (
-                <>
-                    <div className="flex items-center gap-1">
-                        {user && !user.isAdmin && (
-                            <Button size="small" danger
-                                onClick={() => {
-                                    handleDelete(record as OrderRecord);
-                                }}
-                            >
-                                <DeleteOutlined style={{ fontSize: "14px" }} />
-                            </Button>
-                        )}
-                    </div>
-                </>
-            ),
-        }
+        ...(user && !user.isAdmin
+            ? [
+                  {
+                      title: "Action",
+                      key: "action",
+                      render: (_: unknown, record: OrderRecord) => (
+                          <div className="flex items-center gap-1">
+                              <Button
+                                  size="small"
+                                  danger
+                                  onClick={() => handleDelete(record)}
+                              >
+                                  <DeleteOutlined style={{ fontSize: "14px" }} />
+                              </Button>
+                          </div>
+                      ),
+                  },
+              ]
+            : []),
     ];
-
-    // const handleDelete = async (record: any) => {
-    //     console.log("Delete order", record);
-    //     await Deleteorder(record.Bill_No);
-    //     dispatch(fetchOrders({ fromDate: selectedDates ? selectedDates[0].format("YYYY-MM-DD") : "", toDate: selectedDates ? selectedDates[1].format("YYYY-MM-DD") : "" }));
-    //     setSelectedOrderItems([]);
-    //     message.success("Order deleted successfully");
-    // }
 
     const handleDelete = async (record: OrderRecord) => {
         if (!record?.Bill_No) {
@@ -198,7 +192,8 @@ const ViewOrders = () => {
                         <>
                             <h2 style={{ marginTop: "3px", marginBottom: "3px" }}>Item Details</h2>
                             <Table
-                                dataSource={selectedOrderItems}
+                                // dataSource={selectedOrderItems}
+                                dataSource={[...selectedOrderItems].sort((a, b) => a.SrNo - b.SrNo)}
                                 pagination={false}
                                 bordered
                                 // rowKey={(record) => record.Itm_Id}
@@ -206,8 +201,8 @@ const ViewOrders = () => {
                                 columns={[
                                     {
                                         title: "Sr No.",
-                                        key: "serial",
-                                        render: (_: unknown, __: unknown, index: number) => index + 1,
+                                        dataIndex: "SrNo",
+                                        key: "SrNo",
                                     },
                                     {
                                         title: "Item Name",
