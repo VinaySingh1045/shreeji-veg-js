@@ -168,9 +168,11 @@ const AllOrders = () => {
   };
 
   useEffect(() => {
-    handleDateChange(billDate);
-    handleGetBillNo();
-  }, []);
+    if (!orderData) {
+      handleDateChange(billDate);
+      handleGetBillNo();
+    }
+  }, [orderData]);
 
   const handleAddOrder = async () => {
 
