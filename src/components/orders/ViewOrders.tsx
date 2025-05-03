@@ -65,11 +65,12 @@ const ViewOrders = () => {
             const payload = {
                 fromDate: selectedDates[0].format("YYYY-MM-DD"),
                 toDate: selectedDates[1].format("YYYY-MM-DD"),
+                db_name: selectedYear,
             };
 
             dispatch(fetchOrders(payload));
         }
-    }, [selectedDates, dispatch]);
+    }, [selectedDates, dispatch, selectedYear]);
 
 
     const columns = [
@@ -165,6 +166,7 @@ const ViewOrders = () => {
                         dispatch(fetchOrders({
                             fromDate: selectedDates[0].format("YYYY-MM-DD"),
                             toDate: selectedDates[1].format("YYYY-MM-DD"),
+                            db_name: selectedYear,
                         }));
                     }
                 } catch {

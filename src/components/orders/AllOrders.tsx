@@ -12,7 +12,8 @@ const AllOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { favorites, loading, all } = useSelector((state: RootState) => state.vegetables);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
-  const [billDate, setBillDate] = useState(dayjs(Date.now()));
+  // const [billDate, setBillDate] = useState(dayjs(Date.now()));
+  const [billDate, setBillDate] = useState(dayjs().add(1, 'day'));
   const [lrNo, setLrNo] = useState<string | null>(null);
   const [billNo, SetBillNo] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
@@ -356,7 +357,11 @@ const AllOrders = () => {
             <Button type="primary" onClick={orderData ? handleUpdateOrder : handleAddOrder}>
               {orderData ? "Update Order" : "Add Order"}
             </Button>
-
+            {orderData && (
+              <Button type="default" onClick={() => navigate("/")}>
+                Cancel
+              </Button>
+            )}
           </div>
           <Space direction="vertical" style={{ width: "100%" }}>
             <Input.Search

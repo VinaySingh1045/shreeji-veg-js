@@ -5,6 +5,7 @@ interface IDate {
     date?: string;
     fromDate: string;
     toDate: string;
+    db_name?: string;
 }
 
 
