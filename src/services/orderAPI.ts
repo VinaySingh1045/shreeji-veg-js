@@ -47,7 +47,6 @@ export const AddOrder = async (payload: any) => {
 };
 
 export const GetOrder = async (payload: any) => {
-    console.log("payload", payload);
     try {
         const res = await axios.get(`${API_END_POINT}/OrderData`, {
             headers: getAuthHeaders(),
@@ -73,3 +72,15 @@ export const Deleteorder = async (id: string) => {
         throw error;
     }
 }
+
+export const GetAllYear = async () => {
+    try {
+        const res = await axios.get(`${API_END_POINT}/getAllYear`, {
+            headers: getAuthHeaders(),
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error while Getting Year:", error);
+        throw error;
+    }
+};

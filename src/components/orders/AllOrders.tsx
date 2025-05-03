@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
 import { Vegetable } from "../../redux/slice/vegesSlice";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AllOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,7 +21,7 @@ const AllOrders = () => {
   const [addLoding, setAddLoding] = useState(false);
   const location = useLocation();
   const { orderData } = location.state || {};
-
+  const navigate = useNavigate();
   // useEffect(() => {
   //   if (orderData) {
   //     console.log("orderData", orderData);
@@ -230,7 +230,6 @@ const AllOrders = () => {
       await handleDateChange(billDate);
       await handleGetBillNo();
       message.success("Order added successfully");
-
     } catch (error) {
       message.error("Failed to add order");
       console.error("Error while adding order: ", error);
@@ -308,6 +307,7 @@ const AllOrders = () => {
       setAddLoding(true);
       await AddOrder(payload);
       message.success("Order updated successfully");
+      navigate("/");
     } catch (error) {
       message.error("Failed to update order");
       console.error("Error while updating order: ", error);

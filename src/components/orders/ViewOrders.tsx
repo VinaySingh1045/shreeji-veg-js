@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Modal } from "antd";
+import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Modal, Select } from "antd";
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { fetchOrders } from "../../redux/actions/ordersAction";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Deleteorder } from "../../services/orderAPI";
+import { Deleteorder, GetAllYear } from "../../services/orderAPI";
 import { useNavigate } from "react-router-dom";
 
 
@@ -18,23 +18,47 @@ const ViewOrders = () => {
     const { orders, loading } = useSelector((state: RootState) => state.orders) as { orders: any[] | null; loading: boolean };
     const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
     const { RangePicker } = DatePicker;
-    // const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
-    const today = dayjs();
+    const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
+    // const today = dayjs();
     // If current month is before April (i.e., Jan–Mar), we're in the *last* financial year
-    const fiscalYearStart = today.month() < 3
-        ? dayjs(`${today.year() - 1}-04-01`).startOf("day")
-        : dayjs(`${today.year()}-04-01`).startOf("day");
+    // const fiscalYearStart = today.month() < 3
+    //     ? dayjs(`${today.year() - 1}-04-01`).startOf("day")
+    //     : dayjs(`${today.year()}-04-01`).startOf("day");
 
-    const fiscalYearEnd = fiscalYearStart.add(1, "year").subtract(1, "day").endOf("day");
+    // const fiscalYearEnd = fiscalYearStart.add(1, "year").subtract(1, "day").endOf("day");
 
-    const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>([
-        fiscalYearStart,
-        fiscalYearEnd
-    ]);
-
+    // const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>([
+    //     fiscalYearStart,
+    //     fiscalYearEnd
+    // ]);
+    const { Option } = Select;
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedOrderItems, setSelectedOrderItems] = useState<any[]>([]);
+    const [allYear, setAllYear] = useState<{ db_name: string; year1: string; year2: string; year_type: string }[] | null>(null);
+    const [selectedYear, setSelectedYear] = useState<string | undefined>();
+
+    useEffect(() => {
+        const fetchAllYear = async () => {
+            try {
+                const res = await GetAllYear();
+                console.log("res: ", res)
+                const data = res?.data || [];
+                setAllYear(data);
+
+                const currentYear = data.find((item) => item.year_type === "C");
+                if (currentYear) {
+                    setSelectedYear(currentYear.db_name);
+                    const start = dayjs(`${currentYear.year1}-04-01`).startOf("day");
+                    const end = dayjs(`${currentYear.year2}-03-31`).endOf("day");
+                    setSelectedDates([start, end]);
+                }
+            } catch (error) {
+                console.error("Error fetching year data:", error);
+            }
+        }
+        fetchAllYear();
+    }, [])
 
     useEffect(() => {
         if (selectedDates) {
@@ -65,7 +89,17 @@ const ViewOrders = () => {
             title: "Bill Number",
             dataIndex: "Bill_No",
             key: "Bill_No",
+            sorter: (a: any, b: any) => {
+                const aNum = parseInt(a.Bill_No);
+                const bNum = parseInt(b.Bill_No);
+                return aNum - bNum;
+            },
         },
+        // {
+        //     title: "Bill Number",
+        //     dataIndex: "Bill_No",
+        //     key: "Bill_No",
+        // },
         {
             title: "Order Date",
             dataIndex: "Bill_Date",
@@ -108,7 +142,7 @@ const ViewOrders = () => {
             message.error("Invalid Bill Number");
         }
     };
-    
+
 
     const handleDelete = async (record: OrderRecord) => {
         if (!record?.Bill_No) {
@@ -140,6 +174,16 @@ const ViewOrders = () => {
         });
     };
 
+    const handleYearChange = (value: string) => {
+        setSelectedYear(value);
+        const selected = allYear?.find((item) => item.db_name === value);
+        if (selected) {
+            const start = dayjs(`${selected.year1}-04-01`).startOf("day");
+            const end = dayjs(`${selected.year2}-03-31`).endOf("day");
+            setSelectedDates([start, end]);
+        }
+        // Optional: perform other actions on change
+    };
 
     return (
         <div className="p-4">
@@ -161,6 +205,22 @@ const ViewOrders = () => {
                                 </Form.Item>
                             </Col>
                         )}
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Form.Item label="Select Year" colon={false} className={user && user.isAdmin ? "date-select" : "select-year"}>
+                            <Select
+                                value={selectedYear}
+                                onChange={handleYearChange}
+                                placeholder="Select Financial Year"
+                                style={{ width: "100%" }}
+                            >
+                                {allYear?.map((year) => (
+                                    <Option key={year.db_name} value={year.db_name}>
+                                        {`${year.year1}-${year.year2}`}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
 
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item label="Select Date" colon={false} className={user && user.isAdmin ? "date-select" : ""}>
