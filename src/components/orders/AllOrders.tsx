@@ -12,7 +12,6 @@ const AllOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { favorites, loading, all } = useSelector((state: RootState) => state.vegetables);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
-  // const [billDate, setBillDate] = useState(dayjs(Date.now()));
   const [billDate, setBillDate] = useState(dayjs().add(1, 'day'));
   const [lrNo, setLrNo] = useState<string | null>(null);
   const [billNo, SetBillNo] = useState<string | null>(null);
@@ -23,22 +22,8 @@ const AllOrders = () => {
   const location = useLocation();
   const { orderData } = location.state || {};
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (orderData) {
-  //     console.log("orderData", orderData);
-  //     const quantitiesFromOrder = orderData.details?.reduce((acc: Record<string, string>, item: any) => {
-  //       acc[item.Itm_Id] = String(item.Inward);
-  //       return acc;
-  //     }, {});
-  //     setQuantities(quantitiesFromOrder || {});
-  //     setBillDate(dayjs(orderData.Bill_Date));
-  //     SetBillNo(orderData.Bill_No || null);
-  //     setLrNo(orderData.Order_Count || null);
-  //   }
-  // }, [orderData]);
 
   useEffect(() => {
-    console.log("orderData", orderData);
     if (orderData && Array.isArray(orderData.Details)) {
       const initialQuantities: Record<string, string> = {};
       const updatedData: any[] = [];
@@ -54,9 +39,6 @@ const AllOrders = () => {
           });
         }
       });
-      console.log("initialQuantities", initialQuantities);
-      console.log("updatedData", updatedData);
-
 
       setQuantities(initialQuantities);
       setFilteredData(updatedData);
@@ -177,16 +159,6 @@ const AllOrders = () => {
 
   const handleAddOrder = async () => {
 
-    // const details = mergedData
-    //   .filter((item) => item.Itm_Id !== undefined) // include only if Itm_Id exists and quantity exists
-    //   .map((item) => ({
-    //     Itm_Id: item.Itm_Id,
-    //     // Inward: item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0,
-    //     Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
-    //     Uni_ID: item.Uni_ID, // Assuming Uni_ID is fixed; update if dynamic
-    //     Itm_Name: item.Itm_Name,
-    //   }));
-
     const details = [
       // 1. All favorites (quantity 0 or more)
       ...favorites
@@ -247,9 +219,14 @@ const AllOrders = () => {
       render: (_: unknown, __: unknown, index: number) => index + 1,
     },
     {
-      title: "Name",
+      title: "Item Name",
       dataIndex: "Itm_Name",
       key: "Itm_Name",
+    },
+    {
+      title: "Group Name",
+      dataIndex: "IGP_NAME",
+      key: "IGP_NAME",
     },
     {
       title: "Quantity",
@@ -303,7 +280,6 @@ const AllOrders = () => {
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
-    console.log("payload update", payload);
     try {
       setAddLoding(true);
       await AddOrder(payload);
@@ -317,9 +293,9 @@ const AllOrders = () => {
     }
   };
 
-  const disablePastDates = (current) => {
+  const disablePastDates = (current: dayjs.Dayjs | null): boolean => {
     // Disable all dates before today
-    return current && current < dayjs().endOf('day');
+    return current !== null && current < dayjs().endOf('day');
   };
 
   return (

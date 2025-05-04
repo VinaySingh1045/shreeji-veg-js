@@ -19,18 +19,6 @@ const ViewOrders = () => {
     const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
     const { RangePicker } = DatePicker;
     const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
-    // const today = dayjs();
-    // If current month is before April (i.e., Jan–Mar), we're in the *last* financial year
-    // const fiscalYearStart = today.month() < 3
-    //     ? dayjs(`${today.year() - 1}-04-01`).startOf("day")
-    //     : dayjs(`${today.year()}-04-01`).startOf("day");
-
-    // const fiscalYearEnd = fiscalYearStart.add(1, "year").subtract(1, "day").endOf("day");
-
-    // const [selectedDates, setSelectedDates] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>([
-    //     fiscalYearStart,
-    //     fiscalYearEnd
-    // ]);
     const { Option } = Select;
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
@@ -38,24 +26,15 @@ const ViewOrders = () => {
     const [allYear, setAllYear] = useState<{ db_name: string; year1: string; year2: string; year_type: string }[] | null>(null);
     const [selectedYear, setSelectedYear] = useState<string | undefined>();
 
-
-    // useEffect(() => {
-    //     if (!user) {
-    //         navigate("/login");
-    //     }
-    // }, [navigate, user]);
-
     useEffect(() => {
         const fetchAllYear = async () => {
             try {
                 const res = await GetAllYear();
-                console.log("res: ", res)
                 const data = res?.data || [];
                 setAllYear(data);
 
                 const currentYear = data.find((item: { db_name: string; year1: string; year2: string; year_type: string }) => item.year_type === "C");
                 if (currentYear) {
-                    console.log("currentYear: ", currentYear)
                     setSelectedYear(currentYear.db_name);
                     let startDate;
                     let endDate;
@@ -92,11 +71,13 @@ const ViewOrders = () => {
 
 
     const columns = [
-        {
-            title: "Order Id",
-            key: "serial",
-            render: (_: unknown, __: unknown, index: number) => index + 1,
-        },
+        ...(user && user.isAdmin
+            ? [{
+                title: "Order Id",
+                dataIndex: "Ac_Code",
+                key: "Ac_Code",
+            }]
+            : []),
         ...(user && user.isAdmin
             ? [{
                 title: "Account Name",
@@ -114,11 +95,6 @@ const ViewOrders = () => {
                 return aNum - bNum;
             },
         },
-        // {
-        //     title: "Bill Number",
-        //     dataIndex: "Bill_No",
-        //     key: "Bill_No",
-        // },
         {
             title: "Order Date",
             dataIndex: "Bill_Date",
@@ -195,7 +171,6 @@ const ViewOrders = () => {
     };
 
     const handleYearChange = (value: string) => {
-        console.log("value: ", value)
         setSelectedYear(value);
         const selected = allYear?.find((item) => item.db_name === value);
         if (selected) {
@@ -203,7 +178,6 @@ const ViewOrders = () => {
             const end = dayjs(`${selected.year2}-03-31`).endOf("day");
             setSelectedDates([start, end]);
         }
-        // Optional: perform other actions on change
     };
 
     const disableOutsideRange = (current: Dayjs) => {
@@ -278,7 +252,6 @@ const ViewOrders = () => {
 
                     <Table
                         columns={columns}
-                        // dataSource={orders || []}
                         dataSource={
                             orders?.filter((order) =>
                                 order.Ac_Name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -298,7 +271,6 @@ const ViewOrders = () => {
                         <>
                             <h2 style={{ marginTop: "3px", marginBottom: "3px" }}>Item Details</h2>
                             <Table
-                                // dataSource={selectedOrderItems}
                                 dataSource={[...selectedOrderItems].sort((a, b) => a.SrNo - b.SrNo)}
                                 pagination={false}
                                 bordered
@@ -316,7 +288,7 @@ const ViewOrders = () => {
                                         key: "Itm_Name",
                                     },
                                     {
-                                        title: "Item Name",
+                                        title: "Group Name",
                                         dataIndex: "IGP_NAME",
                                         key: "IGP_NAME",
                                     },

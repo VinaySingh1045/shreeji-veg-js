@@ -8,11 +8,6 @@ import { RemoveFavorite } from "../../services/vegesAPI";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 
-// interface Vegetable {
-//     Itm_Id: number;
-//     Itm_Name: string;
-//     Sale_Rate: number;
-// }
 const FavoriteVeges = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -46,9 +41,14 @@ const FavoriteVeges = () => {
             render: (_: unknown, __: unknown, index: number) => index + 1,
         },
         {
-            title: "Name",
+            title: "Item Name",
             dataIndex: "Itm_Name",
             key: "Itm_Name",
+        },
+        {
+            title: "Group Name",
+            dataIndex: "IGP_NAME",
+            key: "IGP_NAME",
         },
         {
             title: "Action",

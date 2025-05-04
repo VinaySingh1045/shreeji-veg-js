@@ -1,14 +1,15 @@
-import { Button, Card, Row, Col, message } from "antd";
+import { Button, Card, Row, Col, message, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const SelectLanguage = () => {
     const navigate = useNavigate();
+    const { token } = theme.useToken();
     const setLang = (lang: string) => {
         localStorage.setItem("appLanguage", lang);
         message.success("Language changed successfully!");
         navigate("/");
     };
-    
+
 
     return (
         <div
@@ -17,7 +18,7 @@ const SelectLanguage = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 minHeight: "100vh",
-                backgroundColor: "#f5f5f5",
+                backgroundColor: token.colorBgLayout === "White" ? "#f5f5f5" : "#1d1d1d",
                 padding: 16,
                 position: "relative",
             }}

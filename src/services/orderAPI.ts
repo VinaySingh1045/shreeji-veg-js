@@ -34,7 +34,6 @@ export const GetBillNo = async () => {
 }
 
 export const AddOrder = async (payload: any) => {
-    console.log("payload", payload);
     try {
         const res = await axios.post(`${API_END_POINT}/insertSalePurMain`, payload, {
             headers: getAuthHeaders(),
