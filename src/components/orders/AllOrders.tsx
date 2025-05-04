@@ -317,6 +317,10 @@ const AllOrders = () => {
     }
   };
 
+  const disablePastDates = (current) => {
+    // Disable all dates before today
+    return current && current < dayjs().endOf('day');
+  };
 
   return (
     <div className="p-4">
@@ -332,6 +336,7 @@ const AllOrders = () => {
               onChange={handleDateChange}
               format="dddd, DD-MM-YYYY"
               size="small"
+              disabledDate={disablePastDates}
             />
 
             <Form.Item label="Order No." colon={false} style={{ marginBottom: 0 }}>

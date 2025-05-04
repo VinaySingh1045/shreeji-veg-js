@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Modal, Select } from "antd";
 import { AppDispatch, RootState } from "../../redux/store";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { fetchOrders } from "../../redux/actions/ordersAction";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Deleteorder, GetAllYear } from "../../services/orderAPI";
@@ -38,6 +38,13 @@ const ViewOrders = () => {
     const [allYear, setAllYear] = useState<{ db_name: string; year1: string; year2: string; year_type: string }[] | null>(null);
     const [selectedYear, setSelectedYear] = useState<string | undefined>();
 
+
+    // useEffect(() => {
+    //     if (!user) {
+    //         navigate("/login");
+    //     }
+    // }, [navigate, user]);
+
     useEffect(() => {
         const fetchAllYear = async () => {
             try {
@@ -46,12 +53,23 @@ const ViewOrders = () => {
                 const data = res?.data || [];
                 setAllYear(data);
 
-                const currentYear = data.find((item) => item.year_type === "C");
+                const currentYear = data.find((item: { db_name: string; year1: string; year2: string; year_type: string }) => item.year_type === "C");
                 if (currentYear) {
+                    console.log("currentYear: ", currentYear)
                     setSelectedYear(currentYear.db_name);
-                    const start = dayjs(`${currentYear.year1}-04-01`).startOf("day");
-                    const end = dayjs(`${currentYear.year2}-03-31`).endOf("day");
-                    setSelectedDates([start, end]);
+                    let startDate;
+                    let endDate;
+
+                    if (currentYear.year_type === "C") {
+                        const today = dayjs().startOf('day');
+                        startDate = today;
+                        endDate = today;
+                    } else {
+                        startDate = dayjs(`${currentYear.year1}-04-01`).startOf("day");
+                        endDate = dayjs(`${currentYear.year2}-03-31`).endOf("day");
+                    }
+
+                    setSelectedDates([startDate, endDate]);
                 }
             } catch (error) {
                 console.error("Error fetching year data:", error);
@@ -87,7 +105,7 @@ const ViewOrders = () => {
             }]
             : []),
         {
-            title: "Bill Number",
+            title: "Order Number",
             dataIndex: "Bill_No",
             key: "Bill_No",
             sorter: (a: any, b: any) => {
@@ -177,6 +195,7 @@ const ViewOrders = () => {
     };
 
     const handleYearChange = (value: string) => {
+        console.log("value: ", value)
         setSelectedYear(value);
         const selected = allYear?.find((item) => item.db_name === value);
         if (selected) {
@@ -185,6 +204,12 @@ const ViewOrders = () => {
             setSelectedDates([start, end]);
         }
         // Optional: perform other actions on change
+    };
+
+    const disableOutsideRange = (current: Dayjs) => {
+        if (!selectedDates) return true;
+        const [start, end] = selectedDates;
+        return current < start.startOf('day') || current > end.endOf('day');
     };
 
     return (
@@ -227,6 +252,7 @@ const ViewOrders = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item label="Select Date" colon={false} className={user && user.isAdmin ? "date-select" : ""}>
                             <RangePicker size="small" style={{ width: '100%' }}
+                                format="DD-MM-YYYY"
                                 value={selectedDates}
                                 onChange={(dates) => {
                                     if (dates && dates[0] && dates[1]) {
@@ -235,6 +261,7 @@ const ViewOrders = () => {
                                         setSelectedDates(null);
                                     }
                                 }}
+                                disabledDate={disableOutsideRange}
                             />
                         </Form.Item>
                     </Col>
@@ -287,6 +314,11 @@ const ViewOrders = () => {
                                         title: "Item Name",
                                         dataIndex: "Itm_Name",
                                         key: "Itm_Name",
+                                    },
+                                    {
+                                        title: "Item Name",
+                                        dataIndex: "IGP_NAME",
+                                        key: "IGP_NAME",
                                     },
                                     {
                                         title: "Quantity",
