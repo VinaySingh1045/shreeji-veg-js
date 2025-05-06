@@ -1,5 +1,5 @@
 {
-  "login":{
+  "login": {
     "userName": "Username",
     "enterUsername": "Please enter your username!",
     "usernamePlaceholder": "Enter your username",
@@ -13,27 +13,50 @@
     "loginSuccess": "Login successful!",
     "unexpectedError": "An unexpected error occurred"
   },
-    "Regester":{
-      "userName": "Username",
-      "mobileNumber": "Mobile Number",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "otp": "OTP",
-      "otpRequired": "Please enter the OTP!",
-      "otpPattern": "OTP must be a 6-digit number",
-      "sendOTP": "Send OTP",
-      "register": "Register",
-      "alreadyAccount": "Already have an account?",
-      "loginNow": "Login Now",
-      "is required": " is required",
-      "Mobile Number Should be 10 Digits": "Mobile number must be exactly 10 digits",
-      "Password: 5-20 chars, 1 upper, 1 lower & 1 special!": "Password must be 5-20 characters with uppercase, lowercase & a special character",
-      "Passwords do not match!": "Passwords do not match!",
-      "otpRequestWarning": "Please request OTP before submitting.",
-      "registrationSuccess": "Registration successful!",
-      "unexpectedError": "An unexpected error occurred",
-      "otpSentSuccess": "OTP sent successfully!",
-      "otpSendFail": "Failed to send OTP",
-      "enterMobileWarning": "Please enter a valid mobile number first"
-    }
+  "Regester": {
+    "userName": "Username",
+    "mobileNumber": "Mobile Number",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "otp": "OTP",
+    "otpRequired": "Please enter the OTP!",
+    "otpPattern": "OTP must be a 6-digit number",
+    "sendOTP": "Send OTP",
+    "register": "Register",
+    "alreadyAccount": "Already have an account?",
+    "loginNow": "Login Now",
+    "is required": " is required",
+    "Mobile Number Should be 10 Digits": "Mobile number must be exactly 10 digits",
+    "Password: 5-20 chars, 1 upper, 1 lower & 1 special!": "Password must be 5-20 characters with uppercase, lowercase & a special character",
+    "Passwords do not match!": "Passwords do not match!",
+    "otpRequestWarning": "Please request OTP before submitting.",
+    "registrationSuccess": "Registration successful!",
+    "unexpectedError": "An unexpected error occurred",
+    "otpSentSuccess": "OTP sent successfully!",
+    "otpSendFail": "Failed to send OTP",
+    "enterMobileWarning": "Please enter a valid mobile number first"
+  },
+  "favorite": {
+    "title": "Favorite Vegetables",
+    "addOrView": "Add/View Favorite",
+    "searchPlaceholder": "Search by vegetable name",
+    "srNo": "Sr.No",
+    "name": "Name",
+    "action": "Action",
+    "removeSuccess": "Removed vege from favorites Successfully!",
+    "removeError": "Invalid vegetable ID."
+  },
+  "vegetable": {
+    "title": "All Vegetables",
+    "viewFavorite": "View Favorite",
+    "searchPlaceholder": "Search by vegetable name",
+    "srNo": "Sr No.",
+    "name": "Name",
+    "action": "Action",
+    "addSuccess": "Added vegetable to favorites successfully!",
+    "addError": "Invalid vegetable ID.",
+    "unactableError":"An unexpected error occurred.",
+    "removeSuccess": "Removed vegetable from favorites successfully!",
+    "removeError": "Error removing from favorites"
   }
+}

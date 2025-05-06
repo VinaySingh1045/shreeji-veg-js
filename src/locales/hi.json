@@ -1,5 +1,5 @@
 {
-  "login":{
+  "login": {
     "userName": "उपयोगकर्ता नाम",
     "enterUsername": "कृपया उपयोगकर्ता नाम दर्ज करें!",
     "usernamePlaceholder": "अपना उपयोगकर्ता नाम दर्ज करें",
@@ -13,7 +13,7 @@
     "loginSuccess": "लॉगिन सफल हुआ!",
     "unexpectedError": "कुछ गलत हो गया है"
   },
-  "Regester":{
+  "Regester": {
     "userName": "उपयोगकर्ता नाम",
     "mobileNumber": "मोबाइल नंबर",
     "password": "पासवर्ड",
@@ -35,5 +35,28 @@
     "otpSentSuccess": "ओटीपी सफलतापूर्वक भेजा गया!",
     "otpSendFail": "ओटीपी भेजने में विफल",
     "enterMobileWarning": "कृपया पहले एक मान्य मोबाइल नंबर दर्ज करें"
+  },
+  "favorite": {
+    "title": "पसंदीदा सब्ज़ियाँ",
+    "addOrView": "पसंदीदा जोड़ें/देखें",
+    "searchPlaceholder": "सब्ज़ी के नाम से खोजें",
+    "srNo": "क्रम संख्या",
+    "name": "नाम",
+    "action": "क्रिया",
+    "removeSuccess": "सब्ज़ी को पसंदीदा से सफलतापूर्वक हटाया गया!",
+    "removeError": "अमान्य सब्ज़ी आईडी।"
+  },
+  "vegetable": {
+    "title": "सभी सब्जियाँ",
+    "viewFavorite": "मेरी पसंदीदा देखें",
+    "searchPlaceholder": "सब्जी के नाम से खोजें",
+    "srNo": "क्रम संख्या",
+    "name": "नाम",
+    "action": "क्रिया",
+    "addSuccess": "सब्जी को सफलतापूर्वक पसंदीदा में जोड़ा गया!",
+    "addError": "अमान्य सब्जी आईडी।",
+    "unactableError": "कुछ गलत हो गया है।",
+    "removeSuccess": "सब्जी को सफलतापूर्वक पसंदीदा से हटाया गया!",
+    "removeError": "पसंदीदा से हटाते समय त्रुटि"
   }
-  }
+}

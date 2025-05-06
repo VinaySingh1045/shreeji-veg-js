@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { RemoveFavorite } from "../../services/vegesAPI";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Vegetable } from "../../redux/slice/vegesSlice";
+import { useTranslation } from "react-i18next";
 
 // interface Vegetable {
 //     Itm_Id: number;
@@ -14,6 +15,7 @@ import { Vegetable } from "../../redux/slice/vegesSlice";
 //     Sale_Rate: number;
 // }
 const FavoriteVeges = () => {
+    const { t } = useTranslation();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { token } = theme.useToken();
@@ -41,17 +43,17 @@ const FavoriteVeges = () => {
 
     const columns = [
         {
-            title: "Sr No.",
+            title: t('favorite.srNo'),
             key: "serial",
             render: (_: unknown, __: unknown, index: number) => index + 1,
         },
         {
-            title: "Name",
+            title: t('favorite.name'),
             dataIndex: "Itm_Name",
             key: "Itm_Name",
         },
         {
-            title: "Action",
+            title: t('favorite.action'),
             key: "action",
             render: (_: unknown, record: Vegetable) => (
                 <Button danger onClick={() => handleRemoveFav(record)}>
@@ -65,22 +67,22 @@ const FavoriteVeges = () => {
         if (record.Itm_Id !== undefined) {
             await RemoveFavorite(record.Itm_Id);
         } else {
-            message.error("Invalid vegetable ID.");
+            message.error(t('favorite.removeError'));
         }
         dispatch(fetchFavoriteVegetables());
-        message.success("Removed vege from favorites Successfully!");
+        message.success(t('favorite.removeSuccess'));
     }
 
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>Favorite Vegetables</h2>
-                <Button onClick={() => navigate("/all/veges")} type="primary">Add/View Favorite</Button>
+                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>{t('favorite.title')}</h2>
+                <Button onClick={() => navigate("/all/veges")} type="primary">{t('favorite.addOrView')}</Button>
             </div>
 
             <Space direction="vertical" style={{ width: "100%" }}>
                 <Input.Search
-                    placeholder="Search by vegetable name"
+                    placeholder={t('favorite.searchPlaceholder')}
                     allowClear
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}

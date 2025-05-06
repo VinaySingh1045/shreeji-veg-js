@@ -10,6 +10,7 @@ import { AddToFavorite, RemoveFavorite } from "../../services/vegesAPI";
 import { useNavigate } from "react-router-dom";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Vegetable } from "../../redux/slice/vegesSlice";
+import { useTranslation } from "react-i18next";
 
 
 // interface Vegetable {
@@ -28,6 +29,7 @@ interface APIError {
 }
 
 const AllVeges = () => {
+    const { t } = useTranslation();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { token } = theme.useToken();
@@ -60,35 +62,35 @@ const AllVeges = () => {
             if (vege.Itm_ID !== undefined) {
                 await AddToFavorite(vege.Itm_ID);
             } else {
-                message.error("Invalid vegetable ID.");
+                message.error(t('vegetable.addError'));
             }
             dispatch(fetchFavoriteVegetables());
-            message.success("Added vege to favorites Successfully!");
+            message.success(t('vegetable.addSuccess'));
         } catch (error) {
             const apiError = error as APIError;
             if (apiError.response?.data?.message) {
                 message.error(apiError.response.data.message);
             } else {
-                message.error("An unexpected error occurred.");
+                message.error(t('vegetable.unactableError'));
             }
         }
     };
 
     const columns = [
         {
-            title: "Sr No.",
+            title: t('vegetable.srNo'),
             key: "serial",
             render: (_: unknown, __: unknown, index: number) => index + 1,
         },
         {
-            title: "Name",
+            title: t('vegetable.name'),
             dataIndex: "Itm_Name",
             key: "Itm_Name",
         },
         ...(user && !user.isAdmin
             ? [
                 {
-                    title: "Action",
+                    title: t('vegetable.action'),
                     key: "action",
                     render: (_: unknown, record: Vegetable) => {
                         const isFavorite = favoriteIds.includes(record.Itm_ID);
@@ -112,27 +114,27 @@ const AllVeges = () => {
             if (vege.Itm_ID !== undefined) {
                 await RemoveFavorite(vege.Itm_ID);
             } else {
-                message.error("Invalid vegetable ID.");
+                message.error(t('vegetable.addError'));
             }
             dispatch(fetchFavoriteVegetables());
-            message.success("Removed from favorites!");
+            message.success(t('vegetable.removeSuccess'));
         } catch {
-            message.error("Error removing from favorites");
+            message.error(t('vegetable.removeError'));
         }
     };
 
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>All Vegetables</h2>
+                <h2 className={token.colorBgLayout === "White" ? "BgTextBefore" : "BgText"}>{t('vegetable.title')}</h2>
                 {
                     user && !user.isAdmin &&
-                    <Button onClick={() => navigate("/favourites")} type="primary">View Favorite</Button>
+                    <Button onClick={() => navigate("/favourites")} type="primary">{t('vegetable.viewFavorite')}</Button>
                 }
             </div>
             <Space direction="vertical" style={{ width: "100%" }}>
                 <Input.Search
-                    placeholder="Search by vegetable name"
+                    placeholder={t('vegetable.searchPlaceholder')}
                     allowClear
                     onChange={(e) => setSearchText(e.target.value)}
                     value={searchText}
