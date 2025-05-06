@@ -1,13 +1,6 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { API_END_POINT } from "../utils/constant";
-const getAuthHeaders = () => {
-    const token = Cookies.get('Shreeji_Veg');
-    return {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-    };
-};
+import { getAuthHeaders } from "../utils/getAuthHeaders";
 
 export const GetAllItems = async (lang: string) => {
     try {
