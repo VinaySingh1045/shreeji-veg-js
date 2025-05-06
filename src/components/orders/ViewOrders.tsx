@@ -252,6 +252,7 @@ const ViewOrders = () => {
 
                     <Table
                         columns={columns}
+                        rowKey={(record) => record.Bill_No}
                         dataSource={
                             orders?.filter((order) =>
                                 order.Ac_Name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -267,14 +268,14 @@ const ViewOrders = () => {
                         size="small"
                     />
 
-                    {selectedOrderItems && (
+                    {selectedOrderItems.length > 0 && (
                         <>
                             <h2 style={{ marginTop: "3px", marginBottom: "3px" }}>Item Details</h2>
                             <Table
                                 dataSource={[...selectedOrderItems].sort((a, b) => a.SrNo - b.SrNo)}
                                 pagination={false}
                                 bordered
-                                // rowKey={(record) => record.Itm_Id}
+                                rowKey={(record) => record.SrNo}
                                 size="small"
                                 columns={[
                                     {
