@@ -1,14 +1,33 @@
 import { Outlet, useNavigate } from "react-router-dom"
 import Footer from "./shared/Footer"
 import Navbar from "./shared/Navbar"
-import { AppDispatch } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { setUser } from "../redux/slice/authSlice";
-import { ConfigProvider, Spin, Layout as Layouts, theme } from "antd";
+import { ConfigProvider, Spin, Layout as Layouts, theme, notification } from "antd";
 import { GetCurrentUser } from "../services/authAPI";
+import socket from "../utils/socket";
 const Layout = () => {
+    const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
+
+    useEffect(() => {
+        if (user && user.isAdmin) {
+            console.log("hellp")
+            socket.on('OrderNotification', (payload) => {
+                console.log("payload", payload);
+                notification.open({
+                    message: 'New Order Notification',
+                    description: payload.noti,
+                });
+            });
+
+            return () => {
+                socket.off('OrderNotification');
+            };
+        }
+    }, [user]);
 
     const lightTheme = {
         algorithm: theme.defaultAlgorithm,

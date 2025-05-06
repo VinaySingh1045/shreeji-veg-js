@@ -5,7 +5,8 @@ import { GetAllItems, GetFavorites } from '../../services/vegesAPI';
 export const fetchAllVegetables = createAsyncThunk(
     'vegetables/fetchAll',
     async () => {
-        const response = await GetAllItems();
+        const lang = localStorage.getItem('appLanguage') as 'en' | 'hi' | 'gu'
+        const response = await GetAllItems(lang);
         return response.data;
     }
 );
@@ -14,7 +15,9 @@ export const fetchAllVegetables = createAsyncThunk(
 export const fetchFavoriteVegetables = createAsyncThunk(
     'vegetables/fetchFavorites',
     async () => {
-        const response = await GetFavorites();
+        const lang = localStorage.getItem('appLanguage') as 'en' | 'hi' | 'gu'
+        console.log("fetch lang", lang)
+        const response = await GetFavorites(lang);
         return response.data;
     }
 );

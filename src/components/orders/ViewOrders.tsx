@@ -51,7 +51,7 @@ const ViewOrders = () => {
         }
        
         fetchAllYear();
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (selectedDates) {
@@ -69,7 +69,7 @@ const ViewOrders = () => {
     const columns = [
         ...(user && user.isAdmin
             ? [{
-                title: "Order Id",
+                title: "Account Code",
                 dataIndex: "Ac_Code",
                 key: "Ac_Code",
             }]

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Layout, Menu, Button, Drawer, Grid, Popover, Avatar, Space, message, theme, Input } from 'antd';
-import { GlobalOutlined, LogoutOutlined, MenuOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
+import { BellOutlined, GlobalOutlined, LogoutOutlined, MenuOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -101,14 +101,20 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       ? [
         { key: 'admin-users', label: 'User List' },
         { key: 'orders', label: 'Orders' },
-        { key: 'admin-veges', label: 'All Vegetables' },
+        {
+          key: 'notification', label:
+            (
+              <a onClick={() => navigate("/notification")} style={{ border: "none", background: "transparent", marginTop: "0px" }}>
+                <BellOutlined style={{ fontSize: "19px", color: "#fff" }} />
+              </a>
+            )
+        },
       ]
       : []),
     ...(user && !user.isAdmin
       ? [
         { key: 'orders', label: 'Orders' },
         { key: 'favourites', label: 'Favourites' },
-        { key: 'contact', label: 'Contact' },
       ]
       : []),
     {
@@ -204,10 +210,11 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       ) : (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
-              {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
-            </Button>
-            <span style={{ color: '#fff' }}>{user?.Ac_Name}</span>
+            {user && user.isAdmin && (
+              <Button onClick={() => navigate("/notification")} style={{ border: "none", background: "transparent" }}>
+                <BellOutlined style={{ fontSize: "22px", color: "#fff" }} />
+              </Button>
+            )}
             <Avatar size="small" style={{ backgroundColor: '#bbf7d0', color: '#000' }}>
               {initials}
             </Avatar>
@@ -219,7 +226,16 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
           </div>
 
           <Drawer
-            title=""
+            title={
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, justifyContent: 'end' }}>
+                <span style={{ color: '' }}>{user?.Ac_Name}</span>
+                  <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
+                    {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
+                  </Button>
+                </div>
+              </>
+            }
             placement="right"
             onClose={() => setVisible(false)}
             open={visible}
@@ -227,7 +243,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
             <Menu
               className={token.colorBgLayout === "White" ? "custom-menu-light" : "custom-menu"}
               mode="vertical"
-              items={menuItems.slice(0, 3)} // Only Home, Products, Contact
+              items={menuItems.slice(0, 2)} // Only Home, Products, Contact
               onClick={handleMenuClick}
               selectedKeys={selectedKey ? [selectedKey] : []}
             />
@@ -244,7 +260,6 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
                 Language
               </Button>
             )}
-
             {/* Logout button for mobile only */}
             {!screens.md && (
               <div style={{ marginTop: 16 }}>
