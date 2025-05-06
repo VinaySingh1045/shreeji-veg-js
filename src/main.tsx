@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -15,6 +14,7 @@ import './i18n';
 import SelectLanguage from './components/auth/SelectLanguage'
 import AllOrders from './components/orders/AllOrders'
 import ViewOrders from './components/orders/ViewOrders'
+import Notifications from './components/notification/Notifications'
 
 const router = createBrowserRouter([
   {
@@ -45,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/add-orders",
         element: <AllOrders />
+      },
+      {
+        path: "/notification",
+        element: <Notifications />
       },
     ]
   },

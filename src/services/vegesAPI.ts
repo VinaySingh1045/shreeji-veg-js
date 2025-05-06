@@ -9,10 +9,11 @@ const getAuthHeaders = () => {
     };
 };
 
-export const GetAllItems = async () => {
+export const GetAllItems = async (lang: string) => {
     try {
         const res = await axios.get(`${API_END_POINT}/getAllItem`, {
             headers: getAuthHeaders(),
+            params: { lang },
         })
         return res.data
     } catch (error) {
@@ -21,10 +22,12 @@ export const GetAllItems = async () => {
     }
 }
 
-export const GetFavorites = async () => {
+export const GetFavorites = async (lang : string) => {
+    console.log("lang", lang)
     try {
         const res = await axios.get(`${API_END_POINT}/getFavorites`, {
             headers: getAuthHeaders(),
+            params: { lang },
         })
         return res.data
     } catch (error) {
