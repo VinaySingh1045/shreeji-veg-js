@@ -39,7 +39,6 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     '/contact': 'contact',
     '/user/list': 'admin-users',
     '/all/veges': 'admin-veges',
-    // '/add-orders': 'admin-view-order',
   };
 
   const selectedKey = Object.entries(pathToKey).find(([path]) =>
@@ -57,7 +56,6 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     else if (key === 'contact') navigate('/contact');
     else if (key === 'admin-users') navigate('/user/list');
     else if (key === 'admin-veges') navigate('/all/veges');
-    // else if (key === 'admin-view-order') navigate('/orders');
     setVisible(false);
   };
 
@@ -104,8 +102,6 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
         { key: 'admin-users', label: 'User List' },
         { key: 'orders', label: 'Orders' },
         { key: 'admin-veges', label: 'All Vegetables' },
-        // { key: 'admin-view-order', label: 'View Orders' }, 
-
       ]
       : []),
     ...(user && !user.isAdmin
@@ -199,23 +195,11 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
               color: '#fff',
               borderBottom: 'none',
               lineHeight: '56px',
-              // minWidth: 300,
               flexGrow: 1,
               justifyContent: 'flex-end',
             }}
             className={token.colorBgLayout === "White" ? "custom-menu-light" : "custom-menu"}
           />
-          {/* <Button onClick={onToggleTheme} style={{ border: "none", background: "transparent" }}>
-            {currentTheme === "light" ? <MoonOutlined style={{ fontSize: "22px", color: "#fff" }} /> : <SunOutlined style={{ fontSize: "22px", color: "#fff" }} />}
-          </Button>
-          <Popover content={popoverContent} trigger="click">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-              <span style={{ color: '#fff' }}>{user?.Ac_Name}</span>
-              <Avatar size="small" style={{ backgroundColor: '#bbf7d0', color: '#000' }}>
-                {initials}
-              </Avatar>
-            </div>
-          </Popover> */}
         </div>
       ) : (
         <>

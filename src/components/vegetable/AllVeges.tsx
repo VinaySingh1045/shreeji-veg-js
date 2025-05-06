@@ -12,14 +12,6 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 import { useTranslation } from "react-i18next";
 
-
-// interface Vegetable {
-//     Itm_ID: number;
-//     Itm_Id?: number;
-//     Itm_Name: string;
-//     Sale_Rate: number;
-// }
-
 interface APIError {
     response?: {
         data?: {
@@ -87,6 +79,11 @@ const AllVeges = () => {
             dataIndex: "Itm_Name",
             key: "Itm_Name",
         },
+        {
+            title: "Group Name",
+            dataIndex: "IGP_NAME",
+            key: "IGP_NAME",
+        },
         ...(user && !user.isAdmin
             ? [
                 {
@@ -145,7 +142,7 @@ const AllVeges = () => {
                     columns={columns}
                     dataSource={filteredVeges}
                     loading={loading}
-                    pagination={{ pageSize: 20 }}
+                    pagination={{ pageSize: 50 }}
                     scroll={{ x: true }}
                     bordered
                     size="small"

@@ -6,18 +6,52 @@ import { AppDispatch, RootState } from "../../redux/store";
 import dayjs from "dayjs";
 import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
 import { Vegetable } from "../../redux/slice/vegesSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AllOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { favorites, loading, all } = useSelector((state: RootState) => state.vegetables);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
-  const [billDate, setBillDate] = useState(dayjs(Date.now()));
+  const [billDate, setBillDate] = useState(dayjs().add(1, 'day'));
   const [lrNo, setLrNo] = useState<string | null>(null);
   const [billNo, SetBillNo] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState<Vegetable[]>([]);
   const [mergedData, setMergedData] = useState<Vegetable[]>([]);
   const [addLoding, setAddLoding] = useState(false);
+  const location = useLocation();
+  const { orderData } = location.state || {};
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (orderData && Array.isArray(orderData.Details)) {
+      const initialQuantities: Record<string, string> = {};
+      const updatedData: any[] = [];
+
+      orderData.Details.forEach((item: any) => {
+        if (item.Itm_Id !== undefined) {
+          initialQuantities[item.Itm_Id] = item.Qty;
+          updatedData.push({
+            Itm_Id: item.Itm_Id,
+            Itm_Name: item.Itm_Name,
+            Uni_ID: item.Uni_ID,
+            Uni_Name: item.Uni_Name,
+          });
+        }
+      });
+
+      setQuantities(initialQuantities);
+      setFilteredData(updatedData);
+      if (orderData.Bill_Date) {
+        const formattedDate = dayjs(orderData.Bill_Date).format("DD-MM-YYYY");
+        setBillDate(dayjs(formattedDate, "DD-MM-YYYY"));
+      }
+      SetBillNo(orderData.Bill_No || null);
+      setLrNo(orderData.Order_Count || null);
+    }
+  }, [orderData]);
+
+
 
   useEffect(() => {
     const normalizedAll = all.map(item => ({
@@ -117,21 +151,13 @@ const AllOrders = () => {
   };
 
   useEffect(() => {
-    handleDateChange(billDate);
-    handleGetBillNo();
-  }, []);
+    if (!orderData) {
+      handleDateChange(billDate);
+      handleGetBillNo();
+    }
+  }, [orderData]);
 
   const handleAddOrder = async () => {
-
-    // const details = mergedData
-    //   .filter((item) => item.Itm_Id !== undefined) // include only if Itm_Id exists and quantity exists
-    //   .map((item) => ({
-    //     Itm_Id: item.Itm_Id,
-    //     // Inward: item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0,
-    //     Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
-    //     Uni_ID: item.Uni_ID, // Assuming Uni_ID is fixed; update if dynamic
-    //     Itm_Name: item.Itm_Name,
-    //   }));
 
     const details = [
       // 1. All favorites (quantity 0 or more)
@@ -177,7 +203,6 @@ const AllOrders = () => {
       await handleDateChange(billDate);
       await handleGetBillNo();
       message.success("Order added successfully");
-
     } catch (error) {
       message.error("Failed to add order");
       console.error("Error while adding order: ", error);
@@ -194,9 +219,14 @@ const AllOrders = () => {
       render: (_: unknown, __: unknown, index: number) => index + 1,
     },
     {
-      title: "Name",
+      title: "Item Name",
       dataIndex: "Itm_Name",
       key: "Itm_Name",
+    },
+    {
+      title: "Group Name",
+      dataIndex: "IGP_NAME",
+      key: "IGP_NAME",
     },
     {
       title: "Quantity",
@@ -219,6 +249,55 @@ const AllOrders = () => {
 
   ];
 
+  const handleUpdateOrder = async () => {
+    const details = [
+      ...favorites
+        .filter(item => item.Itm_Id !== undefined)
+        .map(item => ({
+          Itm_Id: item.Itm_Id!,
+          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+          Uni_ID: item.Uni_ID,
+          Itm_Name: item.Itm_Name,
+        })),
+      ...mergedData
+        .filter(item =>
+          item.Itm_Id !== undefined &&
+          !favorites.some(fav => fav.Itm_Id === item.Itm_Id) &&
+          parseFloat(quantities[item.Itm_Id!] || "0") > 0
+        )
+        .map(item => ({
+          Itm_Id: item.Itm_Id!,
+          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+          Uni_ID: item.Uni_ID,
+          Itm_Name: item.Itm_Name,
+        })),
+    ];
+
+    const payload = {
+      mode: "edit",
+      details,
+      Bill_No: billNo,
+      Order_Count: lrNo,
+      Bill_Date: billDate.format("YYYY-MM-DD"),
+    };
+    try {
+      setAddLoding(true);
+      await AddOrder(payload);
+      message.success("Order updated successfully");
+      navigate("/");
+    } catch (error) {
+      message.error("Failed to update order");
+      console.error("Error while updating order: ", error);
+    } finally {
+      setAddLoding(false);
+    }
+  };
+
+  const disablePastDates = (current: dayjs.Dayjs | null): boolean => {
+    // Disable all dates before today
+    return current !== null && current < dayjs().endOf('day');
+  };
+
   return (
     <div className="p-4">
       {addLoding ? (
@@ -233,6 +312,7 @@ const AllOrders = () => {
               onChange={handleDateChange}
               format="dddd, DD-MM-YYYY"
               size="small"
+              disabledDate={disablePastDates}
             />
 
             <Form.Item label="Order No." colon={false} style={{ marginBottom: 0 }}>
@@ -255,9 +335,14 @@ const AllOrders = () => {
           </div>
 
           <div className="flex flex-wrap gap-3 justify-start mt-4 mb-4">
-            <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
-            <Button type="primary">Modify Order</Button>
-            <Button type="primary">Delete Order</Button>
+            <Button type="primary" onClick={orderData ? handleUpdateOrder : handleAddOrder}>
+              {orderData ? "Update Order" : "Add Order"}
+            </Button>
+            {orderData && (
+              <Button type="default" onClick={() => navigate("/")}>
+                Cancel
+              </Button>
+            )}
           </div>
           <Space direction="vertical" style={{ width: "100%" }}>
             <Input.Search
@@ -278,12 +363,6 @@ const AllOrders = () => {
               size="small"
             />
           </Space>
-
-          {/* <div className="flex flex-wrap gap-3 justify-start mt-4">
-              <Button type="primary" onClick={handleAddOrder}>Add Order</Button>
-              <Button type="primary">Modify Order</Button>
-              <Button type="primary">Delete Order</Button>
-            </div> */}
         </>
       )}
     </div>

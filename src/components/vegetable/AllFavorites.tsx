@@ -9,11 +9,6 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 import { useTranslation } from "react-i18next";
 
-// interface Vegetable {
-//     Itm_Id: number;
-//     Itm_Name: string;
-//     Sale_Rate: number;
-// }
 const FavoriteVeges = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch<AppDispatch>();
@@ -53,7 +48,13 @@ const FavoriteVeges = () => {
             key: "Itm_Name",
         },
         {
+            title: "Group Name",
+            dataIndex: "IGP_NAME",
+            key: "IGP_NAME",
+        },
+        {
             title: t('favorite.action'),
+            // title: "Action",
             key: "action",
             render: (_: unknown, record: Vegetable) => (
                 <Button danger onClick={() => handleRemoveFav(record)}>
