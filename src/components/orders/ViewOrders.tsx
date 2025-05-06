@@ -36,24 +36,20 @@ const ViewOrders = () => {
                 const currentYear = data.find((item: { db_name: string; year1: string; year2: string; year_type: string }) => item.year_type === "C");
                 if (currentYear) {
                     setSelectedYear(currentYear.db_name);
-                    let startDate;
-                    let endDate;
-
                     if (currentYear.year_type === "C") {
                         const today = dayjs().startOf('day');
-                        startDate = today;
-                        endDate = today;
+                        setSelectedDates([today, today]);
                     } else {
-                        startDate = dayjs(`${currentYear.year1}-04-01`).startOf("day");
-                        endDate = dayjs(`${currentYear.year2}-03-31`).endOf("day");
+                        const startDate = dayjs(`${currentYear.year1}-04-01`).startOf("day");
+                        const endDate = dayjs(`${currentYear.year2}-03-31`).endOf("day");
+                        setSelectedDates([startDate, endDate]);
                     }
-
-                    setSelectedDates([startDate, endDate]);
                 }
             } catch (error) {
                 console.error("Error fetching year data:", error);
             }
         }
+       
         fetchAllYear();
     }, [])
 
@@ -181,9 +177,13 @@ const ViewOrders = () => {
     };
 
     const disableOutsideRange = (current: Dayjs) => {
-        if (!selectedDates) return true;
-        const [start, end] = selectedDates;
-        return current < start.startOf('day') || current > end.endOf('day');
+        const selected = allYear?.find((item) => item.db_name === selectedYear);
+        if (!selected) return true; // Disable all if no year is selected
+    
+        const start = dayjs(`${selected.year1}-04-01`).startOf("day");
+        const end = dayjs(`${selected.year2}-03-31`).endOf("day");
+    
+        return current.isBefore(start) || current.isAfter(end);
     };
 
     return (
