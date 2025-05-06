@@ -33,6 +33,7 @@ const ViewOrders = () => {
                 const data = res?.data || [];
                 setAllYear(data);
 
+                
                 const currentYear = data.find((item: { db_name: string; year1: string; year2: string; year_type: string }) => item.year_type === "C");
                 if (currentYear) {
                     setSelectedYear(currentYear.db_name);
