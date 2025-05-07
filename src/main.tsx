@@ -15,6 +15,7 @@ import SelectLanguage from './components/auth/SelectLanguage'
 import AllOrders from './components/orders/AllOrders'
 import ViewOrders from './components/orders/ViewOrders'
 import Notifications from './components/notification/Notifications'
+import OrdersPDF from './components/orders/OrdersPDF'
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
   {
     path: "/select-language1",
     element: <SelectLanguage />
+  },
+  {
+    path: "/orderpdf",
+    element: <OrdersPDF />
   },
 
 
