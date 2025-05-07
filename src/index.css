@@ -86,3 +86,37 @@
 .select-year{
     margin-right: 7px;
 }
+
+@media print {
+    body * {
+      visibility: hidden;
+    }
+  
+    .print-area, .print-area * {
+      visibility: visible;
+    }
+  
+    .print-area {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .navbar, .nav, header, footer {
+      display: none !important;
+    }
+  
+    @page {
+      size: A4 portrait;
+      margin: 20mm;
+    }
+  
+    body {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+  
