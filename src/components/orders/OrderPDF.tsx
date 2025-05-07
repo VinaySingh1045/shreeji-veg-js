@@ -8,7 +8,7 @@ type InvoiceItem = {
   amount: number;
 };
 
-const Invoice: React.FC = () => {
+const OrderPDF: React.FC = () => {
   const items: InvoiceItem[] = [
     { description: "BATAKA BIG KANDA BIG", qty: 5, rate: 100, amount: 500 },
     { description: "DAL RICE", qty: 3, rate: 150, amount: 450 },
@@ -17,12 +17,12 @@ const Invoice: React.FC = () => {
   return (
     <div
       style={{
-        width: "90%",
+        // width: "90%",
         margin: "20px auto",
         padding: "20px",
         fontFamily: "Arial, sans-serif",
         fontSize: "10pt",
-        minHeight: "95vh", // take almost full page height
+        // minHeight: "95vh", // take almost full page height
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between"
@@ -35,7 +35,7 @@ const Invoice: React.FC = () => {
 
         <div style={{ border: "1px solid black", padding: "10px", display: "flex", alignItems: "center" }}>
           <div style={{ marginLeft: "10px", marginRight: "10px" }}>
-            <img src="/01.png" alt="Logo" style={{ width: "200px", height: "130px" }} />
+            <img src="/01.png" alt="Logo" style={{ width: "200px", height: "130px", objectFit: "contain"}} />
           </div>
 
           <div style={{ textAlign: "center", width: "100%",marginRight:'200px' }}>
@@ -76,7 +76,7 @@ const Invoice: React.FC = () => {
       </div>
 
       {/* Middle Section: Invoice Table */}
-      <div style={{ flexGrow: 1, overflow: "auto", marginBottom: "20px" }}>
+      <div style={{ flexGrow: 1, marginBottom: "20px" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -115,5 +115,5 @@ const bodyCellStyle: React.CSSProperties = {
   textAlign: "center"
 };
 
-export default Invoice;
+export default OrderPDF;
 
