@@ -8,6 +8,11 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Deleteorder, GetAllYear } from "../../services/orderAPI";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import 'dayjs/locale/en';
+import 'dayjs/locale/hi';
+import '../../locales/dayJs-gu.ts';
+import localeEn from 'antd/es/date-picker/locale/en_US';
+import localeHi from 'antd/es/date-picker/locale/hi_IN';
 
 
 interface OrderRecord {
@@ -15,7 +20,31 @@ interface OrderRecord {
 }
 
 const ViewOrders = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const getAntdLocale = () => {
+        switch (i18n.language) {
+            case 'hi':
+                dayjs.locale('hi');
+                return localeHi;
+                case 'gu':
+                    return {
+                      ...localeEn,
+                      lang: {
+                        ...localeEn.lang,
+                        locale: 'gu',
+                        placeholder: 'તારીખ પસંદ કરો',
+                        yearPlaceholder: 'વર્ષ પસંદ કરો',
+                        monthPlaceholder: 'મહિનો પસંદ કરો',
+                        today: 'આજ',
+                      },
+                    };
+            default:
+                dayjs.locale('en');
+                return localeEn;
+        }
+    };
+
+    const currentAntdLocale = getAntdLocale();
     const dispatch = useDispatch<AppDispatch>();
     const { orders, loading } = useSelector((state: RootState) => state.orders) as { orders: any[] | null; loading: boolean };
     const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
@@ -35,7 +64,7 @@ const ViewOrders = () => {
                 const data = res?.data || [];
                 setAllYear(data);
 
-                
+
                 const currentYear = data.find((item: { db_name: string; year1: string; year2: string; year_type: string }) => item.year_type === "C");
                 if (currentYear) {
                     setSelectedYear(currentYear.db_name);
@@ -52,7 +81,7 @@ const ViewOrders = () => {
                 console.error("Error fetching year data:", error);
             }
         }
-       
+
         fetchAllYear();
     }, []);
 
@@ -72,7 +101,7 @@ const ViewOrders = () => {
     const columns = [
         ...(user && user.isAdmin
             ? [{
-                title: t('viewOrders.account_code') ,
+                title: t('viewOrders.account_code'),
                 dataIndex: "Ac_Code",
                 key: "Ac_Code",
             }]
@@ -85,7 +114,7 @@ const ViewOrders = () => {
             }]
             : []),
         {
-            title:t('viewOrders.order_number'),
+            title: t('viewOrders.order_number'),
             dataIndex: "Bill_No",
             key: "Bill_No",
             sorter: (a: any, b: any) => {
@@ -95,7 +124,7 @@ const ViewOrders = () => {
             },
         },
         {
-            title:t('viewOrders.order_date'),
+            title: t('viewOrders.order_date'),
             dataIndex: "Bill_Date",
             key: "Bill_Date",
             render: (date: string) => dayjs(date).format("DD-MM-YYYY"),
@@ -146,8 +175,8 @@ const ViewOrders = () => {
 
         Modal.confirm({
             title: t('viewOrders.delete_title'),
-            content: `t('viewOrders.order_no'): ${record.Bill_No}`,
-            okText: t('viewOrders.order_no'),
+            content: `${t('viewOrders.order_no')} : ${record.Bill_No}`,
+            okText: t('viewOrders.delete'),
             okType: "danger",
             cancelText: t('viewOrders.cancel'),
             onOk: async () => {
@@ -182,10 +211,10 @@ const ViewOrders = () => {
     const disableOutsideRange = (current: Dayjs) => {
         const selected = allYear?.find((item) => item.db_name === selectedYear);
         if (!selected) return true; // Disable all if no year is selected
-    
+
         const start = dayjs(`${selected.year1}-04-01`).startOf("day");
         const end = dayjs(`${selected.year2}-03-31`).endOf("day");
-    
+
         return current.isBefore(start) || current.isAfter(end);
     };
 
@@ -227,8 +256,14 @@ const ViewOrders = () => {
                     </Col>
 
                     <Col xs={24} sm={12} md={8} lg={6}>
-                        <Form.Item label={t('viewOrders.select_date')} colon={false} className={user && user.isAdmin ? t( 'viewOrders.select_date') : ""}>
-                            <RangePicker size="small" style={{ width: '100%' }}
+                        <Form.Item
+                            label={t('viewOrders.select_date')}
+                            colon={false}
+                            className={user && user.isAdmin ? t('viewOrders.select_date') : ''}
+                        >
+                            <RangePicker
+                                size="small"
+                                style={{ width: '100%' }}
                                 format="DD-MM-YYYY"
                                 value={selectedDates}
                                 onChange={(dates) => {
@@ -238,14 +273,16 @@ const ViewOrders = () => {
                                         setSelectedDates(null);
                                     }
                                 }}
+                                locale={currentAntdLocale}
                                 disabledDate={disableOutsideRange}
                             />
                         </Form.Item>
                     </Col>
+
                     {user && !user.isAdmin && (
                         <Col xs={24} sm={12} md={8} lg={6}>
                             <Button className="ml-0 md:ml-3" type="primary" onClick={() => navigate("/add-orders")}>
-                            {t('viewOrders.add_order')} 
+                                {t('viewOrders.add_order')}
                             </Button>
                         </Col>
                     )}
@@ -282,7 +319,7 @@ const ViewOrders = () => {
                                 size="small"
                                 columns={[
                                     {
-                                        title: t('viewOrders.sr_no') ,
+                                        title: t('viewOrders.sr_no'),
                                         dataIndex: "SrNo",
                                         key: "SrNo",
                                     },
