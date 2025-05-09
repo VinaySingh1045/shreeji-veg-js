@@ -62,7 +62,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       console.error("Failed to mark notifications as seen", err);
     }
   };
-  
+
 
   // Map path to key
   const pathToKey: { [key: string]: string } = {
@@ -96,7 +96,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
     dispatch(setUser(null));
     Cookies.remove("Shreeji_Veg");
     navigate("/login");
-    message.success("Logged out successfully!");
+    message.success(t('nav.logoutSuccess'));
   }
 
   const popoverContent = (
@@ -131,8 +131,8 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const menuItems = [
     ...(user && user.isAdmin
       ? [
-        { key: 'admin-users', label: 'User List' },
-        { key: 'orders', label: 'Orders' },
+        { key: 'admin-users', label: t('nav.users') },
+        { key: 'orders', label: t('nav.orders') },
         {
           key: 'notification', label:
             (
@@ -208,7 +208,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       >
         <img className='logo-img' src="/01.png" alt="logo" style={{ height: '44px' }} />
         <span className="hidden md:inline text-[20px] logo-text">
-          ShreejiVeg
+          {t('nav.ShreejiVeg')}
         </span>
         <span>
           <Input

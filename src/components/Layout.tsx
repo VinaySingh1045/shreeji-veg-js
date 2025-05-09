@@ -53,7 +53,9 @@ const Layout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [loading, setLoading] = useState(false);
-    const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light")
+    const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(() => {
+        return (localStorage.getItem("appTheme") as "light" | "dark") || "light";
+      });
     const token = Cookies.get("Shreeji_Veg");
 
     useEffect(() => {
@@ -80,8 +82,10 @@ const Layout = () => {
     }
 
     const toggleTheme = () => {
-        setCurrentTheme(prevTheme => (prevTheme === "light" ? "dark" : "light"));
-    };
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        setCurrentTheme(newTheme);
+        localStorage.setItem("appTheme", newTheme);
+      };
 
 
     return (
