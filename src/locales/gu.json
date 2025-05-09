@@ -129,5 +129,13 @@
   },
   "languageChange": {
     "message": "ભાષા સફળતાપૂર્વક બદલાઈ ગઈ!"
+  },
+  "notifications": {
+    "all": "બધા",
+    "user": "વપરાશકર્તા",
+    "order": "ઓર્ડર",
+    "message": "સંદેશ",
+    "time": "સમય",
+    "no_notifications": "કોઈ સૂચનાઓ ઉપલબ્ધ નથી"
   }
 }

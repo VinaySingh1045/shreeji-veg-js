@@ -129,5 +129,13 @@
   },
   "languageChange": {
     "message": "भाषा सफलतापूर्वक बदली गई!"
+  },
+  "notifications": {
+    "all": "सभी",
+    "user": "उपयोगकर्ता",
+    "order": "ऑर्डर",
+    "message": "संदेश",
+    "time": "समय",
+    "no_notifications": "कोई सूचना उपलब्ध नहीं है"
   }
 }

@@ -129,5 +129,13 @@
   },
   "languageChange": {
     "message": "Language changed successfully!"
+  },
+  "notifications": {
+    "all": "All",
+    "user": "User",
+    "order": "Order",
+    "message": "Message",
+    "time": "Time",
+    "no_notifications": "No notifications available"
   }
 }
