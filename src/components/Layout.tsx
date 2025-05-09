@@ -15,16 +15,16 @@ const Layout = () => {
     useEffect(() => {
         if (user && user.isAdmin) {
             console.log("hellp")
-            socket.on('OrderNotification', (payload) => {
+            socket.on('Notification', (payload) => {
                 console.log("payload", payload);
                 notification.open({
-                    message: 'New Order Notification',
+                    message: 'New Notification',
                     description: payload.noti,
                 });
             });
 
             return () => {
-                socket.off('OrderNotification');
+                socket.off('Notification');
             };
         }
     }, [user]);
@@ -94,7 +94,7 @@ const Layout = () => {
                 theme={currentTheme === "light" ? lightTheme : darkTheme}
             >
                 <Layouts >
-                    <div className="min-h-screen flex flex-col">
+                    <div className="min-h-screen flex flex-col pt-[56px]">
                         <Navbar onToggleTheme={toggleTheme} currentTheme={currentTheme} />
                         <div className="flex-grow">
                             <Outlet />
