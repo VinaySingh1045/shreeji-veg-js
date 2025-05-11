@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Spin, message, Button } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Spin, message, Button, Checkbox, Modal } from 'antd';
+import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { GetNotifaction } from '../../services/notificationAPI';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ const Notifications = () => {
   const { t } = useTranslation();
 
   interface Notification {
+    Id?: string;
     Ac_Id: string;
     Cat: string;
     Noti_Date_Time: string;
@@ -22,6 +23,7 @@ const Notifications = () => {
   const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
   const [category, setCategory] = useState<string>('All');
   const navigate = useNavigate();
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   console.log("notifications", notifications);
 
@@ -82,7 +84,13 @@ const Notifications = () => {
   const handleCardClick = (category: string, noti: string) => {
     console.log("notification", noti);
     if (category === 'New User') {
-      navigate('/user/list');
+      const str = noti;
+      const mobile = str.match(/\b\d{10}\b/)
+      navigate('/user/list', {
+        state: {
+          mobile: mobile ? mobile[0] : null,
+        },
+      });
     } else if (category === 'Order') {
       console.log("category", category);
       const str = noti;
@@ -107,28 +115,78 @@ const Notifications = () => {
     }
   };
 
+  const handleCheckboxChange = (id: string, checked: boolean) => {
+    setSelectedIds(prev => {
+      const updated = checked ? [...prev, id] : prev.filter(item => item !== id);
+      return updated;
+    });
+  };
+
+  const handleDelete = async () => {
+    if (selectedIds.length === 0) {
+      message.warning(t('notifications.Please select at least one notification.'));
+      return;
+    }
+
+    Modal.confirm({
+      title: t('notifications.deleteConfermation'),
+      content: `${t('notifications.deleteMessage')} ${selectedIds.length} ${t('notifications.notifications')}`,
+      okText: t('notifications.ok'),
+      okType: 'danger',
+      cancelText: t('notifications.cancel'),
+      onOk: async () => {
+        try {
+          // await DeleteNotifications(selectedIds);
+          message.success(t('notifications.deleteSuccess'));
+          console.log("checkedIds", selectedIds);
+          const updated = notifications.filter(n => !selectedIds.includes(n.Id ?? ''));
+          setNotifications(updated);
+          setFilteredNotifications(
+            category === "All"
+              ? updated
+              : updated.filter(n => n.Cat === category)
+          );
+          setSelectedIds([]);
+        } catch {
+          message.error(t('notifications.deleteError'));
+        }
+      },
+    });
+  };
+
   return (
     <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        {/* Left side buttons */}
+        <div>
+          <Button
+            type={category === 'All' ? 'primary' : 'default'}
+            onClick={() => setCategory('All')}
+          >
+           {t('notifications.all')}
+          </Button>
+          <Button
+            type={category === 'New User' ? 'primary' : 'default'}
+            onClick={() => setCategory('New User')}
+            style={{ marginLeft: '8px' }}
+          >
+            {t('notifications.user')}
+          </Button>
+          <Button
+            type={category === 'Order' ? 'primary' : 'default'}
+            onClick={() => setCategory('Order')}
+            style={{ marginLeft: '8px' }}
+          >
+            {t('notifications.order')}
+          </Button>
+        </div>
+
+        {/* Right side delete button */}
         <Button
-          type={category === 'All' ? 'primary' : 'default'}
-          onClick={() => setCategory('All')}
+          danger
+          onClick={handleDelete}
         >
-          {t('notifications.all')}
-        </Button>
-        <Button
-          type={category === 'New User' ? 'primary' : 'default'}
-          onClick={() => setCategory('New User')}
-          style={{ marginLeft: '8px' }}
-        >
-          {t('notifications.user')}
-        </Button>
-        <Button
-          type={category === 'Order' ? 'primary' : 'default'}
-          onClick={() => setCategory('Order')}
-          style={{ marginLeft: '8px' }}
-        >
-          {t('notifications.order')}
+          <DeleteOutlined />
         </Button>
       </div>
 
@@ -140,7 +198,14 @@ const Notifications = () => {
             <Col xs={24} sm={12} md={8} lg={6} key={index}>
               <Card
                 // title={category === "Order" ? `Order` : `New User`}
-                title={`${getCardTitle(notification.Cat)}`}
+                title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{getCardTitle(notification.Cat)}</span>
+                  <Checkbox
+                    checked={notification.Id ? selectedIds.includes(notification.Id) : false}
+                    onClick={(e) => e.stopPropagation()} // Prevent card click
+                    onChange={(e) => handleCheckboxChange(notification.Id ?? '', e.target.checked)}
+                  />
+                </div>}
                 bordered={false}
                 hoverable
                 onClick={() => handleCardClick(notification.Cat, notification.Noti)}

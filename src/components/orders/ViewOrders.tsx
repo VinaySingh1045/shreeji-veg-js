@@ -13,7 +13,6 @@ import 'dayjs/locale/hi';
 import '../../locales/dayJs-gu.ts';
 import localeEn from 'antd/es/date-picker/locale/en_US';
 import localeHi from 'antd/es/date-picker/locale/hi_IN';
-
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import OrderPDF from "./OrderPDF";
@@ -78,16 +77,15 @@ const ViewOrders = () => {
             if (matchedOrder) {
                 setSelectedOrderItems(matchedOrder.Details || []);
             }
-            // setSelectedDates([dayjs(orderDate), dayjs(orderDate)]); // Set the selected date to the order date
         }
     }, [orderId, orders]);
+
     useEffect(() => {
         if (orderDate) {
             setSelectedDates([dayjs(orderDate), dayjs(orderDate)]);
+            setSelectedYear(selectedYear)
         }
-    }, [orderDate,]);
-
-
+    }, [orderDate,selectedYear]);
 
     useEffect(() => {
         const fetchAllYear = async () => {

@@ -122,7 +122,8 @@
     "logoutSuccess": "सफलतापूर्वक लॉग आउट किया गया!",
     "language": "भाषा",
     "logout": "लॉग आउट",
-    "ShreejiVeg": "श्रीजी वेज"
+    "ShreejiVeg": "श्रीजी वेज",
+    "installApp": "ऐप इंस्टॉल करें"
   },
   "footer": {
     "copyright": "श्रीजी वेज। सर्वाधिकार सुरक्षित।"
@@ -136,6 +137,15 @@
     "order": "ऑर्डर",
     "message": "संदेश",
     "time": "समय",
-    "no_notifications": "कोई सूचना उपलब्ध नहीं है"
+    "no_notifications": "कोई सूचना उपलब्ध नहीं है",
+    "Please select at least one notification.": "कृपया कम से कम एक सूचना का चयन करें।",
+    "deleteConfermation": "क्या आप वास्तव में इन सूचनाओं को हटाना चाहते हैं?",
+    "deleteMessage":"यह स्थायी रूप से",
+    "notifications": "सूचना(ओं) को हटा देगा।",
+    "ok": "हाँ",
+    "cancel": "नहीं",
+    "danger": "खतरा",
+    "deleteSuccess": "सूचनाएँ सफलतापूर्वक हटा दी गईं",
+    "deleteError": "सूचनाएँ हटाने में त्रुटि"
   }
 }

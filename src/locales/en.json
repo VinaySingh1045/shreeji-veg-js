@@ -75,8 +75,8 @@
     "orderCount": "Order Count",
     "orderAdded": "Order added successfully",
     "orderUpdated": "Order updated successfully",
-    "orderAddFailed": "Failed to add order",
-    "orderUpdateFailed": "Failed to update order"
+    "orderAddFailed": "order not saved",
+    "orderUpdateFailed": "order not saved"
   },
   "viewOrders": {
     "account_code": "Account Code",
@@ -122,7 +122,8 @@
     "logoutSuccess": "Logged out successfully!",
     "language": "Language",
     "logout": "Logout",
-    "ShreejiVeg": "Shreeji Veg"
+    "ShreejiVeg": "Shreeji Veg",
+    "installApp": "Install App"
   },
   "footer": {
     "copyright": "Shreeji Veg. All rights reserved."
@@ -136,6 +137,15 @@
     "order": "Order",
     "message": "Message",
     "time": "Time",
-    "no_notifications": "No notifications available"
+    "no_notifications": "No notifications available",
+    "Please select at least one notification.": "Please select at least one notification.",
+    "deleteConfermation": "Are you sure you want to delete these notifications?",
+    "deleteMessage": "This will permanently delete",
+    "notifications": "Notification(s)",
+    "ok": "Yes",
+    "cancel": "No",
+    "danger": "Danger",
+    "deleteSuccess": "Notifications deleted successfully",
+    "deleteError": "Failed to delete notifications"
   }
 }
