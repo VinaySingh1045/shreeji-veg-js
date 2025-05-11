@@ -37,27 +37,27 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
 
-useEffect(() => {
-  const handler = (e: any) => {
-    console.log("beforeinstallprompt fired");
-    e.preventDefault();
-    setDeferredPrompt(e);
-    setShowInstallBtn(true);
-  };
-
-  window.addEventListener("beforeinstallprompt", handler);
-
-  return () => {
-    window.removeEventListener("beforeinstallprompt", handler);
-  };
-}, []);
   useEffect(() => {
-  console.log("showInstallBtn", showInstallBtn);
-}, [showInstallBtn]);
+    const handler = (e: any) => {
+      console.log("beforeinstallprompt fired");
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
 
-// useEffect(() => {
-//   console.log('PWA installable check:', deferredPrompt);
-// }, [deferredPrompt]);
+    window.addEventListener("beforeinstallprompt", handler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
+  }, []);
+  useEffect(() => {
+    console.log("showInstallBtn", showInstallBtn);
+  }, [showInstallBtn]);
+
+  // useEffect(() => {
+  //   console.log('PWA installable check:', deferredPrompt);
+  // }, [deferredPrompt]);
 
 
   const handlePWAInstall = async () => {
@@ -150,6 +150,16 @@ useEffect(() => {
         <Button onClick={handleLogout} type="text" icon={<LogoutOutlined />}>
           {t('nav.logout')}
         </Button>
+        {
+          showInstallBtn &&
+          <Button
+            type="text"
+            onClick={handlePWAInstall}
+            icon={<DownloadOutlined />}
+          >
+            {t('nav.installApp') || 'Install App'}
+          </Button>
+        }
       </Space>
     </div>
   );
@@ -171,23 +181,6 @@ useEffect(() => {
   const initials = getInitials(fullName);
 
   const menuItems = [
-    ...(showInstallBtn
-      ? [
-        {
-          key: 'install',
-          label: (
-            <Button
-              type="text"
-              onClick={handlePWAInstall}
-              icon={<DownloadOutlined />}
-              style={{ color: '#fff' }}
-            >
-              {t('nav.installApp') || 'Install App'}
-            </Button>
-          ),
-        },
-      ]
-      : []),
     ...(user && user.isAdmin
       ? [
         { key: 'admin-users', label: t('nav.users') },
@@ -384,7 +377,7 @@ useEffect(() => {
                   {t('nav.installApp') || 'Install App'}
                 </Button>
               </div>
-            )};
+            )}
           </Drawer>
         </>
       )}
