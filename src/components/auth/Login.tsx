@@ -39,7 +39,7 @@ const Login = () => {
     if (savedUser) {
       const parsed = JSON.parse(savedUser);
       form.setFieldsValue({
-        Ac_Name: parsed.Ac_Name,
+        Mobile_No: parsed.Mobile_No,
         Book_Pass: parsed.Book_Pass,
         remember: true,
       });
@@ -57,7 +57,7 @@ const Login = () => {
 
       if (values.remember) {
         localStorage.setItem("rememberedUser", JSON.stringify({
-          Ac_Name: values.Ac_Name,
+          Mobile_No: values.Mobile_No,
           Book_Pass: values.Book_Pass,
         }));
       } else {
@@ -119,13 +119,13 @@ const Login = () => {
               initialValues={{ remember: true }}
             >
               <Form.Item
-                label={t("login.userName")}
-                name="Ac_Name"
-                rules={[{ required: true, message: t("login.enterUsername") }]}
+                label={t("login.UserPhoneNo")}
+                name="Mobile_No"
+                rules={[{ required: true, message: t("login.enterPhoneNo") }]}
               >
                 <Input
                   prefix={<UserOutlined />}
-                  placeholder={t("login.usernamePlaceholder")}
+                  placeholder={t("login.PhoneNoPlaceholder")}
                   size="large"
                 />
               </Form.Item>

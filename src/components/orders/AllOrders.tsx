@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Input, Space, DatePicker, Form, Button, message, Spin } from "antd";
+import { Table, Input, Space, DatePicker, Form, Button, message, Spin, theme } from "antd";
 import { fetchAllVegetables, fetchFavoriteVegetables } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs, { Dayjs } from "dayjs";
-import { AddOrder, GetBillNo, GetLrNo } from "../../services/orderAPI";
+import { AddOrder, GetLrNo, UpdateOrder } from "../../services/orderAPI";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,7 @@ import localeHi from 'antd/es/date-picker/locale/hi_IN';
 
 const AllOrders = () => {
 
+  const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean, Id: string, Our_Shop_Ac: boolean, Ac_Code: string } | null };
   const { t, i18n } = useTranslation();
   useEffect(() => {
     dayjs.locale(i18n.language);
@@ -62,6 +63,9 @@ const AllOrders = () => {
   const location = useLocation();
   const { orderData } = location.state || {};
   const navigate = useNavigate();
+  const userDetails = location?.state || null;
+  const { token } = theme.useToken();
+  console.log("orderData admin", userDetails);
 
   useEffect(() => {
     if (orderData && Array.isArray(orderData.Details)) {
@@ -91,6 +95,7 @@ const AllOrders = () => {
     }
   }, [orderData]);
 
+  console.log("orderData: ", orderData);
 
 
   useEffect(() => {
@@ -119,10 +124,10 @@ const AllOrders = () => {
   }, [favorites, all]);
 
   useEffect(() => {
-    const lowerSearch = searchText.trim().toLowerCase();
+    const lowerSearch = searchText?.trim().toLowerCase();
 
     const searchMatched = mergedData.filter(item =>
-      item.Itm_Name.toLowerCase().includes(lowerSearch)
+      item?.Itm_Name?.toLowerCase().includes(lowerSearch)
     );
     const quantityItems = mergedData.filter(item => {
       const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
@@ -155,9 +160,10 @@ const AllOrders = () => {
   }, [searchText, mergedData, favorites, quantities]);
 
   useEffect(() => {
-    dispatch(fetchFavoriteVegetables());
+    // if(user)
+    dispatch(fetchFavoriteVegetables(userDetails ? userDetails?.Id : user?.Id));
     dispatch(fetchAllVegetables());
-  }, [dispatch]);
+  }, [dispatch, userDetails, user]);
 
 
   const handleManualInput = (itemId: number, value: string) => {
@@ -172,28 +178,25 @@ const AllOrders = () => {
       setBillDate(dayjs(dateFormatted));
       try {
         const formattedDate = date.format("YYYY-MM-DD");
-        const res = await GetLrNo(formattedDate);
-        setLrNo(res?.data?.Order_Count);
+        if (userDetails) {
+          const res = await GetLrNo(formattedDate, userDetails.Id);
+          setLrNo(res?.data?.Order_Count);
+          console.log("res userDetails", res);
+        }
+        else {
+          const res = await GetLrNo(formattedDate, user?.Id ?? "");
+          setLrNo(res?.data?.Order_Count);
+          console.log("res user", res);
+        }
       } catch {
         setLrNo(null);
       }
     }
   };
 
-  const handleGetBillNo = async () => {
-    try {
-      const res = await GetBillNo();
-      SetBillNo(res?.data?.Bill_No);
-    } catch {
-      SetBillNo(null);
-    }
-
-  };
-
   useEffect(() => {
     if (!orderData) {
       handleDateChange(billDate);
-      handleGetBillNo();
     }
   }, [orderData]);
 
@@ -228,10 +231,20 @@ const AllOrders = () => {
         })),
     ];
 
+    const allQuantitiesZero = details.every(item => item.Inward === 0);
+
+    if (details.length === 0 || allQuantitiesZero) {
+      message.warning("Please enter at least one quantity greater than zero.");
+      return;
+    }
+
     const payload = {
       mode: "add",
+      Ac_Id: userDetails ? userDetails?.Id : user?.Id,
       details,
-      Bill_No: billNo,
+      Ac_Code: user?.Ac_Code,
+      Our_Shop_Ac: user?.Our_Shop_Ac,
+      // Bill_No: billNo,
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
@@ -241,8 +254,8 @@ const AllOrders = () => {
       await AddOrder(payload);
       setQuantities({});
       await handleDateChange(billDate);
-      await handleGetBillNo();
       message.success(t('allOrders.orderAdded'));
+      navigate("/");
     } catch (error) {
       message.error(t('allOrders.orderAddFailed'));
       console.error("Error while adding order: ", error);
@@ -289,8 +302,8 @@ const AllOrders = () => {
 
   ];
 
-  const handleUpdateOrder = async () => {
-    if(!billNo || !lrNo) {
+  const handleUpdateOrder = async (Id: string) => {
+    if (!billNo || !lrNo) {
       message.error(t('allOrders.orderUpdateFailed'));
       return;
     }
@@ -320,13 +333,14 @@ const AllOrders = () => {
     const payload = {
       mode: "edit",
       details,
-      Bill_No: billNo,
+      Id: Id,
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
+    console.log("payload", payload);
     try {
       setAddLoding(true);
-      await AddOrder(payload);
+      await UpdateOrder(payload);
       message.success(t('allOrders.orderUpdated'));
       navigate("/");
     } catch {
@@ -361,10 +375,10 @@ const AllOrders = () => {
             <Form.Item label={t('allOrders.orderNo')} colon={false} style={{ marginBottom: 0 }}>
               <Input
                 placeholder={(t('allOrders.orderNo'))}
-                value={billNo || ""}
+                value={orderData ? billNo || "" : "New"}
                 size="small"
                 disabled
-                style={{ fontWeight: "bold", color: "rgba(0, 0, 0, 0.85)" }}
+                style={{ fontWeight: "bold", color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
               />
             </Form.Item>
 
@@ -374,20 +388,20 @@ const AllOrders = () => {
                 value={lrNo || ""}
                 size="small"
                 disabled
-                style={{ fontWeight: "bold", color: "rgba(0, 0, 0, 0.85)" }}
+                style={{ fontWeight: "bold", color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
               />
             </Form.Item>
           </div>
 
           <div className="flex flex-wrap gap-3 justify-start mt-4 mb-4">
-            <Button type="primary" onClick={orderData ? handleUpdateOrder : handleAddOrder}>
+            <Button type="primary" onClick={orderData ? () => handleUpdateOrder(orderData.Id) : handleAddOrder}>
               {orderData ? t('allOrders.updateOrder') : t('allOrders.addOrder')}
             </Button>
-            {orderData && (
+            {
               <Button type="default" onClick={() => navigate("/")}>
                 {t('allOrders.cancel')}
               </Button>
-            )}
+            }
           </div>
           <Space direction="vertical" style={{ width: "100%" }}>
             <Input.Search
@@ -410,9 +424,9 @@ const AllOrders = () => {
           </Space>
         </>
       )}
-      <Button type="primary" onClick={() => navigate("/")}>
+      {/* <Button type="primary" onClick={() => navigate("/")}>
         Back
-      </Button>
+      </Button> */}
     </div>
   );
 

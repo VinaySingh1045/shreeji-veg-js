@@ -37,15 +37,28 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
 
+useEffect(() => {
+  const handler = (e: any) => {
+    console.log("beforeinstallprompt fired");
+    e.preventDefault();
+    setDeferredPrompt(e);
+    setShowInstallBtn(true);
+  };
+
+  window.addEventListener("beforeinstallprompt", handler);
+
+  return () => {
+    window.removeEventListener("beforeinstallprompt", handler);
+  };
+}, []);
   useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault(); // ✅ Prevent default prompt
-      setDeferredPrompt(e);
-      setShowInstallBtn(true); // ✅ Show custom install button
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+  console.log("showInstallBtn", showInstallBtn);
+}, [showInstallBtn]);
+
+// useEffect(() => {
+//   console.log('PWA installable check:', deferredPrompt);
+// }, [deferredPrompt]);
+
 
   const handlePWAInstall = async () => {
     if (deferredPrompt) {

@@ -18,17 +18,18 @@ const FavoriteVeges = () => {
     const [searchText, setSearchText] = useState("");
     const [filteredVeges, setFilteredVeges] = useState<Vegetable[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean, Id: string, Our_Shop_Ac: boolean, Ac_Code: string } | null };
     const pageSize = 20;
 
     const favoriteVeges = favorites || [];
 
     useEffect(() => {
-        dispatch(fetchFavoriteVegetables());
-    }, [dispatch]);
+        dispatch(fetchFavoriteVegetables(user?.Id || ""));
+    }, [dispatch, user]);
 
     useEffect(() => {
         const filtered = favoriteVeges.filter((veg: Vegetable) =>
-            veg.Itm_Name.toLowerCase().includes(searchText.toLowerCase())
+            veg.Itm_Name?.toLowerCase().includes(searchText?.toLowerCase())
         );
 
         if (JSON.stringify(filtered) !== JSON.stringify(filteredVeges)) {
@@ -72,7 +73,7 @@ const FavoriteVeges = () => {
         } else {
             message.error(t('favorite.removeError'));
         }
-        dispatch(fetchFavoriteVegetables());
+        dispatch(fetchFavoriteVegetables(user?.Id || ""));
         message.success(t('favorite.removeSuccess'));
     }
 

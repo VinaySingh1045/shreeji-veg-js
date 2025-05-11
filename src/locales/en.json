@@ -1,8 +1,8 @@
 {
   "login": {
-    "userName": "User Name",
-    "enterUsername": "Please enter your username!",
-    "usernamePlaceholder": "Enter your username",
+    "UserPhoneNo": "Phone No.",
+    "enterPhoneNo": "Please enter your PhoneNo!",
+    "PhoneNoPlaceholder": "Enter your PhoneNo",
     "password": "Password",
     "enterPassword": "Please enter your password!",
     "passwordPlaceholder": "Enter your password",
@@ -62,7 +62,7 @@
     "removeError": "Error removing from favorites"
   },
   "allOrders": {
-    "addOrder": "Add Order",
+    "addOrder": "Update",
     "updateOrder": "Update Order",
     "cancel": "Cancel",
     "searchPlaceholder": "Search by vegetable name",

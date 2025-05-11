@@ -2,9 +2,10 @@ import axios from "axios";
 import { API_END_POINT } from "../utils/constant";
 import { getAuthHeaders } from "../utils/getAuthHeaders";
 
-export const GetLrNo = async (userData: string) => {
+export const GetLrNo = async (Bill_Date: string ,Id: string) => {
+    // ({mobileNo, Ac_Name}: {mobileNo: string, Ac_Name: string})
     try {
-        const res = await axios.post(`${API_END_POINT}/getLrNo`, { Bill_Date: userData }, {
+        const res = await axios.post(`${API_END_POINT}/getLrNo`, { Bill_Date: Bill_Date, Ac_Id: Id }, {
             headers: getAuthHeaders(),
         })
         return res.data
@@ -28,12 +29,24 @@ export const GetBillNo = async () => {
 
 export const AddOrder = async (payload: any) => {
     try {
-        const res = await axios.post(`${API_END_POINT}/insertSalePurMain`, payload, {
+        const res = await axios.post(`${API_END_POINT}/addSalePurMain`, payload, {
             headers: getAuthHeaders(),
         });
         return res.data;
     } catch (error) {
         console.error("Error while adding order:", error);
+        throw error;
+    }
+};
+
+export const UpdateOrder = async (payload: any) => {
+    try {
+        const res = await axios.post(`${API_END_POINT}/editSalePurMain`, payload, {
+            headers: getAuthHeaders(),
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error while Edting order:", error);
         throw error;
     }
 };

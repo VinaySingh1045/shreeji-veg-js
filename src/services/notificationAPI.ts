@@ -26,3 +26,18 @@ export const MarkNotificationAsSeen = async () => {
         throw error;
     }
 }
+
+export const DeleteNotifications = async (Ids: string[] | number[]) => {
+    try {
+        const res = await axios.delete(`${API_END_POINT}/deleteNotification`, {
+            headers: getAuthHeaders(),
+            data: {Ids}
+        })
+        console.log("res", res)
+        return res.data
+    } catch (error) {
+        console.error('Error While deleting the Notification:', error)
+        throw error;
+    }
+}
+

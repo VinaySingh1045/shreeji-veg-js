@@ -1,8 +1,8 @@
 {
   "login": {
-    "userName": "उपयोगकर्ता नाम",
-    "enterUsername": "कृपया उपयोगकर्ता नाम दर्ज करें!",
-    "usernamePlaceholder": "अपना उपयोगकर्ता नाम दर्ज करें",
+    "UserPhoneNo": "फोन नंबर",
+    "enterPhoneNo": "कृपया अपना फोन नंबर दर्ज करें!",
+    "PhoneNoPlaceholder": "अपना फोन नंबर दर्ज करें",
     "password": "पासवर्ड",
     "enterPassword": "कृपया पासवर्ड दर्ज करें!",
     "passwordPlaceholder": "अपना पासवर्ड दर्ज करें",

@@ -1,8 +1,8 @@
 {
   "login": {
-    "userName": "યુઝરનામ",
-    "enterUsername": "મહેરબાની કરીને યુઝરનામ દાખલ કરો!",
-    "usernamePlaceholder": "તમારું યુઝરનામ દાખલ કરો",
+    "UserPhoneNo": "મોબાઈલ નંબર",
+    "enterPhoneNo": "મોબાઈલ નંબર દાખલ કરો!",
+    "PhoneNoPlaceholder": "મોબાઈલ નંબર દાખલ કરો",
     "password": "પાસવર્ડ",
     "enterPassword": "મહેરબાની કરીને પાસવર્ડ દાખલ કરો!",
     "passwordPlaceholder": "તમારું પાસવર્ડ દાખલ કરો",

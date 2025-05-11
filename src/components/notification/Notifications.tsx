@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Spin, message, Button, Checkbox, Modal } from 'antd';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
-import { GetNotifaction } from '../../services/notificationAPI';
+import { DeleteNotifications, GetNotifaction } from '../../services/notificationAPI';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -138,6 +138,9 @@ const Notifications = () => {
         try {
           // await DeleteNotifications(selectedIds);
           message.success(t('notifications.deleteSuccess'));
+          console.log("selectedIds", selectedIds);
+          await DeleteNotifications(selectedIds);
+          message.success("Notifications deleted successfully");
           console.log("checkedIds", selectedIds);
           const updated = notifications.filter(n => !selectedIds.includes(n.Id ?? ''));
           setNotifications(updated);
