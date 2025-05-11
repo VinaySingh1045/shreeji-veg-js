@@ -10,7 +10,7 @@ const Notifications = () => {
   const { t } = useTranslation();
 
   interface Notification {
-    Id?: string;
+    Id?: number;
     Ac_Id: string;
     Cat: string;
     Noti_Date_Time: string;
@@ -19,29 +19,11 @@ const Notifications = () => {
   }
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(false); // Set false to skip spinner initially
+  const [loading, setLoading] = useState(true);
   const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
   const [category, setCategory] = useState<string>('All');
   const navigate = useNavigate();
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  console.log("notifications", notifications);
-
-  // const str = notifications[0]?.Noti;
-  // const regex = /order (\d+)/;
-  // const match = str ? str.match(regex) : null; // Handle case when str is undefined or null
-
-  // const billNo = match ? match[1] : null;
-  // const billNo = notifications.map(notification => {
-  //   const str = notification?.Noti; // Access each notification's Noti field
-  //   const regex = /order (\d+)/; // Regex to capture the order number
-  //   const match = str ? str.match(regex) : null; // Apply regex to extract the BillNo
-
-  //   return match ? match[1] : null; // Return the BillNo if match is found, else return null
-  // });
-
-  // console.log("billNo", billNo);
-  // console.log("category", category);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
     // Fetch notifications when the component mounts
@@ -115,7 +97,7 @@ const Notifications = () => {
     }
   };
 
-  const handleCheckboxChange = (id: string, checked: boolean) => {
+  const handleCheckboxChange = (id: number, checked: boolean) => {
     setSelectedIds(prev => {
       const updated = checked ? [...prev, id] : prev.filter(item => item !== id);
       return updated;
@@ -142,7 +124,7 @@ const Notifications = () => {
           await DeleteNotifications(selectedIds);
           message.success("Notifications deleted successfully");
           console.log("checkedIds", selectedIds);
-          const updated = notifications.filter(n => !selectedIds.includes(n.Id ?? ''));
+          const updated = notifications.filter(n => !selectedIds.includes(n.Id ?? 0));
           setNotifications(updated);
           setFilteredNotifications(
             category === "All"
@@ -157,14 +139,44 @@ const Notifications = () => {
     });
   };
 
-  return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        {/* Left side buttons */}
-        <div>
+  return loading ?
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+    }}>
+      <Spin /> </div> : (
+      <div style={{ padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+          {/* Left side buttons */}
+          <div>
+            <Button
+              type={category === 'All' ? 'primary' : 'default'}
+              onClick={() => setCategory('All')}
+            >
+              All
+            </Button>
+            <Button
+              type={category === 'New User' ? 'primary' : 'default'}
+              onClick={() => setCategory('New User')}
+              style={{ marginLeft: '8px' }}
+            >
+              User
+            </Button>
+            <Button
+              type={category === 'Order' ? 'primary' : 'default'}
+              onClick={() => setCategory('Order')}
+              style={{ marginLeft: '8px' }}
+            >
+              Order
+            </Button>
+          </div>
+
+          {/* Right side delete button */}
           <Button
-            type={category === 'All' ? 'primary' : 'default'}
-            onClick={() => setCategory('All')}
+            danger
+            onClick={handleDelete}
           >
            {t('notifications.all')}
           </Button>
@@ -181,60 +193,52 @@ const Notifications = () => {
             style={{ marginLeft: '8px' }}
           >
             {t('notifications.order')}
+            <DeleteOutlined />
           </Button>
         </div>
 
-        {/* Right side delete button */}
-        <Button
-          danger
-          onClick={handleDelete}
-        >
-          <DeleteOutlined />
-        </Button>
+        {loading ? (
+          <Spin indicator={antIcon} />
+        ) : (
+          <Row gutter={[16, 16]}>
+            {filteredNotifications && filteredNotifications.map((notification, index) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                <Card
+                  // title={category === "Order" ? `Order` : `New User`}
+                  title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>{getCardTitle(notification.Cat)}</span>
+                    <Checkbox
+                      checked={notification.Id ? selectedIds.includes(notification.Id) : false}
+                      onClick={(e) => e.stopPropagation()} // Prevent card click
+                      onChange={(e) => handleCheckboxChange(notification.Id ?? 0, e.target.checked)}
+                    />
+                  </div>}
+                  bordered={false}
+                  hoverable
+                  onClick={() => handleCardClick(notification.Cat, notification.Noti)}
+                >
+                  <p><strong>Message:</strong> {notification?.Noti}</p>
+                  <p><strong>Time:</strong>{new Date(notification.Noti_Date_Time).toLocaleTimeString("en-IN", {
+                    timeZone: "Asia/Kolkata",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true,
+                  })}</p>
+                </Card>
+              </Col>
+            ))}
+            {filteredNotifications.length === 0 && (
+              <Col span={24}>
+                <Card bordered={false} style={{ textAlign: 'center' }}>
+                  <p>No notifications available</p>
+                </Card>
+              </Col>
+            )}
+          </Row>
+        )}
       </div>
-
-      {loading ? (
-        <Spin indicator={antIcon} />
-      ) : (
-        <Row gutter={[16, 16]}>
-          {filteredNotifications && filteredNotifications.map((notification, index) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={index}>
-              <Card
-                // title={category === "Order" ? `Order` : `New User`}
-                title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>{getCardTitle(notification.Cat)}</span>
-                  <Checkbox
-                    checked={notification.Id ? selectedIds.includes(notification.Id) : false}
-                    onClick={(e) => e.stopPropagation()} // Prevent card click
-                    onChange={(e) => handleCheckboxChange(notification.Id ?? '', e.target.checked)}
-                  />
-                </div>}
-                bordered={false}
-                hoverable
-                onClick={() => handleCardClick(notification.Cat, notification.Noti)}
-              >
-                <p><strong>{t('notifications.message')}:</strong> {notification?.Noti}</p>
-                <p><strong>{t('notifications.time')}:</strong>{new Date(notification.Noti_Date_Time).toLocaleTimeString("en-IN", {
-                  timeZone: "Asia/Kolkata",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                  hour12: true,
-                })}</p>
-              </Card>
-            </Col>
-          ))}
-          {filteredNotifications.length === 0 && (
-            <Col span={24}>
-              <Card bordered={false} style={{ textAlign: 'center' }}>
-                <p>{t('notifications.no_notifications')}</p>
-              </Card>
-            </Col>
-          )}
-        </Row>
-      )}
-    </div>
-  );
+    );
 };
 
 export default Notifications;
