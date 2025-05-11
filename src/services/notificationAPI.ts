@@ -27,7 +27,7 @@ export const MarkNotificationAsSeen = async () => {
     }
 }
 
-export const DeleteNotifications = async (Ids: string[] | number[]) => {
+export const DeleteNotifications = async (Ids: number[]) => {
     try {
         const res = await axios.delete(`${API_END_POINT}/deleteNotification`, {
             headers: getAuthHeaders(),
