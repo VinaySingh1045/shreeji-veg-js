@@ -12,7 +12,7 @@ const UserListToApprove = () => {
     const { t } = useTranslation();
     const [users, setUsers] = useState<IColumns[]>([]);
     const [loading, setLoading] = useState(false);
-    // const { token } = theme.useToken();
+    const [searchQuery, setSearchQuery] = useState("");
     const [activeTab, setActiveTab] = useState<'approved' | 'toApprove'>('approved');
     const inputRefs = useRef<Record<string, InputRef | null>>({});
     const location = useLocation();
@@ -114,13 +114,16 @@ const UserListToApprove = () => {
                     >
                         <PlusOutlined />
                     </Button >
+                } else if (activeTab === 'approved') {
+                    return (
+                        <Button
+                            type="primary"
+                            onClick={() => record.Id && handleStatusChange(record.Id, record.approvalCode || '')}
+                        >
+                            {t('AproveUser.approve')}
+                        </Button>
+                    )
                 }
-                <Button
-                    type="primary"
-                    onClick={() => record.Id && handleStatusChange(record.Id, record.approvalCode || '')}
-                >
-                    {t('AproveUser.approve')}
-                </Button>
             },
         },
     ];
@@ -137,7 +140,7 @@ const UserListToApprove = () => {
             };
             await ApproveUser(payload);
             message.success(t('AproveUser.statusSuccess'));
-            fetchUsers('toApprove');
+            fetchUsers('approved');
         } catch (error) {
             console.error(t('AproveUser.statusError'), error);
             message.error(t('AproveUser.statusError'));
@@ -166,6 +169,12 @@ const UserListToApprove = () => {
         fetchUsers(activeTab);
     }, [activeTab]);
 
+    const filteredUsers = users.filter((user) =>
+        user.Mobile_No?.toString().includes(searchQuery.trim()) ||
+        user.Ac_Name?.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    );
+
+
     return (
         <div style={{ padding: '20px' }}>
             <div style={{ display: 'flex', marginBottom: '16px' }}>
@@ -184,9 +193,20 @@ const UserListToApprove = () => {
                     User List
                 </Button>
             </div>
+            {activeTab === 'toApprove' && (
+                <Input.Search
+                    placeholder="Search by Mobile No or Username"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    size="small"
+                    enterButton
+                    style={{ width: '100%', marginBottom: "7px" }}
+                />
+            )}
+
             <Table
                 columns={columns}
-                dataSource={users}
+                dataSource={activeTab === 'toApprove' ? filteredUsers : users}
                 rowKey="_id"
                 loading={loading}
                 pagination={{ pageSize: 20 }}
