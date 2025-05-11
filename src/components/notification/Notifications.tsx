@@ -3,12 +3,8 @@ import { Card, Row, Col, Spin, message, Button, Checkbox, Modal } from 'antd';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { DeleteNotifications, GetNotifaction } from '../../services/notificationAPI';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-
 
 const Notifications = () => {
-  const { t } = useTranslation();
-
   interface Notification {
     Id?: number;
     Ac_Id: string;
@@ -58,9 +54,9 @@ const Notifications = () => {
 
   const getCardTitle = (category: string) => {
     // console.log("category2", category);
-    if (category === 'New User') return t('notifications.user');
-    if (category === 'Order') return t('notifications.order');
-    return t('notifications.all'); // Default title if it's neither "New user" nor "Order"
+    if (category === 'New User') return 'User';
+    if (category === 'Order') return 'Order';
+    return 'Notification'; // Default title if it's neither "New user" nor "Order"
   };
 
   const handleCardClick = (category: string, noti: string) => {
@@ -106,20 +102,18 @@ const Notifications = () => {
 
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
-      message.warning(t('notifications.Please select at least one notification.'));
+      message.warning("Please select at least one notification.");
       return;
     }
 
     Modal.confirm({
-      title: t('notifications.deleteConfermation'),
-      content: `${t('notifications.deleteMessage')} ${selectedIds.length} ${t('notifications.notifications')}`,
-      okText: t('notifications.ok'),
+      title: 'Are you sure you want to delete these notifications?',
+      content: `This will permanently delete ${selectedIds.length} notification(s).`,
+      okText: 'Yes',
       okType: 'danger',
-      cancelText: t('notifications.cancel'),
+      cancelText: 'No',
       onOk: async () => {
         try {
-          // await DeleteNotifications(selectedIds);
-          message.success(t('notifications.deleteSuccess'));
           console.log("selectedIds", selectedIds);
           await DeleteNotifications(selectedIds);
           message.success("Notifications deleted successfully");
@@ -133,7 +127,7 @@ const Notifications = () => {
           );
           setSelectedIds([]);
         } catch {
-          message.error(t('notifications.deleteError'));
+          message.error("Failed to delete notifications");
         }
       },
     });
@@ -178,21 +172,6 @@ const Notifications = () => {
             danger
             onClick={handleDelete}
           >
-           {t('notifications.all')}
-          </Button>
-          <Button
-            type={category === 'New User' ? 'primary' : 'default'}
-            onClick={() => setCategory('New User')}
-            style={{ marginLeft: '8px' }}
-          >
-            {t('notifications.user')}
-          </Button>
-          <Button
-            type={category === 'Order' ? 'primary' : 'default'}
-            onClick={() => setCategory('Order')}
-            style={{ marginLeft: '8px' }}
-          >
-            {t('notifications.order')}
             <DeleteOutlined />
           </Button>
         </div>
