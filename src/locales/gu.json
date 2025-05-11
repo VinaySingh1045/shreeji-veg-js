@@ -1,8 +1,8 @@
 {
   "login": {
-    "userName": "યુઝરનામ",
-    "enterUsername": "મહેરબાની કરીને યુઝરનામ દાખલ કરો!",
-    "usernamePlaceholder": "તમારું યુઝરનામ દાખલ કરો",
+    "UserPhoneNo": "મોબાઈલ નંબર",
+    "enterPhoneNo": "મોબાઈલ નંબર દાખલ કરો!",
+    "PhoneNoPlaceholder": "મોબાઈલ નંબર દાખલ કરો",
     "password": "પાસવર્ડ",
     "enterPassword": "મહેરબાની કરીને પાસવર્ડ દાખલ કરો!",
     "passwordPlaceholder": "તમારું પાસવર્ડ દાખલ કરો",
@@ -122,12 +122,30 @@
     "logoutSuccess": "સફળતાપૂર્વક લોગ આઉટ થયો!",
     "language": "ભાષા",
     "logout": "લૉગ આઉટ",
-    "ShreejiVeg": "શ્રીજી વેજ"
+    "ShreejiVeg": "શ્રીજી વેજ",
+    "installApp": "એપ્લિકેશન ઇન્સ્ટોલ કરો"
   },
   "footer": {
     "copyright": "શ્રીજી વેજ. સર્વ હકો રાખેલા છે."
   },
   "languageChange": {
     "message": "ભાષા સફળતાપૂર્વક બદલાઈ ગઈ!"
+  },
+  "notifications": {
+    "all": "બધા",
+    "user": "વપરાશકર્તા",
+    "order": "ઓર્ડર",
+    "message": "સંદેશ",
+    "time": "સમય",
+    "no_notifications": "કોઈ સૂચનાઓ ઉપલબ્ધ નથી",
+    "Please select at least one notification.": "કૃપા કરીને ઓછામાં ઓછા એક સૂચના પસંદ કરો.",
+    "deleteConfermation": "શું તમે ખરેખર આ સૂચનાઓ કાઢી નાખવા માંગો છો?",
+    "deleteMessage":"આ",
+    "notifications":"સૂચના(ઓ)ને કાયમ માટે દૂર કરી દેશે.",
+    "ok": "હાં",
+    "cancel": "ના",
+    "danger": "ખતરો",
+    "deleteSuccess": "સૂચનાઓ સફળતાપૂર્વક કાઢી નાખવામાં આવી",
+    "deleteError": "સૂચનાઓ કાઢવામાં નિષ્ફળ"
   }
 }

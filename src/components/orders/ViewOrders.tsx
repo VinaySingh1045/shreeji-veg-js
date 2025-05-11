@@ -13,7 +13,6 @@ import 'dayjs/locale/hi';
 import '../../locales/dayJs-gu.ts';
 import localeEn from 'antd/es/date-picker/locale/en_US';
 import localeHi from 'antd/es/date-picker/locale/hi_IN';
-
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import OrderPDF from "./OrderPDF";

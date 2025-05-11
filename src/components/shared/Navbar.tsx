@@ -10,6 +10,7 @@ import { LogoutApi } from '../../services/authAPI';
 import dayjs from 'dayjs';
 import { GetNotifaction, MarkNotificationAsSeen } from '../../services/notificationAPI';
 import { useTranslation } from 'react-i18next';
+import { DownloadOutlined } from '@ant-design/icons';
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -18,6 +19,8 @@ interface NavbarProps {
   onToggleTheme: () => void;
   currentTheme: 'light' | 'dark';
 }
+
+
 
 const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const { t } = useTranslation();
@@ -30,6 +33,44 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean } | null };
   const [currentDate, setCurrentDate] = useState('');
   const [hasNewNotification, setHasNewNotification] = useState(false);
+  //pwa install
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
+
+useEffect(() => {
+  const handler = (e: any) => {
+    console.log("beforeinstallprompt fired");
+    e.preventDefault();
+    setDeferredPrompt(e);
+    setShowInstallBtn(true);
+  };
+
+  window.addEventListener("beforeinstallprompt", handler);
+
+  return () => {
+    window.removeEventListener("beforeinstallprompt", handler);
+  };
+}, []);
+  useEffect(() => {
+  console.log("showInstallBtn", showInstallBtn);
+}, [showInstallBtn]);
+
+// useEffect(() => {
+//   console.log('PWA installable check:', deferredPrompt);
+// }, [deferredPrompt]);
+
+
+  const handlePWAInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      }
+      setDeferredPrompt(null);
+      setShowInstallBtn(false); // Hide button after interaction
+    }
+  };
 
   useEffect(() => {
     const checkNotifications = async () => {
@@ -130,6 +171,23 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
   const initials = getInitials(fullName);
 
   const menuItems = [
+    ...(showInstallBtn
+      ? [
+        {
+          key: 'install',
+          label: (
+            <Button
+              type="text"
+              onClick={handlePWAInstall}
+              icon={<DownloadOutlined />}
+              style={{ color: '#fff' }}
+            >
+              {t('nav.installApp') || 'Install App'}
+            </Button>
+          ),
+        },
+      ]
+      : []),
     ...(user && user.isAdmin
       ? [
         { key: 'admin-users', label: t('nav.users') },
@@ -315,6 +373,18 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
                 </Button>
               </div>
             )}
+            {showInstallBtn && !screens.md && (
+              <div style={{ marginTop: 8 }}>
+                <Button
+                  type="default"
+                  icon={<DownloadOutlined />}
+                  block
+                  onClick={handlePWAInstall}
+                >
+                  {t('nav.installApp') || 'Install App'}
+                </Button>
+              </div>
+            )};
           </Drawer>
         </>
       )}

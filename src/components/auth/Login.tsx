@@ -119,13 +119,13 @@ const Login = () => {
               initialValues={{ remember: true }}
             >
               <Form.Item
-                label={t("login.userName")}
+                label={t("login.UserPhoneNo")}
                 name="Mobile_No"
-                rules={[{ required: true, message: t("login.enterUsername") }]}
+                rules={[{ required: true, message: t("login.enterPhoneNo") }]}
               >
                 <Input
                   prefix={<UserOutlined />}
-                  placeholder={t("login.usernamePlaceholder")}
+                  placeholder={t("login.PhoneNoPlaceholder")}
                   size="large"
                 />
               </Form.Item>
