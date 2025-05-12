@@ -76,7 +76,8 @@
     "orderAdded": "Order added successfully",
     "orderUpdated": "Order updated successfully",
     "orderAddFailed": "order not saved",
-    "orderUpdateFailed": "order not saved"
+    "orderUpdateFailed": "order not saved",
+    "addAtlestOne": "Please enter at least one quantity greater than zero."
   },
   "viewOrders": {
     "account_code": "Account Code",
@@ -112,7 +113,9 @@
     "action": "Action",
     "approve": "Approve",
     "statusSuccess": "Status updated successfully",
-    "statusError": "Error updating status"
+    "statusError": "Error updating status",
+    "ApprovedList": "Approved List",
+    "UserList": "User List"
   },
   "nav": {
     "orders": "Orders",
@@ -146,6 +149,7 @@
     "cancel": "No",
     "danger": "Danger",
     "deleteSuccess": "Notifications deleted successfully",
-    "deleteError": "Failed to delete notifications"
+    "deleteError": "Failed to delete notifications",
+    "noNotifications": "No notifications available"
   }
 }

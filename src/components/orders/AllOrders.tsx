@@ -11,9 +11,9 @@ import { useTranslation } from "react-i18next";
 import 'dayjs/locale/en';
 import 'dayjs/locale/hi';
 import '../../locales/dayJs-gu.ts';
-
 import localeEn from 'antd/es/date-picker/locale/en_US';
 import localeHi from 'antd/es/date-picker/locale/hi_IN';
+// import { sendNotification } from "../../utils/notifications";
 // interface Props {
 //   billDate: Dayjs;
 //   handleDateChange: (date: Dayjs | null) => void;
@@ -234,7 +234,7 @@ const AllOrders = () => {
     const allQuantitiesZero = details.every(item => item.Inward === 0);
 
     if (details.length === 0 || allQuantitiesZero) {
-      message.warning("Please enter at least one quantity greater than zero.");
+      message.warning(t('allOrders.addAtlestOne'));
       return;
     }
 
@@ -395,7 +395,7 @@ const AllOrders = () => {
 
           <div className="flex flex-wrap gap-3 justify-start mt-4 mb-4">
             <Button type="primary" onClick={orderData ? () => handleUpdateOrder(orderData.Id) : handleAddOrder}>
-              {orderData ? t('allOrders.updateOrder') : t('allOrders.addOrder')}
+              {orderData ? t('allOrders.updateOrder') : t('allOrders.updateOrder')}
             </Button>
             {
               <Button type="default" onClick={() => navigate("/")}>

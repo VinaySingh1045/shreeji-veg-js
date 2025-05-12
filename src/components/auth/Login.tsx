@@ -9,22 +9,26 @@ import { AppDispatch } from "../../redux/store";
 import { setUser } from "../../redux/slice/authSlice";
 import { ILogin } from "../../types/ILogin";
 import { useTranslation } from "react-i18next";
+import { askNotificationPermission } from "../../utils/notifications";
+
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const { t,i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+
 
   useEffect(() => {
     const lang = localStorage.getItem("appLanguage");
     if (!lang) {
-          navigate("/select-language1");
-          return;
-        }
+      navigate("/select-language1");
+      return;
+    }
     i18n.changeLanguage(lang);
-}, [i18n,navigate]);
+  }, [i18n, navigate]);
 
   interface APIError {
     response?: {
@@ -46,41 +50,86 @@ const Login = () => {
     }
   }, [form]);
 
+  // const handleSubmit = async (values: ILogin) => {
+
+  //   setLoading(true);
+  //   try {
+  //     const response = await LoginApi(values);
+  //     message.success(t("login.loginSuccess"));
+  //     Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
+  //     dispatch(setUser(response.data.user));
+  //     if (response.data.user.isAdmin === true) {
+  //       // ✨ Ask for notification permission
+  //       askNotificationPermission();
+
+  //       navigate("/user/List");
+  //     } else {
+  //       navigate("/");
+  //     }
+
+  //     if (values.remember) {
+  //       localStorage.setItem("rememberedUser", JSON.stringify({
+  //         Mobile_No: values.Mobile_No,
+  //         Book_Pass: values.Book_Pass,
+  //       }));
+  //     } else {
+  //       localStorage.removeItem("rememberedUser");
+  //     }
+
+
+  //     if (response.data.user.isAdmin === true) {
+  //       navigate("/user/List");
+  //     } else {
+  //       navigate("/");
+  //     }
+  //   } catch (error) {
+  //     const apiError = error as APIError;
+  //     if (apiError.response?.data?.message) {
+  //       message.error(apiError.response.data.message);
+  //     } else {
+  //       message.error(t("login.unexpectedError"));
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (values: ILogin) => {
+  setLoading(true);
+  try {
+    const response = await LoginApi(values);
+    message.success(t("login.loginSuccess"));
+    Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
+    dispatch(setUser(response.data.user));
 
-    setLoading(true);
-    try {
-      const response = await LoginApi(values);
-      message.success(t("login.loginSuccess"));
-      Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
-      dispatch(setUser(response.data.user));
-
-      if (values.remember) {
-        localStorage.setItem("rememberedUser", JSON.stringify({
-          Mobile_No: values.Mobile_No,
-          Book_Pass: values.Book_Pass,
-        }));
-      } else {
-        localStorage.removeItem("rememberedUser");
-      }
-
-
-      if (response.data.user.isAdmin === true) {
-        navigate("/user/List");
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      const apiError = error as APIError;
-      if (apiError.response?.data?.message) {
-        message.error(apiError.response.data.message);
-      } else {
-        message.error(t("login.unexpectedError"));
-      }
-    } finally {
-      setLoading(false);
+    if (values.remember) {
+      localStorage.setItem("rememberedUser", JSON.stringify({
+        Mobile_No: values.Mobile_No,
+        Book_Pass: values.Book_Pass,
+      }));
+    } else {
+      localStorage.removeItem("rememberedUser");
     }
-  };
+
+    // ✨ Admin-specific logic
+    if (response.data.user.isAdmin === true) {
+      await askNotificationPermission(); // NEW: Ask for push notification permission
+      navigate("/user/List");
+    } else {
+      navigate("/");
+    }
+  } catch (error) {
+    const apiError = error as APIError;
+    if (apiError.response?.data?.message) {
+      message.error(apiError.response.data.message);
+    } else {
+      message.error(t("login.unexpectedError"));
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div

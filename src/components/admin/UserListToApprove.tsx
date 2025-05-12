@@ -183,14 +183,14 @@ const UserListToApprove = () => {
                     onClick={() => setActiveTab('approved')}
                     style={{}}
                 >
-                    Approved List
+                    {t('AproveUser.ApprovedList')}
                 </Button>
                 <Button
                     type={activeTab === 'toApprove' ? 'primary' : 'default'}
                     style={{ marginLeft: '8px' }}
                     onClick={() => setActiveTab('toApprove')}
                 >
-                    User List
+                    {t('AproveUser.UserList')}
                 </Button>
             </div>
             {activeTab === 'toApprove' && (

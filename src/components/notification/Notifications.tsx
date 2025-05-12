@@ -3,6 +3,7 @@ import { Card, Row, Col, Spin, message, Button, Checkbox, Modal } from 'antd';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { DeleteNotifications, GetNotifaction } from '../../services/notificationAPI';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Notifications = () => {
   interface Notification {
@@ -13,7 +14,8 @@ const Notifications = () => {
     Noti: string;
     extractedDates: string | null;
   }
-
+  
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
@@ -54,8 +56,8 @@ const Notifications = () => {
 
   const getCardTitle = (category: string) => {
     // console.log("category2", category);
-    if (category === 'New User') return 'User';
-    if (category === 'Order') return 'Order';
+    if (category === 'New User') return t('notifications.user');
+    if (category === 'Order') return t('notifications.order');
     return 'Notification'; // Default title if it's neither "New user" nor "Order"
   };
 
@@ -102,21 +104,21 @@ const Notifications = () => {
 
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
-      message.warning("Please select at least one notification.");
+      message.warning(t('notifications.Please select at least one notification.'));
       return;
     }
 
     Modal.confirm({
-      title: 'Are you sure you want to delete these notifications?',
-      content: `This will permanently delete ${selectedIds.length} notification(s).`,
-      okText: 'Yes',
+      title: t('notifications.deleteConfermation'),
+      content: `${t('notifications.deleteMessage')} ${selectedIds.length} ${t('notifications.notifications')}`,
+      okText: t('notifications.ok'),
       okType: 'danger',
-      cancelText: 'No',
+      cancelText: t('notifications.cancel'),
       onOk: async () => {
         try {
           console.log("selectedIds", selectedIds);
           await DeleteNotifications(selectedIds);
-          message.success("Notifications deleted successfully");
+          message.success(t('notifications.deleteSuccess'));
           console.log("checkedIds", selectedIds);
           const updated = notifications.filter(n => !selectedIds.includes(n.Id ?? 0));
           setNotifications(updated);
@@ -127,7 +129,7 @@ const Notifications = () => {
           );
           setSelectedIds([]);
         } catch {
-          message.error("Failed to delete notifications");
+          message.error(t('notifications.deleteError'));
         }
       },
     });
@@ -149,21 +151,21 @@ const Notifications = () => {
               type={category === 'All' ? 'primary' : 'default'}
               onClick={() => setCategory('All')}
             >
-              All
+              {t('notifications.all')}
             </Button>
             <Button
               type={category === 'New User' ? 'primary' : 'default'}
               onClick={() => setCategory('New User')}
               style={{ marginLeft: '8px' }}
             >
-              User
+              {t('notifications.user')}
             </Button>
             <Button
               type={category === 'Order' ? 'primary' : 'default'}
               onClick={() => setCategory('Order')}
               style={{ marginLeft: '8px' }}
             >
-              Order
+              {t('notifications.order')}
             </Button>
           </div>
 
@@ -196,8 +198,8 @@ const Notifications = () => {
                   hoverable
                   onClick={() => handleCardClick(notification.Cat, notification.Noti)}
                 >
-                  <p><strong>Message:</strong> {notification?.Noti}</p>
-                  <p><strong>Time:</strong>{new Date(notification.Noti_Date_Time).toLocaleTimeString("en-IN", {
+                  <p><strong>{t('notifications.message')} :</strong> {notification?.Noti}</p>
+                  <p><strong>{t('notifications.time')} : </strong>{new Date(notification.Noti_Date_Time).toLocaleTimeString("en-IN", {
                     timeZone: "Asia/Kolkata",
                     hour: "2-digit",
                     minute: "2-digit",
@@ -210,7 +212,7 @@ const Notifications = () => {
             {filteredNotifications.length === 0 && (
               <Col span={24}>
                 <Card bordered={false} style={{ textAlign: 'center' }}>
-                  <p>No notifications available</p>
+                  <p>{t('notifications.noNotifications')}</p>
                 </Card>
               </Col>
             )}

@@ -410,7 +410,7 @@ const ViewOrders = () => {
                 <Space direction="vertical" style={{ width: "100%" }}>
                     {user && user.isAdmin &&
                         <Input.Search
-                            placeholder={"Order Number"}
+                            placeholder={t('viewOrders.order_number')}
                             value={orderNumberSearch}
                             onChange={(e) => setOrderNumberSearch(e.target.value)}
                             size="small"
