@@ -17,6 +17,7 @@ import ViewOrders from './components/orders/ViewOrders'
 import OrderPDF from './components/orders/OrderPDF'
 import Notifications from './components/notification/Notifications'
 import { I18nextProvider } from 'react-i18next';
+import ForgotPassword from './components/auth/ForgotPassword'
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />
   },
   {
     path: "/select-language1",

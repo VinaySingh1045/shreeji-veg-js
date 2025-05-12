@@ -62,3 +62,27 @@ export const LogoutApi = async () => {
         throw error;
     }
 }
+
+export const ForgetPassword = async (userData: any) => {
+    try {
+        const res = await axios.post(`${API_END_POINT}/forgotPassword`, userData, {
+            headers: getAuthHeaders(),
+        })
+        return res.data
+    } catch (error) {
+        console.error('Error While Password(Mobile) Otp sent:', error)
+        throw error;
+    }
+}
+
+export const ResetPassword = async (userData: any) => {
+    try {
+        const res = await axios.post(`${API_END_POINT}/resetPassword`, userData, {
+            headers: getAuthHeaders(),
+        })
+        return res.data
+    } catch (error) {
+        console.error('Error While Password(Mobile) Otp sent:', error)
+        throw error;
+    }
+}
