@@ -1,5 +1,5 @@
 import { Button, Card, Checkbox, Form, Input, message, Row, Col } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { LockOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../services/authAPI";
@@ -18,8 +18,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { t, i18n } = useTranslation();
-
-
 
   useEffect(() => {
     const lang = localStorage.getItem("appLanguage");
@@ -127,12 +125,22 @@ const Login = () => {
               <Form.Item
                 label={t("login.UserPhoneNo")}
                 name="Mobile_No"
-                rules={[{ required: true, message: t("login.enterPhoneNo") }]}
+                rules={[
+                  { required: true, message: t("login.enterPhoneNo") },
+                  // {
+                  //   pattern: /^\d{10}$/,
+                  //   message: "Mobile number must be exactly 10 digits",
+                  // },
+                ]}
               >
                 <Input
-                  prefix={<UserOutlined />}
+                  addonBefore="+91"
                   placeholder={t("login.PhoneNoPlaceholder")}
                   size="large"
+                  maxLength={10}
+                  onKeyPress={(e) => {
+                    if (!/^\d$/.test(e.key)) e.preventDefault(); // Allow only digits
+                  }}
                 />
               </Form.Item>
 
@@ -147,10 +155,25 @@ const Login = () => {
                   size="large"
                 />
               </Form.Item>
-
-              <Form.Item name="remember" valuePropName="checked">
-                <Checkbox>{t("login.rememberMe")}</Checkbox>
+              <Form.Item>
+                <Row justify="space-between" align="middle">
+                  <Col>
+                    <Form.Item name="remember" valuePropName="checked" noStyle>
+                      <Checkbox>{t("login.rememberMe")}</Checkbox>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Button
+                      type="link"
+                      onClick={() => navigate("/forgot-password")}
+                      style={{ padding: 0, margin: 0 }}
+                    >
+                      Forgot Password?
+                    </Button>
+                  </Col>
+                </Row>
               </Form.Item>
+
 
               <Form.Item>
                 <Button

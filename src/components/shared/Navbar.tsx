@@ -50,9 +50,6 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
       window.removeEventListener("beforeinstallprompt", handler);
     };
   }, []);
-  useEffect(() => {
-    console.log("showInstallBtn", showInstallBtn);
-  }, [showInstallBtn]);
 
   const handlePWAInstall = async () => {
     if (deferredPrompt) {

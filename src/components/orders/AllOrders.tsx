@@ -13,12 +13,6 @@ import 'dayjs/locale/hi';
 import '../../locales/dayJs-gu.ts';
 import localeEn from 'antd/es/date-picker/locale/en_US';
 import localeHi from 'antd/es/date-picker/locale/hi_IN';
-// import { sendNotification } from "../../utils/notifications";
-// interface Props {
-//   billDate: Dayjs;
-//   handleDateChange: (date: Dayjs | null) => void;
-// }
-
 
 const AllOrders = () => {
 
@@ -62,41 +56,11 @@ const AllOrders = () => {
   const [addLoding, setAddLoding] = useState(false);
   const location = useLocation();
   const { orderData } = location.state || {};
-  const navigate = useNavigate();
   const userDetails = location?.state || null;
+  const navigate = useNavigate();
   const { token } = theme.useToken();
-  console.log("orderData admin", userDetails);
-
-  useEffect(() => {
-    if (orderData && Array.isArray(orderData.Details)) {
-      const initialQuantities: Record<string, string> = {};
-      const updatedData: any[] = [];
-
-      orderData.Details.forEach((item: any) => {
-        if (item.Itm_Id !== undefined) {
-          initialQuantities[item.Itm_Id] = item.Qty;
-          updatedData.push({
-            Itm_Id: item.Itm_Id,
-            Itm_Name: item.Itm_Name,
-            Uni_ID: item.Uni_ID,
-            Uni_Name: item.Uni_Name,
-          });
-        }
-      });
-
-      setQuantities(initialQuantities);
-      setFilteredData(updatedData);
-      if (orderData.Bill_Date) {
-        const formattedDate = dayjs(orderData.Bill_Date).format("DD-MM-YYYY");
-        setBillDate(dayjs(formattedDate, "DD-MM-YYYY"));
-      }
-      SetBillNo(orderData.Bill_No || null);
-      setLrNo(orderData.Order_Count || null);
-    }
-  }, [orderData]);
-
-  console.log("orderData: ", orderData);
-
+  const [isOrderMode, setIsOrderMode] = useState(false);
+  const [originalOrderItemIds, setOriginalOrderItemIds] = useState<number[]>([]);
 
   useEffect(() => {
     const normalizedAll = all.map(item => ({
@@ -124,32 +88,63 @@ const AllOrders = () => {
   }, [favorites, all]);
 
   useEffect(() => {
-    const lowerSearch = searchText?.trim().toLowerCase();
 
+    const lowerSearch = searchText?.trim().toLowerCase() || "";
+
+    if (isOrderMode) {
+      const lowerSearch = searchText?.trim().toLowerCase() || "";
+
+      // Maintain original order
+      const orderItems = originalOrderItemIds
+        .map(id => mergedData.find(item => item.Itm_Id === id))
+        .filter((item): item is Vegetable => item !== undefined);
+      // filter out undefined, if any
+
+      if (lowerSearch) {
+        const extraMatches = mergedData.filter(item =>
+          item?.Itm_Name?.toLowerCase().includes(lowerSearch) &&
+          !originalOrderItemIds.includes(item.Itm_Id ?? -1)
+        );
+
+        const merged = [...orderItems, ...extraMatches];
+        setFilteredData(merged);
+      } else {
+        const quantityItems = mergedData.filter(item => {
+          const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
+          return !originalOrderItemIds.includes(item.Itm_Id ?? -1) && quantity > 0;
+        });
+
+        const merged = [...orderItems, ...quantityItems];
+        setFilteredData(merged);
+      }
+
+      return;
+    }
+
+    // normal search-based logic
     const searchMatched = mergedData.filter(item =>
       item?.Itm_Name?.toLowerCase().includes(lowerSearch)
     );
+
     const quantityItems = mergedData.filter(item => {
       const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
       return quantity > 0;
     });
+
     const favoriteWithQuantity = favorites.filter(item => {
       const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
-      return quantity > 0 || item.Itm_Id === item.Itm_Id;;
+      return quantity > 0 || item.Itm_Id === item.Itm_Id;
     });
 
     let merged = [];
 
     if (lowerSearch) {
-      // When user types something, show search matched, favorites and quantity > 0 items
       merged = [
         ...searchMatched,
-        ...quantityItems.filter(
-          item => !searchMatched.some(i => i.Itm_Id === item.Itm_Id)
-        ),
+        ...quantityItems.filter(item => !searchMatched.some(i => i.Itm_Id === item.Itm_Id)),
       ];
+      setIsOrderMode(false);
     } else {
-      // No search: show only favorites and quantity items
       merged = [
         ...favoriteWithQuantity,
         ...quantityItems.filter(item => !favoriteWithQuantity.some(i => i.Itm_Id === item.Itm_Id))
@@ -157,10 +152,43 @@ const AllOrders = () => {
     }
 
     setFilteredData(merged);
-  }, [searchText, mergedData, favorites, quantities]);
+  }, [searchText, mergedData, favorites, quantities, isOrderMode, originalOrderItemIds]);
+
 
   useEffect(() => {
-    // if(user)
+    if (orderData && Array.isArray(orderData.Details)) {
+
+      const initialQuantities: Record<string, string> = {};
+      const updatedData: any[] = [];
+
+      orderData.Details.forEach((item: any) => {
+        if (item.Itm_Id !== undefined) {
+          initialQuantities[item.Itm_Id] = item.Qty;
+          updatedData.push({
+            Itm_Id: item.Itm_Id,
+            Itm_Name: item.Itm_Name,
+            Uni_ID: item.Uni_ID,
+            Uni_Name: item.Uni_Name,
+          });
+        }
+      });
+
+      setQuantities(initialQuantities);
+      setFilteredData(updatedData);
+      setIsOrderMode(true);
+      setOriginalOrderItemIds(orderData.Details.map((item: { Itm_Id: number }) => item.Itm_Id));
+
+      if (orderData.Bill_Date) {
+        const formattedDate = dayjs(orderData.Bill_Date).format("DD-MM-YYYY");
+        setBillDate(dayjs(formattedDate, "DD-MM-YYYY"));
+      }
+
+      SetBillNo(orderData.Bill_No || null);
+      setLrNo(orderData.Order_Count || null);
+    }
+  }, [orderData]);
+
+  useEffect(() => {
     dispatch(fetchFavoriteVegetables(userDetails ? userDetails?.Id : user?.Id));
     dispatch(fetchAllVegetables());
   }, [dispatch, userDetails, user]);
@@ -181,12 +209,10 @@ const AllOrders = () => {
         if (userDetails) {
           const res = await GetLrNo(formattedDate, userDetails.Id);
           setLrNo(res?.data?.Order_Count);
-          console.log("res userDetails", res);
         }
         else {
           const res = await GetLrNo(formattedDate, user?.Id ?? "");
           setLrNo(res?.data?.Order_Count);
-          console.log("res user", res);
         }
       } catch {
         setLrNo(null);
@@ -307,37 +333,25 @@ const AllOrders = () => {
       message.error(t('allOrders.orderUpdateFailed'));
       return;
     }
-    const details = [
-      ...favorites
-        .filter(item => item.Itm_Id !== undefined)
-        .map(item => ({
-          Itm_Id: item.Itm_Id!,
-          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
-          Uni_ID: item.Uni_ID,
-          Itm_Name: item.Itm_Name,
-        })),
-      ...mergedData
-        .filter(item =>
-          item.Itm_Id !== undefined &&
-          !favorites.some(fav => fav.Itm_Id === item.Itm_Id) &&
-          parseFloat(quantities[item.Itm_Id!] || "0") > 0
-        )
-        .map(item => ({
-          Itm_Id: item.Itm_Id!,
-          Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
-          Uni_ID: item.Uni_ID,
-          Itm_Name: item.Itm_Name,
-        })),
-    ];
+    const details = filteredData
+      .filter(item => item.Itm_Id !== undefined)
+      .map(item => ({
+        Itm_Id: item.Itm_Id!,
+        Inward: parseFloat(quantities[item.Itm_Id!] || "0"),
+        Uni_ID: item.Uni_ID,
+        Itm_Name: item.Itm_Name,
+      }));
 
     const payload = {
       mode: "edit",
+      Ac_Id: orderData ? orderData?.Ac_Id : user?.Id,
+      Ac_Code: orderData ? orderData?.Ac_Code : user?.Ac_Code,
+      Our_Shop_Ac: orderData ? orderData?.Our_Shop_Ac : user?.Our_Shop_Ac,
       details,
       Id: Id,
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
-    console.log("payload", payload);
     try {
       setAddLoding(true);
       await UpdateOrder(payload);
@@ -424,9 +438,6 @@ const AllOrders = () => {
           </Space>
         </>
       )}
-      {/* <Button type="primary" onClick={() => navigate("/")}>
-        Back
-      </Button> */}
     </div>
   );
 

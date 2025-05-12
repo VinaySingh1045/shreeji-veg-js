@@ -42,9 +42,7 @@ const Layout = () => {
 
     useEffect(() => {
         if (user && user.isAdmin) {
-            console.log("hellp")
             const handleNotification = (payload: { noti: string }) => {
-                console.log("payload", payload);
                 notification.open({
                     message: 'New Notification',
                     description: payload.noti,
