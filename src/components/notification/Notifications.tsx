@@ -26,7 +26,6 @@ const Notifications = () => {
     const fetchNotifications = async () => {
       try {
         const response = await GetNotifaction();
-        // console.log("response", response);
         const sortedNotifications = response.data.sort((a: Notification, b: Notification) => {
           return new Date(b.Noti_Date_Time).getTime() - new Date(a.Noti_Date_Time).getTime();
         });

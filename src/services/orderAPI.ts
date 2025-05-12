@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_END_POINT } from "../utils/constant";
 import { getAuthHeaders } from "../utils/getAuthHeaders";
 
-export const GetLrNo = async (Bill_Date: string ,Id: string) => {
+export const GetLrNo = async (Bill_Date: string, Id: string) => {
     // ({mobileNo, Ac_Name}: {mobileNo: string, Ac_Name: string})
     try {
         const res = await axios.post(`${API_END_POINT}/getLrNo`, { Bill_Date: Bill_Date, Ac_Id: Id }, {
@@ -40,7 +40,6 @@ export const AddOrder = async (payload: any) => {
 };
 
 export const UpdateOrder = async (payload: any) => {
-    console.log("payload2", payload);
     try {
         const res = await axios.post(`${API_END_POINT}/editSalePurMain`, payload, {
             headers: getAuthHeaders(),
