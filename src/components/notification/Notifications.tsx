@@ -69,17 +69,14 @@ const Notifications = () => {
         },
       });
     } else if (category === 'Order') {
-      console.log("category", category);
       const str = noti;
-      console.log("str: ", str);
-      const regex = /order (\d+)/;
+      const regex = /order (\d+)/i;
       const match = str ? str.match(regex) : null;
       const billNo = match ? match[1] : null;
       // Extract date in YYYY-MM-DD format
       const dateRegex = /\d{4}-\d{2}-\d{2}/;
       const dateMatch = str.match(dateRegex);
       const orderDate = dateMatch ? dateMatch[0] : null;
-      console.log("orderDate", orderDate);
       console.log("billNo", billNo);
       if (billNo) {
         navigate('/', {

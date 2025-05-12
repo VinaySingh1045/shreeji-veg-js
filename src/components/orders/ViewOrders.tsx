@@ -213,18 +213,6 @@ const ViewOrders = () => {
                     orderData: record
                 },
             });
-            // onClick={() =>
-            //                 navigate('/add-orders', {
-            //                     state: {
-            //                         Ac_Name: record.Ac_Name,
-            //                         Mobile_No: record.Mobile_No,
-            //                         Book_Pass: record.Book_Pass,
-            //                         Ac_Code: record.Ac_Code,
-            //                         Id: record.Id,
-            //                         Our_Shop_Ac: record.Our_Shop_Ac,
-            //                     },
-            //                 })
-            //             }
         } else {
             message.error(t('viewOrders.invalidBillNo'));
         }
@@ -466,7 +454,7 @@ const ViewOrders = () => {
                         <Form.Item
                             label={t('viewOrders.select_date')}
                             colon={false}
-                            className={user && user.isAdmin ? t('viewOrders.select_date') : ''}
+                            className={user && user.isAdmin ? 'date-select' : ''}
                         >
                             <RangePicker
                                 size="small"
