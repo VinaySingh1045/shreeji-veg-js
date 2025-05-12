@@ -16,7 +16,6 @@ export const fetchFavoriteVegetables = createAsyncThunk(
     'vegetables/fetchFavorites',
     async (id: string) => {
         const lang = localStorage.getItem('appLanguage') as 'en' | 'hi' | 'gu'
-        console.log("fetch lang", lang)
         const response = await GetFavorites(lang, id);
         return response.data;
     }

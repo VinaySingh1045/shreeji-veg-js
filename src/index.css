@@ -65,8 +65,19 @@
 /* .ant-menu-overflow-item-rest {
     display: none !important;
   } */
+
+.time-freeze{
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .time-freeze{
+        margin-left: 0px;
+    }
+}
+
 .date-select {
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 @media (max-width: 767px) {
@@ -84,6 +95,7 @@
 }
 
 .select-year{
+  width: 100px !important;
     margin-right: 7px;
 }
 

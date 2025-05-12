@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Spin, message, Button, Checkbox, Modal } from 'antd';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
-import { DeleteNotifications, GetNotifaction } from '../../services/notificationAPI';
+import { DeleteAllNotifications, DeleteNotifications, GetNotifaction } from '../../services/notificationAPI';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,7 @@ const Notifications = () => {
     Noti: string;
     extractedDates: string | null;
   }
-  
+
   const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,23 +23,24 @@ const Notifications = () => {
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  useEffect(() => {
-    // Fetch notifications when the component mounts
-    const fetchNotifications = async () => {
-      try {
-        const response = await GetNotifaction();
-        const sortedNotifications = response.data.sort((a: Notification, b: Notification) => {
-          return new Date(b.Noti_Date_Time).getTime() - new Date(a.Noti_Date_Time).getTime();
-        });
 
-        setNotifications(sortedNotifications);
-        setFilteredNotifications(sortedNotifications);
-      } catch {
-        message.error('Failed to load notifications');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch notifications when the component mounts
+  const fetchNotifications = async () => {
+    try {
+      const response = await GetNotifaction();
+      const sortedNotifications = response.data.sort((a: Notification, b: Notification) => {
+        return new Date(b.Noti_Date_Time).getTime() - new Date(a.Noti_Date_Time).getTime();
+      });
+
+      setNotifications(sortedNotifications);
+      setFilteredNotifications(sortedNotifications);
+    } catch {
+      message.error('Failed to load notifications');
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchNotifications();
   }, []);
 
@@ -54,14 +55,12 @@ const Notifications = () => {
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
   const getCardTitle = (category: string) => {
-    // console.log("category2", category);
     if (category === 'New User') return t('notifications.user');
     if (category === 'Order') return t('notifications.order');
     return 'Notification'; // Default title if it's neither "New user" nor "Order"
   };
 
   const handleCardClick = (category: string, noti: string) => {
-    console.log("notification", noti);
     if (category === 'New User') {
       const str = noti;
       const mobile = str.match(/\b\d{10}\b/)
@@ -79,7 +78,6 @@ const Notifications = () => {
       const dateRegex = /\d{4}-\d{2}-\d{2}/;
       const dateMatch = str.match(dateRegex);
       const orderDate = dateMatch ? dateMatch[0] : null;
-      console.log("billNo", billNo);
       if (billNo) {
         navigate('/', {
           state: {
@@ -112,10 +110,8 @@ const Notifications = () => {
       cancelText: t('notifications.cancel'),
       onOk: async () => {
         try {
-          console.log("selectedIds", selectedIds);
           await DeleteNotifications(selectedIds);
           message.success(t('notifications.deleteSuccess'));
-          console.log("checkedIds", selectedIds);
           const updated = notifications.filter(n => !selectedIds.includes(n.Id ?? 0));
           setNotifications(updated);
           setFilteredNotifications(
@@ -131,6 +127,28 @@ const Notifications = () => {
     });
   };
 
+  const handleDeleteAll = async () => {
+
+    Modal.confirm({
+      title: "Are You Sure?, Do you want to Delete All the Notification",
+      content: `It will delete All the Notification`,
+      okText: t('notifications.ok'),
+      okType: 'danger',
+      cancelText: t('notifications.cancel'),
+      onOk: async () => {
+        try {
+          await DeleteAllNotifications();
+          message.success(t('notifications.deleteSuccess'));
+          fetchNotifications();
+        } catch {
+          message.error(t('notifications.deleteError'));
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
+  };
+
   return loading ?
     <div style={{
       display: 'flex',
@@ -140,79 +158,96 @@ const Notifications = () => {
     }}>
       <Spin /> </div> : (
       <div style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <Row gutter={[16, 16]} justify="space-between" align="middle">
           {/* Left side buttons */}
-          <div>
-            <Button
-              type={category === 'All' ? 'primary' : 'default'}
-              onClick={() => setCategory('All')}
-            >
-              {t('notifications.all')}
-            </Button>
-            <Button
-              type={category === 'New User' ? 'primary' : 'default'}
-              onClick={() => setCategory('New User')}
-              style={{ marginLeft: '8px' }}
-            >
-              {t('notifications.user')}
-            </Button>
-            <Button
-              type={category === 'Order' ? 'primary' : 'default'}
-              onClick={() => setCategory('Order')}
-              style={{ marginLeft: '8px' }}
-            >
-              {t('notifications.order')}
-            </Button>
-          </div>
+          <Col xs={24} sm={18}>
+            <Row gutter={[8, 8]} wrap>
+              <Col>
+                <Button
+                  type={category === 'All' ? 'primary' : 'default'}
+                  onClick={() => setCategory('All')}
+                  block={true}
+                >
+                  {t('notifications.all')}
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type={category === 'New User' ? 'primary' : 'default'}
+                  onClick={() => setCategory('New User')}
+                  block={true}
+                >
+                  {t('notifications.user')}
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type={category === 'Order' ? 'primary' : 'default'}
+                  onClick={() => setCategory('Order')}
+                  block={true}
+                >
+                  {t('notifications.order')}
+                </Button>
+              </Col>
+            </Row>
+          </Col>
 
-          {/* Right side delete button */}
-          <Button
-            danger
-            onClick={handleDelete}
-          >
-            <DeleteOutlined />
-          </Button>
-        </div>
+          {/* Delete buttons on right side */}
+          <Col xs={24} sm={6} style={{ textAlign: 'right' }}>
+            <Row gutter={[8, 8]} justify="end">
+              <Col>
+                <Button danger onClick={handleDeleteAll} block={true}>
+                  Delete All <DeleteOutlined />
+                </Button>
+              </Col>
+              <Col>
+                <Button danger onClick={handleDelete} icon={<DeleteOutlined />} />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
         {loading ? (
           <Spin indicator={antIcon} />
         ) : (
-          <Row gutter={[16, 16]}>
-            {filteredNotifications && filteredNotifications.map((notification, index) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={index}>
-                <Card
-                  // title={category === "Order" ? `Order` : `New User`}
-                  title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>{getCardTitle(notification.Cat)}</span>
-                    <Checkbox
-                      checked={notification.Id ? selectedIds.includes(notification.Id) : false}
-                      onClick={(e) => e.stopPropagation()} // Prevent card click
-                      onChange={(e) => handleCheckboxChange(notification.Id ?? 0, e.target.checked)}
-                    />
-                  </div>}
-                  bordered={false}
-                  hoverable
-                  onClick={() => handleCardClick(notification.Cat, notification.Noti)}
-                >
-                  <p><strong>{t('notifications.message')} :</strong> {notification?.Noti}</p>
-                  <p><strong>{t('notifications.time')} : </strong>{new Date(notification.Noti_Date_Time).toLocaleTimeString("en-IN", {
-                    timeZone: "Asia/Kolkata",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: true,
-                  })}</p>
-                </Card>
-              </Col>
-            ))}
-            {filteredNotifications.length === 0 && (
-              <Col span={24}>
-                <Card bordered={false} style={{ textAlign: 'center' }}>
-                  <p>{t('notifications.noNotifications')}</p>
-                </Card>
-              </Col>
-            )}
-          </Row>
+          <div style={{padding: "20px"}}>
+            <Row gutter={[16, 16]}>
+              {filteredNotifications && filteredNotifications.map((notification, index) => (
+                <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                  <Card
+                    // title={category === "Order" ? `Order` : `New User`}
+                    title={<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>{getCardTitle(notification.Cat)}</span>
+                      <Checkbox
+                        checked={notification.Id ? selectedIds.includes(notification.Id) : false}
+                        onClick={(e) => e.stopPropagation()} // Prevent card click
+                        onChange={(e) => handleCheckboxChange(notification.Id ?? 0, e.target.checked)}
+                      />
+                    </div>}
+                    bordered={false}
+                    hoverable
+                    onClick={() => handleCardClick(notification.Cat, notification.Noti)}
+                  >
+                    <p><strong>{t('notifications.message')} :</strong> {notification?.Noti}</p>
+                    <p><strong>{t('notifications.time')} : </strong>{new Date(notification.Noti_Date_Time).toLocaleTimeString("en-IN", {
+                      timeZone: "Asia/Kolkata",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: true,
+                    })}</p>
+                  </Card>
+                </Col>
+              ))}
+              {filteredNotifications.length === 0 && (
+                <Col span={24}>
+                  <Card bordered={false} style={{ textAlign: 'center' }}>
+                    <p>{t('notifications.noNotifications')}</p>
+                  </Card>
+                </Col>
+              )}
+            </Row>
+          </div>
         )}
       </div>
     );

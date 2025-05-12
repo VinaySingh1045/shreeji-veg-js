@@ -4,7 +4,7 @@ import { Table, Input, Space, DatePicker, Form, Button, message, Spin, theme } f
 import { fetchAllVegetables, fetchFavoriteVegetables } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs, { Dayjs } from "dayjs";
-import { AddOrder, GetLrNo, UpdateOrder } from "../../services/orderAPI";
+import { AddOrder, GetFreezeTime, GetLrNo, UpdateOrder } from "../../services/orderAPI";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,38 @@ const AllOrders = () => {
 
   const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean, Id: string, Our_Shop_Ac: boolean, Ac_Code: string } | null };
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { favorites, loading, all } = useSelector((state: RootState) => state.vegetables);
+  const [quantities, setQuantities] = useState<Record<string, string>>({});
+  const [billDate, setBillDate] = useState(dayjs().add(1, 'day'));
+  const [lrNo, setLrNo] = useState<string | null>(null);
+  const [billNo, SetBillNo] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState<Vegetable[]>([]);
+  const [mergedData, setMergedData] = useState<Vegetable[]>([]);
+  const [addLoding, setAddLoding] = useState(false);
+  const location = useLocation();
+  const { orderData } = location.state || {};
+  const userDetails = location?.state || null;
+  const navigate = useNavigate();
+  const { token } = theme.useToken();
+  const [isOrderMode, setIsOrderMode] = useState(false);
+  const [originalOrderItemIds, setOriginalOrderItemIds] = useState<number[]>([]);
+  const [freezeTime, setFreezeTime] = useState(""); // State to track loading status
+
+  const fetchFreezeTime = async () => {
+    try {
+      const response = await GetFreezeTime();
+      setFreezeTime(response?.data?.freezeTime);
+    } catch (error) {
+      console.error("Error fetching freeze time:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchFreezeTime();
+  }, [])
+
   useEffect(() => {
     dayjs.locale(i18n.language);
   }, [i18n.language]);
@@ -43,24 +75,6 @@ const AllOrders = () => {
         return localeEn;
     }
   };
-
-  const dispatch = useDispatch<AppDispatch>();
-  const { favorites, loading, all } = useSelector((state: RootState) => state.vegetables);
-  const [quantities, setQuantities] = useState<Record<string, string>>({});
-  const [billDate, setBillDate] = useState(dayjs().add(1, 'day'));
-  const [lrNo, setLrNo] = useState<string | null>(null);
-  const [billNo, SetBillNo] = useState<string | null>(null);
-  const [searchText, setSearchText] = useState("");
-  const [filteredData, setFilteredData] = useState<Vegetable[]>([]);
-  const [mergedData, setMergedData] = useState<Vegetable[]>([]);
-  const [addLoding, setAddLoding] = useState(false);
-  const location = useLocation();
-  const { orderData } = location.state || {};
-  const userDetails = location?.state || null;
-  const navigate = useNavigate();
-  const { token } = theme.useToken();
-  const [isOrderMode, setIsOrderMode] = useState(false);
-  const [originalOrderItemIds, setOriginalOrderItemIds] = useState<number[]>([]);
 
   useEffect(() => {
     const normalizedAll = all.map(item => ({
@@ -365,7 +379,16 @@ const AllOrders = () => {
   };
 
   const disablePastDates = (current: Dayjs) => {
-    return current && current < dayjs().endOf('day');
+    if (!freezeTime) return false;
+
+    const now = dayjs();
+    const [freezeHour, freezeMinute, freezeSecond] = freezeTime.split(':').map(Number);
+
+    const freezeMoment = now.clone().hour(freezeHour).minute(freezeMinute).second(freezeSecond);
+
+    const logicalToday = now.isBefore(freezeMoment) ? now.subtract(1, 'day') : now;
+
+    return current && current < logicalToday.endOf('day');
   };
 
   return (

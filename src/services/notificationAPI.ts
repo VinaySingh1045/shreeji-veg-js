@@ -19,7 +19,6 @@ export const MarkNotificationAsSeen = async () => {
         const res = await axios.put(`${API_END_POINT}/updateAllUnseenNotifications`, {}, {
             headers: getAuthHeaders(),
         })
-        console.log("res", res)
         return res.data
     } catch (error) {
         console.error('Error While updating the Notification:', error)
@@ -33,7 +32,18 @@ export const DeleteNotifications = async (Ids: number[]) => {
             headers: getAuthHeaders(),
             data: {Ids}
         })
-        console.log("res", res)
+        return res.data
+    } catch (error) {
+        console.error('Error While deleting the Notification:', error)
+        throw error;
+    }
+}
+
+export const DeleteAllNotifications = async () => {
+    try {
+        const res = await axios.delete(`${API_END_POINT}/deleteAllNotification`, {
+            headers: getAuthHeaders(),
+        })
         return res.data
     } catch (error) {
         console.error('Error While deleting the Notification:', error)

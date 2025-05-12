@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Modal, Select, Tooltip } from "antd";
+import { Table, Input, Space, DatePicker, Row, Col, Form, Button, message, Modal, Select, Tooltip, TimePicker } from "antd";
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs, { Dayjs } from "dayjs";
 import { fetchOrders } from "../../redux/actions/ordersAction";
 import { DeleteOutlined, DownloadOutlined, EditOutlined } from "@ant-design/icons";
-import { Deleteorder, GetAllYear } from "../../services/orderAPI";
+import { Deleteorder, GetAllYear, GetFreezeTime, SendFreezeTime } from "../../services/orderAPI";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import 'dayjs/locale/en';
@@ -66,11 +66,20 @@ const ViewOrders = () => {
     const orderId = location?.state?.billNo || null;
     const orderDate = location?.state?.orderDate || null;
     const [orderNumberSearch, setOrderNumberSearch] = useState("");
+    const [freezeTime, setFreezeTime] = useState(""); // State to track loading status
 
-    console.log("orderDate3", orderDate);
-    console.log("orderId", orderId);
-    console.log("selectedYear", selectedYear);
+    const fetchFreezeTime = async () => {
+        try {
+            const response = await GetFreezeTime();
+            setFreezeTime(response?.data?.freezeTime);
+        } catch (error) {
+            console.error("Error fetching freeze time:", error);
+        }
+    }
 
+    useEffect(() => {
+        fetchFreezeTime();
+    }, [])
 
     useEffect(() => {
         if (orderId) {
@@ -80,8 +89,6 @@ const ViewOrders = () => {
 
     useEffect(() => {
         if (orderId && orders && orders.length > 0) {
-            console.log("orderId", orderId);
-            console.log("orders", orders);
             const matchedOrder = orders?.find((order) => order.Bill_No === Number(orderId));
             if (matchedOrder) {
                 setSelectedOrderItems(matchedOrder.Details || []);
@@ -130,7 +137,6 @@ const ViewOrders = () => {
                 toDate: selectedDates[1].format("YYYY-MM-DD"),
                 db_name: selectedYear,
             };
-            console.log("payload", payload);
             dispatch(fetchOrders(payload));
         }
     }, [selectedDates, dispatch, selectedYear]);
@@ -197,13 +203,25 @@ const ViewOrders = () => {
                 </div>
             ),
         },
-        // ]
-        //         : []),
     ];
 
     const disablePastDates = (current: Dayjs) => {
-        return current && current < dayjs().endOf('day');
+        if (!freezeTime) return false;
+
+        const now = dayjs();
+        const [freezeHour, freezeMinute, freezeSecond] = freezeTime.split(':').map(Number);
+        const freezeMoment = now.clone().hour(freezeHour).minute(freezeMinute).second(freezeSecond);
+
+        const isPast = current.isBefore(now, 'day');
+        const isTodayAfterFreeze = current.isSame(now, 'day') && now.isAfter(freezeMoment);
+
+        const shouldDisable = isPast || isTodayAfterFreeze;
+
+        return shouldDisable;
     };
+
+
+
 
     const handleEdit = (record: any) => {
         if (record.Bill_No) {
@@ -413,6 +431,12 @@ const ViewOrders = () => {
         return current.isBefore(start) || current.isAfter(end);
     };
 
+    const handleSendFreezeTime = async (time: string) => {
+        await SendFreezeTime(time);
+        message.success("Freeze time sent successfully");;
+        // Add your logic to send the freeze time to the server or perform any action
+    }
+
     return (
         <div className="p-4">
             <>
@@ -433,13 +457,32 @@ const ViewOrders = () => {
                                 </Form.Item>
                             </Col>
                         )}
+                    {
+                        user && user.isAdmin && (
+                            <Col xs={24} sm={12} md={8} lg={6}>
+
+                                <Form.Item label="Freeze Time" colon={false} className="time-freeze">
+                                    <TimePicker style={{ width: "100%" }}
+                                        size="small"
+                                        format="HH:mm:ss"
+                                        onChange={(_, timeString) => {
+                                            if (typeof timeString === 'string') {
+                                                handleSendFreezeTime(timeString);
+                                            }
+                                        }}
+                                        placeholder={"Select Freeze Time"}
+                                        locale={currentAntdLocale}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        )}
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item label={t('viewOrders.select_year')} colon={false} className={user && user.isAdmin ? "date-select" : "select-year"}>
                             <Select
                                 value={selectedYear}
                                 onChange={handleYearChange}
                                 placeholder={t('viewOrders.select_financial_year')}
-                                style={{ width: "100%" }}
+                                style={{ width: "300px" }}
                             >
                                 {allYear?.map((year) => (
                                     <Option key={year.db_name} value={year.db_name}>
@@ -497,13 +540,6 @@ const ViewOrders = () => {
                     <Table
                         columns={columns}
                         rowKey={(record) => record.Bill_No}
-                        // dataSource={
-                        //     orders?.filter((order) => {
-                        //         const accountMatch = order.Ac_Name?.toLowerCase().includes(searchTerm?.toLowerCase());
-                        //         const orderMatch = order.Bill_No?.toString().includes(orderNumberSearch);
-                        //         return accountMatch && orderMatch;
-                        //     }) || []
-                        // }
                         dataSource={
                             [...(orders || [])]
                                 .sort((a, b) => dayjs(b.Bill_Date).valueOf() - dayjs(a.Bill_Date).valueOf())
@@ -514,7 +550,7 @@ const ViewOrders = () => {
                                 })
                         }
                         onRow={(record) => ({
-                            onClick: () => setSelectedOrderItems((record as any).Details || []), // Add row click functionality
+                            onClick: () => setSelectedOrderItems((record as any).Details || []),
                         })}
                         loading={loading}
                         scroll={{ x: true, }}

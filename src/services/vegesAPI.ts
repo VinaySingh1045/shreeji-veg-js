@@ -16,7 +16,6 @@ export const GetAllItems = async (lang: string) => {
 }
 
 export const GetFavorites = async (lang: string, id: string) => {
-    console.log("lang", lang)
     try {
         const res = await axios.get(`${API_END_POINT}/getFavorites`, {
             headers: getAuthHeaders(),

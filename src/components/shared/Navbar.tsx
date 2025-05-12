@@ -87,8 +87,7 @@ const Navbar = ({ onToggleTheme, currentTheme }: NavbarProps) => {
 
   const handleNotificationClick = async () => {
     try {
-      const res = await MarkNotificationAsSeen();
-      console.log("res2", res);
+      await MarkNotificationAsSeen();
       setHasNewNotification(false); // remove badge dot
       navigate('/notification');
     } catch (err) {

@@ -89,3 +89,27 @@ export const GetAllYear = async () => {
         throw error;
     }
 };
+
+export const SendFreezeTime = async (time: string) => {
+    try {
+        const res = await axios.post(`${API_END_POINT}/updateFreezeTime`, { Order_Freez_Time: time }, {
+            headers: getAuthHeaders(),
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error while Getting All Order:", error);
+        throw error;
+    }
+};
+
+export const GetFreezeTime = async () => {
+    try {
+        const res = await axios.get(`${API_END_POINT}/getFreezeTime`, {
+            headers: getAuthHeaders(),
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error while Getting All Order:", error);
+        throw error;
+    }
+};
