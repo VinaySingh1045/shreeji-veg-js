@@ -62,40 +62,10 @@ const AllOrders = () => {
   const [addLoding, setAddLoding] = useState(false);
   const location = useLocation();
   const { orderData } = location.state || {};
-  const navigate = useNavigate();
   const userDetails = location?.state || null;
+  const navigate = useNavigate();
   const { token } = theme.useToken();
-  console.log("orderData admin", userDetails);
-
-  useEffect(() => {
-    if (orderData && Array.isArray(orderData.Details)) {
-      const initialQuantities: Record<string, string> = {};
-      const updatedData: any[] = [];
-
-      orderData.Details.forEach((item: any) => {
-        if (item.Itm_Id !== undefined) {
-          initialQuantities[item.Itm_Id] = item.Qty;
-          updatedData.push({
-            Itm_Id: item.Itm_Id,
-            Itm_Name: item.Itm_Name,
-            Uni_ID: item.Uni_ID,
-            Uni_Name: item.Uni_Name,
-          });
-        }
-      });
-
-      setQuantities(initialQuantities);
-      setFilteredData(updatedData);
-      if (orderData.Bill_Date) {
-        const formattedDate = dayjs(orderData.Bill_Date).format("DD-MM-YYYY");
-        setBillDate(dayjs(formattedDate, "DD-MM-YYYY"));
-      }
-      SetBillNo(orderData.Bill_No || null);
-      setLrNo(orderData.Order_Count || null);
-    }
-  }, [orderData]);
-
-  console.log("orderData: ", orderData);
+  const [isOrderMode, setIsOrderMode] = useState(false);
 
 
   useEffect(() => {
@@ -124,40 +94,97 @@ const AllOrders = () => {
   }, [favorites, all]);
 
   useEffect(() => {
-    const lowerSearch = searchText?.trim().toLowerCase();
+    console.log("[filter effect] Triggered");
+    console.log("isOrderMode:", isOrderMode);
+    console.log("searchText:", searchText);
 
+    const lowerSearch = searchText?.trim().toLowerCase() || "";
+    console.log("lowerSearch:", lowerSearch);
+
+    if (isOrderMode && !searchText) {
+      const orderItemIds = Object.keys(quantities).map(id => Number(id));
+      const allWithQuantities = mergedData.filter(item => {
+        const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
+        return item.Itm_Id !== undefined && orderItemIds.includes(item.Itm_Id) && quantity >= 0;
+      });
+
+      console.log("[filter effect] Order mode filtered data", allWithQuantities);
+      setFilteredData(allWithQuantities);
+      return;
+    }
+
+    // normal search-based logic
     const searchMatched = mergedData.filter(item =>
       item?.Itm_Name?.toLowerCase().includes(lowerSearch)
     );
+    console.log("searchMatched", searchMatched);
+
     const quantityItems = mergedData.filter(item => {
       const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
       return quantity > 0;
     });
+
     const favoriteWithQuantity = favorites.filter(item => {
       const quantity = item.Itm_Id !== undefined ? parseFloat(quantities[item.Itm_Id] || "0") : 0;
-      return quantity > 0 || item.Itm_Id === item.Itm_Id;;
+      return quantity > 0 || item.Itm_Id === item.Itm_Id;
     });
 
     let merged = [];
 
     if (lowerSearch) {
-      // When user types something, show search matched, favorites and quantity > 0 items
       merged = [
         ...searchMatched,
-        ...quantityItems.filter(
-          item => !searchMatched.some(i => i.Itm_Id === item.Itm_Id)
-        ),
+        ...quantityItems.filter(item => !searchMatched.some(i => i.Itm_Id === item.Itm_Id)),
       ];
+      setIsOrderMode(false);
     } else {
-      // No search: show only favorites and quantity items
       merged = [
         ...favoriteWithQuantity,
         ...quantityItems.filter(item => !favoriteWithQuantity.some(i => i.Itm_Id === item.Itm_Id))
       ];
     }
 
+    console.log("[filter effect] Final merged", merged);
     setFilteredData(merged);
-  }, [searchText, mergedData, favorites, quantities]);
+  }, [searchText, mergedData, favorites, quantities, isOrderMode]);
+
+
+  useEffect(() => {
+    if (orderData && Array.isArray(orderData.Details)) {
+      console.log("[orderData effect] Triggered");
+
+      const initialQuantities: Record<string, string> = {};
+      const updatedData: any[] = [];
+
+      orderData.Details.forEach((item: any) => {
+        if (item.Itm_Id !== undefined) {
+          initialQuantities[item.Itm_Id] = item.Qty;
+          updatedData.push({
+            Itm_Id: item.Itm_Id,
+            Itm_Name: item.Itm_Name,
+            Uni_ID: item.Uni_ID,
+            Uni_Name: item.Uni_Name,
+          });
+        }
+      });
+
+      console.log("[orderData effect] updatedData", updatedData);
+      console.log("[orderData effect] initialQuantities", initialQuantities);
+
+      setQuantities(initialQuantities);
+      setFilteredData(updatedData);
+      setIsOrderMode(true); // ✅ Activate order mode
+      console.log("[orderData effect] setIsOrderMode(true)");
+
+      if (orderData.Bill_Date) {
+        const formattedDate = dayjs(orderData.Bill_Date).format("DD-MM-YYYY");
+        setBillDate(dayjs(formattedDate, "DD-MM-YYYY"));
+      }
+
+      SetBillNo(orderData.Bill_No || null);
+      setLrNo(orderData.Order_Count || null);
+    }
+  }, [orderData]);
 
   useEffect(() => {
     // if(user)
@@ -332,6 +359,9 @@ const AllOrders = () => {
 
     const payload = {
       mode: "edit",
+      Ac_Id: orderData ? orderData?.Ac_Id : user?.Id,
+      Ac_Code: orderData ? orderData?.Ac_Code : user?.Ac_Code,
+      Our_Shop_Ac: orderData ? orderData?.Our_Shop_Ac : user?.Our_Shop_Ac,
       details,
       Id: Id,
       Order_Count: lrNo,
@@ -414,6 +444,7 @@ const AllOrders = () => {
 
             <Table
               columns={columns}
+              // rowKey={(record) => record.Itm_Id ?? `key-${Math.random()}`}
               dataSource={filteredData}
               loading={loading}
               pagination={{ pageSize: 20 }}

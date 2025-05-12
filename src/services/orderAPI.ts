@@ -40,6 +40,7 @@ export const AddOrder = async (payload: any) => {
 };
 
 export const UpdateOrder = async (payload: any) => {
+    console.log("payload2", payload);
     try {
         const res = await axios.post(`${API_END_POINT}/editSalePurMain`, payload, {
             headers: getAuthHeaders(),

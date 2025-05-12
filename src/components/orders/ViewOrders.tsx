@@ -17,6 +17,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import OrderPDF from "./OrderPDF";
 
+
 interface OrderRecord {
     Bill_No: string;
     Bill_Date: string;
@@ -154,11 +155,6 @@ const ViewOrders = () => {
             title: t('viewOrders.order_number'),
             dataIndex: "Bill_No",
             key: "Bill_No",
-            sorter: (a: any, b: any) => {
-                const aNum = parseInt(a.Bill_No);
-                const bNum = parseInt(b.Bill_No);
-                return aNum - bNum;
-            },
         },
         {
             title: t('viewOrders.order_date'),
@@ -166,43 +162,43 @@ const ViewOrders = () => {
             key: "Bill_Date",
             render: (date: string) => dayjs(date).format("DD-MM-YYYY"),
         },
-        ...(user && !user.isAdmin
-            ? [
-                {
-                    title: t('viewOrders.action'),
-                    key: "action",
-                    render: (_: unknown, record: OrderRecord) => (
-                        <div className="flex items-center gap-3">
-                            <Tooltip title={disablePastDates(dayjs(record.Bill_Date)) ? "You can't update past orders" : ""}>
-                                <Button
-                                    size="small"
-                                    onClick={() => handleEdit(record)}
-                                    disabled={disablePastDates(dayjs(record.Bill_Date))}
-                                >
-                                    <EditOutlined style={{ fontSize: "14px" }} />
-                                </Button>
-                            </Tooltip>
-                            <Button
-                                size="small"
-                                onClick={() => handleDownload(record)}
-                            >
-                                <DownloadOutlined style={{ fontSize: "14px" }} />
-                            </Button>
-                            <Tooltip title={disablePastDates(dayjs(record.Bill_Date)) ? "You can't delete past orders" : ""}>
-                                <Button
-                                    size="small"
-                                    danger
-                                    onClick={() => handleDelete(record)}
-                                    disabled={disablePastDates(dayjs(record.Bill_Date))}
-                                >
-                                    <DeleteOutlined style={{ fontSize: "14px" }} />
-                                </Button>
-                            </Tooltip>
-                        </div>
-                    ),
-                },
-            ]
-            : []),
+        // ...(user && !user.isAdmin
+        //     ? [
+        {
+            title: t('viewOrders.action'),
+            key: "action",
+            render: (_: unknown, record: OrderRecord) => (
+                <div className="flex items-center gap-3">
+                    <Tooltip title={disablePastDates(dayjs(record.Bill_Date)) ? "You can't update past orders" : ""}>
+                        <Button
+                            size="small"
+                            onClick={() => handleEdit(record)}
+                            disabled={disablePastDates(dayjs(record.Bill_Date))}
+                        >
+                            <EditOutlined style={{ fontSize: "14px" }} />
+                        </Button>
+                    </Tooltip>
+                    <Button
+                        size="small"
+                        onClick={() => handleDownload(record)}
+                    >
+                        <DownloadOutlined style={{ fontSize: "14px" }} />
+                    </Button>
+                    <Tooltip title={disablePastDates(dayjs(record.Bill_Date)) ? "You can't delete past orders" : ""}>
+                        <Button
+                            size="small"
+                            danger
+                            onClick={() => handleDelete(record)}
+                            disabled={disablePastDates(dayjs(record.Bill_Date))}
+                        >
+                            <DeleteOutlined style={{ fontSize: "14px" }} />
+                        </Button>
+                    </Tooltip>
+                </div>
+            ),
+        },
+        // ]
+        //         : []),
     ];
 
     const disablePastDates = (current: Dayjs) => {
@@ -212,16 +208,88 @@ const ViewOrders = () => {
     const handleEdit = (record: any) => {
         if (record.Bill_No) {
             // Passing data via state
-            navigate("/add-orders", { state: { orderData: record } });
+            navigate("/add-orders", {
+                state: {
+                    orderData: record
+                },
+            });
+            // onClick={() =>
+            //                 navigate('/add-orders', {
+            //                     state: {
+            //                         Ac_Name: record.Ac_Name,
+            //                         Mobile_No: record.Mobile_No,
+            //                         Book_Pass: record.Book_Pass,
+            //                         Ac_Code: record.Ac_Code,
+            //                         Id: record.Id,
+            //                         Our_Shop_Ac: record.Our_Shop_Ac,
+            //                     },
+            //                 })
+            //             }
         } else {
             message.error(t('viewOrders.invalidBillNo'));
         }
     };
 
+    // const handleDownload = async (record: any) => {
+    //     const hide = message.loading('Preparing download...', 0);
+    //     try {
+    //         const orderToDownload = orders && orders.find((order: any) => order.Bill_No === record.Bill_No);
+    //         selectedOrderRef.current = orderToDownload;
+
+    //         setTimeout(async () => {
+    //             if (!pdfRef.current) {
+    //                 hide();
+    //                 return;
+    //             }
+    //             const canvas = await html2canvas(pdfRef.current, {
+    //                 scale: 3, // High resolution for better quality
+    //                 useCORS: true, // Allow loading remote resources like images
+    //             });
+
+    //             const imgData = canvas.toDataURL("image/png");
+    //             const pdf = new jsPDF("p", "pt", "a4");
+
+    //             const pdfWidth = pdf.internal.pageSize.getWidth();
+    //             const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    //             // Calculate the number of pages needed
+    //             const canvasHeight = canvas.height;
+    //             let yPosition = 0;
+
+    //             while (yPosition < canvasHeight) {
+    //                 // Add image of the current portion of the canvas
+    //                 pdf.addImage(
+    //                     imgData,
+    //                     "PNG",
+    //                     0,
+    //                     -yPosition,
+    //                     pdfWidth,
+    //                     pdfHeight
+    //                 );
+
+    //                 yPosition += pdfHeight; // Move to the next page's height
+
+    //                 // Add a new page if there is still more content to print
+    //                 if (yPosition < canvasHeight) {
+    //                     pdf.addPage();
+    //                 }
+    //             }
+
+    //             pdf.save(`${orderToDownload.Bill_No || "invoice"}.pdf`);
+    //             hide(); // Stop loading
+    //             message.success('Download successful!', 2);
+    //         }, 0);
+    //     } catch (error) {
+    //         hide(); // Stop loading if there's an error
+    //         message.error('Download failed. Please try again.', 2);
+    //         console.error(error);
+    //     }
+    // };
+
     const handleDownload = async (record: any) => {
         const hide = message.loading('Preparing download...', 0);
         try {
-            const orderToDownload = orders && orders.find((order: any) => order.Bill_No === record.Bill_No);
+            const orderToDownload = orders?.find((order: any) => order.Bill_No === record.Bill_No);
             selectedOrderRef.current = orderToDownload;
 
             setTimeout(async () => {
@@ -229,50 +297,70 @@ const ViewOrders = () => {
                     hide();
                     return;
                 }
+
                 const canvas = await html2canvas(pdfRef.current, {
-                    scale: 3, // High resolution for better quality
-                    useCORS: true, // Allow loading remote resources like images
+                    scale: 3,
+                    useCORS: true,
                 });
 
-                const imgData = canvas.toDataURL("image/png");
+                // const imgData = canvas.toDataURL("image/png");
                 const pdf = new jsPDF("p", "pt", "a4");
 
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
 
-                // Calculate the number of pages needed
-                const canvasHeight = canvas.height;
-                let yPosition = 0;
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
 
-                while (yPosition < canvasHeight) {
-                    // Add image of the current portion of the canvas
-                    pdf.addImage(
-                        imgData,
-                        "PNG",
-                        0,
-                        -yPosition,
-                        pdfWidth,
-                        pdfHeight
+                const ratio = pageWidth / imgWidth;
+                const scaledHeight = imgHeight * ratio;
+
+                let position = 0;
+
+                while (position < scaledHeight) {
+                    const sourceY = (position / ratio);
+                    const pageCanvas = document.createElement("canvas");
+                    const pageContext = pageCanvas.getContext("2d");
+
+                    pageCanvas.width = imgWidth;
+                    pageCanvas.height = (pageHeight / ratio);
+
+                    // Copy the current slice of the full canvas
+                    pageContext?.drawImage(
+                        canvas,
+                        0, sourceY,
+                        imgWidth, pageCanvas.height,
+                        0, 0,
+                        imgWidth, pageCanvas.height
                     );
 
-                    yPosition += pdfHeight; // Move to the next page's height
+                    const pageImgData = pageCanvas.toDataURL("image/png");
 
-                    // Add a new page if there is still more content to print
-                    if (yPosition < canvasHeight) {
-                        pdf.addPage();
-                    }
+                    if (position > 0) pdf.addPage();
+
+                    pdf.addImage(
+                        pageImgData,
+                        "PNG",
+                        0,
+                        0,
+                        pageWidth,
+                        pageHeight
+                    );
+
+                    position += pageHeight;
                 }
 
-                pdf.save(`${orderToDownload.Bill_No || "invoice"}.pdf`);
-                hide(); // Stop loading
+                pdf.save(`${orderToDownload?.Bill_No || "invoice"}.pdf`);
+                hide();
                 message.success('Download successful!', 2);
             }, 0);
         } catch (error) {
-            hide(); // Stop loading if there's an error
+            hide();
             message.error('Download failed. Please try again.', 2);
             console.error(error);
         }
     };
+
 
     const handleDelete = async (record: OrderRecord) => {
         if (!record?.Bill_No) {
@@ -421,12 +509,21 @@ const ViewOrders = () => {
                     <Table
                         columns={columns}
                         rowKey={(record) => record.Bill_No}
+                        // dataSource={
+                        //     orders?.filter((order) => {
+                        //         const accountMatch = order.Ac_Name?.toLowerCase().includes(searchTerm?.toLowerCase());
+                        //         const orderMatch = order.Bill_No?.toString().includes(orderNumberSearch);
+                        //         return accountMatch && orderMatch;
+                        //     }) || []
+                        // }
                         dataSource={
-                            orders?.filter((order) => {
-                                const accountMatch = order.Ac_Name?.toLowerCase().includes(searchTerm?.toLowerCase());
-                                const orderMatch = order.Bill_No?.toString().includes(orderNumberSearch);
-                                return accountMatch && orderMatch;
-                            }) || []
+                            [...(orders || [])]
+                                .sort((a, b) => dayjs(b.Bill_Date).valueOf() - dayjs(a.Bill_Date).valueOf())
+                                .filter((order) => {
+                                    const accountMatch = order.Ac_Name?.toLowerCase().includes(searchTerm?.toLowerCase());
+                                    const orderMatch = order.Bill_No?.toString().includes(orderNumberSearch);
+                                    return accountMatch && orderMatch;
+                                })
                         }
                         onRow={(record) => ({
                             onClick: () => setSelectedOrderItems((record as any).Details || []), // Add row click functionality
