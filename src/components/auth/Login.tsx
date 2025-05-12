@@ -9,7 +9,7 @@ import { AppDispatch } from "../../redux/store";
 import { setUser } from "../../redux/slice/authSlice";
 import { ILogin } from "../../types/ILogin";
 import { useTranslation } from "react-i18next";
-import { askNotificationPermission } from "../../utils/notifications";
+// import { askNotificationPermission } from "../../utils/notifications";
 
 
 const Login = () => {
@@ -50,85 +50,42 @@ const Login = () => {
     }
   }, [form]);
 
-  // const handleSubmit = async (values: ILogin) => {
-
-  //   setLoading(true);
-  //   try {
-  //     const response = await LoginApi(values);
-  //     message.success(t("login.loginSuccess"));
-  //     Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
-  //     dispatch(setUser(response.data.user));
-  //     if (response.data.user.isAdmin === true) {
-  //       // ✨ Ask for notification permission
-  //       askNotificationPermission();
-
-  //       navigate("/user/List");
-  //     } else {
-  //       navigate("/");
-  //     }
-
-  //     if (values.remember) {
-  //       localStorage.setItem("rememberedUser", JSON.stringify({
-  //         Mobile_No: values.Mobile_No,
-  //         Book_Pass: values.Book_Pass,
-  //       }));
-  //     } else {
-  //       localStorage.removeItem("rememberedUser");
-  //     }
-
-
-  //     if (response.data.user.isAdmin === true) {
-  //       navigate("/user/List");
-  //     } else {
-  //       navigate("/");
-  //     }
-  //   } catch (error) {
-  //     const apiError = error as APIError;
-  //     if (apiError.response?.data?.message) {
-  //       message.error(apiError.response.data.message);
-  //     } else {
-  //       message.error(t("login.unexpectedError"));
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (values: ILogin) => {
-  setLoading(true);
-  try {
-    const response = await LoginApi(values);
-    message.success(t("login.loginSuccess"));
-    Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
-    dispatch(setUser(response.data.user));
 
-    if (values.remember) {
-      localStorage.setItem("rememberedUser", JSON.stringify({
-        Mobile_No: values.Mobile_No,
-        Book_Pass: values.Book_Pass,
-      }));
-    } else {
-      localStorage.removeItem("rememberedUser");
-    }
+    setLoading(true);
+    try {
+      const response = await LoginApi(values);
+      message.success(t("login.loginSuccess"));
+      Cookies.set("Shreeji_Veg", response.data.token, { expires: 15 });
+      dispatch(setUser(response.data.user));
 
-    // ✨ Admin-specific logic
-    if (response.data.user.isAdmin === true) {
-      await askNotificationPermission(); // NEW: Ask for push notification permission
-      navigate("/user/List");
-    } else {
-      navigate("/");
+      if (values.remember) {
+        localStorage.setItem("rememberedUser", JSON.stringify({
+          Mobile_No: values.Mobile_No,
+          Book_Pass: values.Book_Pass,
+        }));
+      } else {
+        localStorage.removeItem("rememberedUser");
+      }
+
+
+      if (response.data.user.isAdmin === true) {
+        navigate("/user/List");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      const apiError = error as APIError;
+      if (apiError.response?.data?.message) {
+        message.error(apiError.response.data.message);
+      } else {
+        message.error(t("login.unexpectedError"));
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    const apiError = error as APIError;
-    if (apiError.response?.data?.message) {
-      message.error(apiError.response.data.message);
-    } else {
-      message.error(t("login.unexpectedError"));
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
 
 
   return (
