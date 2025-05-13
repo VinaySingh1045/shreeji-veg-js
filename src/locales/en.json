@@ -14,7 +14,7 @@
     "unexpectedError": "An unexpected error occurred"
   },
   "Regester": {
-    "userName": "User Name",
+    "userName": " Acount Name(User Name)",
     "mobileNumber": "Mobile Number",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -106,8 +106,8 @@
     "failDelete": "Failed to delete order",
     "Freeze time sent successfully": "Freeze time sent successfully",
     "FreezeTime": "Freeze Time",
-    "Select Freeze Time": "Select Freeze Time",
-    "Search With order number or account name": "Search with order number or account name"
+    "SelectFreezeTime": "Select Freeze Time",
+    "SearchWithordernumberoraccountname": "Search with order number or account name"
   },
   "AproveUser": {
     "title": "Users Pending Approval",
@@ -119,7 +119,8 @@
     "statusSuccess": "Status updated successfully",
     "statusError": "Error updating status",
     "ApprovedList": "Approved List",
-    "UserList": "User List"
+    "UserList": "User List",
+    "SearchbyMobileNoorUsername": "Search by Mobile No or Username"
   },
   "nav": {
     "orders": "Orders",
@@ -133,7 +134,7 @@
     "installApp": "Install App"
   },
   "footer": {
-    "copyright": "Shreeji Veg. All rights reserved."
+    "copyright": "Code Soft. All rights reserved."
   },
   "languageChange": {
     "message": "Language changed successfully!"

@@ -455,7 +455,7 @@ const ViewOrders = () => {
                                                 handleSendFreezeTime(timeIn24HourFormat);
                                             }
                                         }}
-                                        placeholder={t('viewOrders.selectfreezetime')}
+                                        placeholder={t('viewOrders.SelectFreezeTime')}
                                         locale={currentAntdLocale}
                                     />
                                 </Form.Item>
