@@ -103,7 +103,11 @@
     "danger": "Danger",
     "cancel": "Cancel",
     "orderDelete": "Order deleted successfully",
-    "failDelete": "Failed to delete order"
+    "failDelete": "Failed to delete order",
+    "Freeze time sent successfully": "Freeze time sent successfully",
+    "FreezeTime": "Freeze Time",
+    "Select Freeze Time": "Select Freeze Time",
+    "Search With order number or account name": "Search with order number or account name"
   },
   "AproveUser": {
     "title": "Users Pending Approval",
@@ -150,6 +154,9 @@
     "danger": "Danger",
     "deleteSuccess": "Notifications deleted successfully",
     "deleteError": "Failed to delete notifications",
-    "noNotifications": "No notifications available"
+    "noNotifications": "No notifications available",
+    "DeleteNotifications": "Are you sure? Do you want to delete all the notifications?",
+    "deleteAllNotifications": "It will delete all the notifications",
+    "DeleteAll": "Delete All"
   }
 }

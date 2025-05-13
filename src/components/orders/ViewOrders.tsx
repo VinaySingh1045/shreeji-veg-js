@@ -302,7 +302,7 @@ const ViewOrders = () => {
                 }
 
                 const canvas = await html2canvas(pdfRef.current, {
-                    scale: 3,
+                    scale: 1.10,
                     useCORS: true,
                 });
 
@@ -430,7 +430,7 @@ const ViewOrders = () => {
 
     const handleSendFreezeTime = async (time: string) => {
         await SendFreezeTime(time);
-        message.success("Freeze time sent successfully");;
+        message.success(t('viewOrders.Freezetimesentsuccessfully'));;
         // Add your logic to send the freeze time to the server or perform any action
     }
 
@@ -441,7 +441,7 @@ const ViewOrders = () => {
                     {user && user.isAdmin && (
                         <>
                             <Col xs={24} sm={12} md={8} lg={6}>
-                                <Form.Item label="Freeze Time" colon={false} className="time-freeze">
+                                <Form.Item label={t('viewOrders.FreezeTime')} colon={false} className="time-freeze">
                                     <TimePicker
                                         style={{ width: "100%" }}
                                         size="small"
@@ -455,7 +455,7 @@ const ViewOrders = () => {
                                                 handleSendFreezeTime(timeIn24HourFormat);
                                             }
                                         }}
-                                        placeholder={"Select Freeze Time"}
+                                        placeholder={t('viewOrders.selectfreezetime')}
                                         locale={currentAntdLocale}
                                     />
                                 </Form.Item>
@@ -538,7 +538,7 @@ const ViewOrders = () => {
                 <Space direction="vertical" style={{ width: "100%" }}>
                     {user && user.isAdmin &&
                         <Input.Search
-                            placeholder={"Search With order number or account name"}
+                            placeholder={t('viewOrders.SearchWithordernumberoraccountname')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             enterButton
