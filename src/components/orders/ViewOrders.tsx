@@ -217,9 +217,6 @@ const ViewOrders = () => {
         return shouldDisable;
     };
 
-
-
-
     const handleEdit = (record: any) => {
         if (record.Bill_No) {
             // Passing data via state
@@ -232,62 +229,6 @@ const ViewOrders = () => {
             message.error(t('viewOrders.invalidBillNo'));
         }
     };
-
-    // const handleDownload = async (record: any) => {
-    //     const hide = message.loading('Preparing download...', 0);
-    //     try {
-    //         const orderToDownload = orders && orders.find((order: any) => order.Bill_No === record.Bill_No);
-    //         selectedOrderRef.current = orderToDownload;
-
-    //         setTimeout(async () => {
-    //             if (!pdfRef.current) {
-    //                 hide();
-    //                 return;
-    //             }
-    //             const canvas = await html2canvas(pdfRef.current, {
-    //                 scale: 3, // High resolution for better quality
-    //                 useCORS: true, // Allow loading remote resources like images
-    //             });
-
-    //             const imgData = canvas.toDataURL("image/png");
-    //             const pdf = new jsPDF("p", "pt", "a4");
-
-    //             const pdfWidth = pdf.internal.pageSize.getWidth();
-    //             const pdfHeight = pdf.internal.pageSize.getHeight();
-
-    //             // Calculate the number of pages needed
-    //             const canvasHeight = canvas.height;
-    //             let yPosition = 0;
-
-    //             while (yPosition < canvasHeight) {
-    //                 // Add image of the current portion of the canvas
-    //                 pdf.addImage(
-    //                     imgData,
-    //                     "PNG",
-    //                     0,
-    //                     -yPosition,
-    //                     pdfWidth,
-    //                     pdfHeight
-    //                 );
-
-    //                 yPosition += pdfHeight; // Move to the next page's height
-
-    //                 // Add a new page if there is still more content to print
-    //                 if (yPosition < canvasHeight) {
-    //                     pdf.addPage();
-    //                 }
-    //             }
-
-    //             pdf.save(`${orderToDownload.Bill_No || "invoice"}.pdf`);
-    //             hide(); // Stop loading
-    //             message.success('Download successful!', 2);
-    //         }, 0);
-    //     } catch (error) {
-    //         hide(); // Stop loading if there's an error
-    //         message.error('Download failed. Please try again.', 2);
-    //         console.error(error);
-    //     }
-    // };
 
     const handleDownload = async (record: any) => {
         const hide = message.loading('Preparing download...', 0);
@@ -534,7 +475,11 @@ const ViewOrders = () => {
                         </Col>
                     )}
                 </Row>
-
+                <div>
+                    <h2 className="text-[20px] font-bold mt-2">
+                       Total Orders: {orders?.length}
+                    </h2>
+                </div>
                 <Space direction="vertical" style={{ width: "100%" }}>
                     {user && user.isAdmin &&
                         <Input.Search
@@ -543,6 +488,7 @@ const ViewOrders = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             enterButton
                             style={{ width: '100%' }}
+                            allowClear
                         />
                     }
                     <Table
@@ -550,7 +496,11 @@ const ViewOrders = () => {
                         rowKey={(record) => record.Bill_No}
                         dataSource={
                             [...(orders || [])]
-                                .sort((a, b) => dayjs(b.Bill_Date).valueOf() - dayjs(a.Bill_Date).valueOf())
+                                .sort((a, b) => {
+                                    const billNoDiff = b.Bill_No - a.Bill_No; // Assuming Bill_No is numeric
+                                    if (billNoDiff !== 0) return billNoDiff;
+                                    return dayjs(b.Bill_Date).valueOf() - dayjs(a.Bill_Date).valueOf();
+                                })
                                 .filter((order) => {
                                     const searchLower = searchTerm.toLowerCase();
                                     const accountMatch = order.Ac_Name?.toLowerCase().includes(searchLower);
@@ -563,7 +513,7 @@ const ViewOrders = () => {
                         })}
                         loading={loading}
                         scroll={{ x: true, }}
-                        pagination={{ pageSize: 5 }}
+                        pagination={{ pageSize: 5, showSizeChanger: false }}
                         bordered
                         size="small"
                     />

@@ -209,7 +209,7 @@ const UserListToApprove = () => {
                 dataSource={activeTab === 'toApprove' ? filteredUsers : users}
                 rowKey="_id"
                 loading={loading}
-                pagination={{ pageSize: 20 }}
+                pagination={{ pageSize: 20, showSizeChanger: false }}
                 bordered
                 scroll={{ x: 'max-content' }}
                 size='small'
