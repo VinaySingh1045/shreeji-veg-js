@@ -14,7 +14,7 @@
     "unexpectedError": "અનપેક્ષિત ભૂલ થઈ"
   },
   "Regester": {
-    "userName": "યુઝરનામ",
+    "userName": "ખાતાનું નામ(વપરાશકર્તા નામ)",
     "mobileNumber": "મોબાઈલ નંબર",
     "password": "પાસવર્ડ",
     "confirmPassword": "પાસવર્ડ પુષ્ટિ કરો",
@@ -119,7 +119,8 @@
     "statusSuccess": "સ્થિતિ સફળતાપૂર્વક અપડેટ થઈ",
     "statusError": "સ્થિતિ અપડેટ કરતી વખતે ભૂલ",
     "ApprovedList": "મંજૂર કરેલ યાદી",
-    "UserList": "વપરાશકર્તા યાદી"
+    "UserList": "વપરાશકર્તા યાદી",
+    "SearchbyMobileNoorUsername": "મોબાઈલ નંબર અથવા વપરાશકર્તા નામ દ્વારા શોધો"
   },
   "nav": {
     "orders": "ઓર્ડર્સ",
@@ -133,7 +134,7 @@
     "installApp": "એપ્લિકેશન ઇન્સ્ટોલ કરો"
   },
   "footer": {
-    "copyright": "શ્રીજી વેજ. સર્વ હકો રાખેલા છે."
+    "copyright": "કોડ સોફ્ટ. સર્વ હકો રાખેલા છે."
   },
   "languageChange": {
     "message": "ભાષા સફળતાપૂર્વક બદલાઈ ગઈ!"
