@@ -11,7 +11,8 @@
     "noAccount": "Don't have an account?",
     "registerNow": "Register Now",
     "loginSuccess": "Login successful!",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "mobileNumberMessage": "Mobile number must be exactly 10 digits"
   },
   "Regester": {
     "userName": "Account Name",
@@ -47,7 +48,9 @@
     "action": "Action",
     "removeSuccess": "Removed vege from favorites Successfully!",
     "removeError": "Invalid vegetable ID.",
-    "groupName": "Group Name"
+    "groupName": "Group Name",
+    "sortIndex": "Sort Index",
+    "sortIndexMessage": "Index Updated Successfully"
   },
   "vegetable": {
     "title": "All Vegetables",
@@ -137,7 +140,8 @@
     "installApp": "Install App"
   },
   "footer": {
-    "copyright": "Code Soft. All rights reserved."
+    "copyright": "The Code Soft. ",
+    "right": "All rights reserved."
   },
   "languageChange": {
     "message": "Language changed successfully!"
@@ -161,6 +165,7 @@
     "noNotifications": "No notifications available",
     "DeleteNotifications": "Are you sure? Do you want to delete all the notifications?",
     "deleteAllNotifications": "It will delete all the notifications",
-    "DeleteAll": "Delete All"
+    "DeleteAll": "Delete All",
+    "DeleteNotificationsMessage": "This order has been deleted."
   }
 }
