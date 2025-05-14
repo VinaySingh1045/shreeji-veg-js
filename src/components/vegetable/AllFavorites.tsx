@@ -140,9 +140,7 @@ const FavoriteVeges = () => {
     ];
 
     const handleSaveSortIndex = async (record: Vegetable) => {
-        console.log("record: ", record)
         if (editedSortIndex === null || record.Itm_Id === undefined) return;
-        console.log("editedSortIndex: ", editedSortIndex)
         try {
             await updateSortIndexAPI(record.Itm_Id, editedSortIndex);
             message.success(t('favorite.sortIndexMessage'));

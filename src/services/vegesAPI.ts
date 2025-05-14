@@ -33,12 +33,10 @@ export const GetFavorites = async (lang: string, id: string) => {
 
 
 export const AddToFavorite = async (userData: number, sortIndex: number = 0) => {
-    console.log("Sort_Index: ", sortIndex);
     try {
         const res = await axios.post(`${API_END_POINT}/addToFavorites`, { Itm_Id: userData, Sort_Index: sortIndex }, {
             headers: getAuthHeaders(),
         })
-        console.log("res.data: ", res)
         return res.data
     } catch (error) {
         console.error('Error While Adding the Favorites:', error)
