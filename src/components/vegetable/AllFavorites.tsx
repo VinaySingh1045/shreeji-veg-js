@@ -8,6 +8,9 @@ import { RemoveFavorite, updateSortIndexAPI } from "../../services/vegesAPI";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Vegetable } from "../../redux/slice/vegesSlice";
 import { useTranslation } from "react-i18next";
+import { useRef } from "react";
+import type { InputRef } from "antd";
+
 
 const FavoriteVeges = () => {
     const { t } = useTranslation();
@@ -22,21 +25,33 @@ const FavoriteVeges = () => {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editedSortIndex, setEditedSortIndex] = useState<number | null>(null);
     const pageSize = 20;
+    const inputRef = useRef<InputRef>(null);
 
     const favoriteVeges = favorites || [];
+
+    useEffect(() => {
+        if (editingId !== null && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [editingId]);
 
     useEffect(() => {
         dispatch(fetchFavoriteVegetables(user?.Id || ""));
     }, [dispatch, user]);
 
     useEffect(() => {
-        const filtered = favoriteVeges.filter((veg: Vegetable) => {
-            // If Itm_Name is null, include it only when there's no search text
-            if (!veg.Itm_Name) {
-                return searchText.trim() === ""; // show these only if search is empty
+        const search = searchText.trim().toLowerCase();
+
+        const filtered = favoriteVeges.filter((veg: Vegetable,) => {
+            const itmName = veg.Itm_Name?.toLowerCase().trim() || "";
+            const itmNameEn = veg.Itm_Name_en?.toLowerCase().trim() || "";
+
+            if (!search) {
+                return true;
             }
 
-            return veg.Itm_Name.toLowerCase().includes(searchText.toLowerCase());
+            const match = itmName.includes(search) || itmNameEn.includes(search);
+            return match;
         });
 
         setFilteredVeges(filtered);
@@ -49,14 +64,16 @@ const FavoriteVeges = () => {
             key: "serial",
             render: (_: unknown, __: unknown, index: number) =>
                 (currentPage - 1) * pageSize + index + 1,
-            // dataIndex: 'Sort_Index',  // <-- bind directly to the backend field
-            // key: 'sortIndex',
         },
         {
             title: t('favorite.name'),
             dataIndex: "Itm_Name",
             key: "Itm_Name",
-            render: (text: string | null) => text ?? <span style={{ color: '#999' }}>N/A</span>,
+            render: (_: string | null, record: Vegetable) => {
+                if (record.Itm_Name) return record.Itm_Name;
+                if (record.Itm_Name_en) return <span>{record.Itm_Name_en}</span>;
+                return <span style={{ color: '#999' }}>N/A</span>;
+            },
         },
         {
             title: t('favorite.groupName'),
@@ -74,6 +91,7 @@ const FavoriteVeges = () => {
                 return isEditing ? (
                     <Input
                         type="text"
+                        ref={inputRef}
                         value={editedSortIndex ?? ""}
                         onChange={(e) => {
                             const value = e.target.value;

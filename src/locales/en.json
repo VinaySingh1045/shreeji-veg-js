@@ -117,7 +117,7 @@
   },
   "AproveUser": {
     "title": "Users Pending Approval",
-    "name": "Name",
+    "name": "Account Name",
     "mobile": "Mobile No",
     "code": "Code",
     "action": "Action",
@@ -126,7 +126,7 @@
     "statusError": "Error updating status",
     "ApprovedList": "Approved List",
     "UserList": "User List",
-    "SearchbyMobileNoorUsername": "Search by Mobile No or Username",
+    "SearchbyMobileNoorUsername": "Search by Mobile No or Account Name",
     "Pleasefilltheapprovalcode": "Please fill the approval code"
   },
   "nav": {
@@ -170,13 +170,27 @@
     "DeleteNotificationsMessage": "This order has been deleted."
   },
   "forgotPassword": {
-    "title": "Forgot Password",
-    "message": "Please enter your registered mobile number to receive an OTP.",
-    "mobileNumber": "Mobile No.",
-    "mobileNumberPlaceholder": "Enter your mobile number",
-    "sendOTP": "Send OTP",
     "otpSentSuccess": "OTP sent successfully!",
-    "otpSendFail": "Failed to send OTP",
-    "enterMobileWarning": "Please enter a valid mobile number first"
+    "FailedtosendOTP": "Failed to send OTP",
+   "Passwordupdatedsuccessfully!": "Password updated successfully!",
+   "Failedtoresetpassword": "Failed to reset password",
+   "ForgotPassword": "Forgot Password",
+   "MobileNumber": "Mobile Number",
+   "Pleaseenteryourmobilenumber": "Please enter your mobile number",
+   "Pleaseenteravalid10-digitmobilenumber": "Please enter a valid 10-digit mobile number",
+   "Entermobilenumber": "Enter mobile number",
+   "OTP": "OTP",
+   "PleaseentertheOTP": "Please enter the OTP",
+   "OTPmustbeexactly6digits": "OTP must be exactly 6 digits",
+   "EnterOTP": "Enter OTP",
+   "NewPassword": "New Password",
+    "PleaseentertheNewPassword": "Please enter the new password",
+    "passwordmustbe": "Password must be 5-20 characters with uppercase, lowercase & a special character",
+    "ConfirmPassword": "Confirm Password",
+    "Pleaseconfirmyourpassword": "Please confirm your password",
+    "Passwordsdonotmatch!": "Passwords do not match!",
+    "SendOTP": "Send OTP",
+    "ResetPassword": "Reset Password",
+    "BacktoLogin": "Back to Login"
   }
 }

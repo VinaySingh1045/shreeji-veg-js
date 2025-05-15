@@ -117,7 +117,7 @@
   },
   "AproveUser": {
     "title": "स्वीकृति की प्रतीक्षा कर रहे उपयोगकर्ता",
-    "name": "नाम",
+    "name": "खाता नाम",
     "mobile": "मोबाइल नंबर",
     "code": "कोड",
     "action": "क्रिया",
@@ -126,7 +126,7 @@
     "statusError": "स्थिति अपडेट करने में त्रुटि",
     "ApprovedList": "स्वीकृत सूची",
     "UserList": "उपयोगकर्ता सूची",
-    "SearchbyMobileNoorUsername": "मोबाइल नंबर या उपयोगकर्ता नाम द्वारा खोजें",
+    "SearchbyMobileNoorUsername": "मोबाइल नंबर या खाता नाम से खोजें",
     "Pleasefilltheapprovalcode": "कृपया स्वीकृति कोड भरें"
   },
   "nav": {
@@ -170,17 +170,27 @@
     "DeleteNotificationsMessage": "यह ऑर्डर हटा दिया गया है।"
   },
   "forgotPassword": {
-    "title": "पासवर्ड भूल गए",
-    "message": "कृपया अपना पंजीकृत मोबाइल नंबर दर्ज करें।",
-    "mobileNumber": "मोबाइल नंबर",
-    "sendOTP": "ओटीपी भेजें",
-    "otp": "ओटीपी",
-    "enterOTP": "कृपया ओटीपी दर्ज करें!",
-    "otpPlaceholder": "ओटीपी दर्ज करें",
-    "newPassword": "नया पासवर्ड",
-    "confirmPassword": "पासवर्ड की पुष्टि करें",
-    "resetPassword": "पासवर्ड रीसेट करें",
-    "passwordResetSuccess": "पासवर्ड सफलतापूर्वक रीसेट किया गया!",
-    "passwordResetFailed": "पासवर्ड रीसेट करने में विफल"
+   "otpSentSuccess": "ओटीपी सफलतापूर्वक भेजा गया!",
+   "FailedtosendOTP": "ओटीपी भेजने में विफल",
+   "Passwordupdatedsuccessfully!": "पासवर्ड सफलतापूर्वक अपडेट किया गया!",
+   "Failedtoresetpassword": "पासवर्ड रीसेट करने में विफल",
+   "ForgotPassword": "पासवर्ड भूल गए",
+   "MobileNumber": "मोबाइल नंबर",
+   "Pleaseenteryourmobilenumber": "कृपया अपना मोबाइल नंबर दर्ज करें",
+   "Pleaseenteravalid10-digitmobilenumber": "कृपया एक मान्य 10-अंक का मोबाइल नंबर दर्ज करें",
+   "Entermobilenumber": "कृपया मोबाइल नंबर दर्ज करें",
+   "OTP": "ओटीपी",
+   "PleaseentertheOTP": "कृपया ओटीपी दर्ज करें",
+   "OTPmustbeexactly6digits": "ओटीपी को ठीक 6 अंकों का होना चाहिए",
+   "EnterOTP": "ओटीपी दर्ज करें",
+    "NewPassword": "नया पासवर्ड",
+    "Pleaseenternewpassword": "कृपया नया पासवर्ड दर्ज करें",
+    "passwordmustbe": "पासवर्ड 5-20 अक्षरों का होना चाहिए जिसमें एक अपरकेस, एक लोअरकेस और एक विशेष वर्ण हो",
+    "ConfirmPassword": "पासवर्ड की पुष्टि करें",
+    "Pleaseconfirmyourpassword": "कृपया अपना पासवर्ड की पुष्टि करें",
+    "Passwordsdonotmatch!": "पासवर्ड मेल नहीं खाते!",
+    "SendOTP": "ओटीपी भेजें",
+    "ResetPassword": "पासवर्ड रीसेट करें",
+    "BacktoLogin": "लॉगिन पर वापस जाएं"
   }
 }

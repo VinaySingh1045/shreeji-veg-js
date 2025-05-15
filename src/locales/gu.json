@@ -117,7 +117,7 @@
   },
   "AproveUser": {
     "title": "મંજૂરી માટે રાહ જોઈ રહ્યા વપરાશકર્તાઓ",
-    "name": "નામ",
+    "name": "ખાતાનું નામ",
     "mobile": "મોબાઈલ નંબર",
     "code": "કોડ",
     "action": "ક્રિયા",
@@ -126,7 +126,7 @@
     "statusError": "સ્થિતિ અપડેટ કરતી વખતે ભૂલ",
     "ApprovedList": "મંજૂર કરેલ યાદી",
     "UserList": "વપરાશકર્તા યાદી",
-    "SearchbyMobileNoorUsername": "મોબાઈલ નંબર અથવા વપરાશકર્તા નામ દ્વારા શોધો",
+    "SearchbyMobileNoorUsername": "મોબાઇલ નંબર અથવા ખાતાના નામ દ્વારા શોધો",
     "Pleasefilltheapprovalcode": "મહેરબાની કરીને મંજૂરી કોડ ભરો"
   },
   "nav": {
@@ -170,16 +170,27 @@
     "DeleteNotificationsMessage": "આ ઓર્ડર દૂર કરી દેવામાં આવ્યો છે."
   },
   "forgotPassword": {
-    "title": "પાસવર્ડ ભૂલી ગયા છો?",
-    "message": "તમારા મોબાઇલ નંબર પર એક OTP મોકલવામાં આવશે.",
-    "otp": "ઓટીપી",
-    "otpPlaceholder": "ઓટીપી દાખલ કરો",
-    "sendOTP": "ઓટીપી મોકલો",
-    "resetPassword": "પાસવર્ડ ફરીથી સેટ કરો",
-    "newPassword": "નવો પાસવર્ડ",
-    "confirmPassword": "પાસવર્ડ પુષ્ટિ કરો",
-    "reset": "ફરીથી સેટ કરો",
-    "passwordResetSuccess": "પાસવર્ડ સફળતાપૂર્વક ફરીથી સેટ થયો!",
-    "passwordResetError": "પાસવર્ડ ફરીથી સેટ કરવામાં ભૂલ"
+    "otpSentSuccess": "ઓટીપી સફળતાપૂર્વક મોકલાયો!",
+    "FailedtosendOTP": "ઓટીપી મોકલવામાં નિષ્ફળ",
+    "Passwordupdatedsuccessfully!": "પાસવર્ડ સફળતાપૂર્વક અપડેટ થયો!",
+    "Failedtoresetpassword": "પાસવર્ડ ફરીથી સેટ કરવામાં નિષ્ફળ",
+    "ForgotPassword": "પાસવર્ડ ભૂલી ગયા છો",
+    "MobileNumber": "મોબાઇલ નંબર",
+    "Pleaseenteryourmobilenumber": "મહેરબાની કરીને તમારો મોબાઇલ નંબર દાખલ કરો",
+    "Pleaseenteravalid10-digitmobilenumber": "મહેરબાની કરીને માન્ય 10-અંકનો મોબાઇલ નંબર દાખલ કરો",
+    "Entermobilenumber": "મોબાઇલ નંબર દાખલ કરો",
+    "OTP": "ઓટીપી",
+    "PleaseentertheOTP": "મહેરબાની કરીને ઓટીપી દાખલ કરો",
+    "OTPmustbeexactly6digits": "ઓટીપી ચોક્કસ 6 અંકનો હોવો જોઈએ",
+    "EnterOTP": "ઓટીપી દાખલ કરો",
+    "NewPassword": "નવો પાસવર્ડ",
+    "Pleaseenteranewpassword": "મહેરબાની કરીને નવો પાસવર્ડ દાખલ કરો",
+    "passwordmustbe": "પાસવર્ડ 5-20 અક્ષરનો હોવો જોઈએ જેમાં એક અપરકેસ, એક લોઅરકેસ અને એક વિશિષ્ટ અક્ષર હોય",
+    "ConfirmPassword": "પાસવર્ડની પુષ્ટિ કરો",
+    "Pleaseconfirmyourpassword": "મહેરબાની કરીને તમારો પાસવર્ડ પુષ્ટિ કરો",
+    "Passwordsdonotmatch!": "પાસવર્ડ મેળ ખાતા નથી!",
+    "SendOTP": "ઓટીપી મોકલો",
+    "ResetPassword": "પાસવર્ડ ફરીથી સેટ કરો",
+    "BacktoLogin": "લોગિન પર પાછા જાઓ"
   }
 }
