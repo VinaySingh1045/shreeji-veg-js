@@ -12,7 +12,8 @@
     "registerNow": "હમણાં રજીસ્ટર કરો",
     "loginSuccess": "લોગિન સફળ થયું!",
     "unexpectedError": "અનપેક્ષિત ભૂલ થઈ",
-    "mobileNumberMessage": "મોબાઇલ નંબર ચોક્કસ 10 અંકનો હોવો જોઈએ."
+    "mobileNumberMessage": "મોબાઇલ નંબર ચોક્કસ 10 અંકનો હોવો જોઈએ.",
+    "ForgotPassword": "પાસવર્ડ ભૂલી ગયા છો?"
   },
   "Regester": {
     "userName": "ખાતાનું નામ",
@@ -167,5 +168,18 @@
     "deleteAllNotifications": "તે તમામ સૂચનાઓને દૂર કરશે.",
     "DeleteAll": "બધા કાઢી નાખો",
     "DeleteNotificationsMessage": "આ ઓર્ડર દૂર કરી દેવામાં આવ્યો છે."
+  },
+  "forgotPassword": {
+    "title": "પાસવર્ડ ભૂલી ગયા છો?",
+    "message": "તમારા મોબાઇલ નંબર પર એક OTP મોકલવામાં આવશે.",
+    "otp": "ઓટીપી",
+    "otpPlaceholder": "ઓટીપી દાખલ કરો",
+    "sendOTP": "ઓટીપી મોકલો",
+    "resetPassword": "પાસવર્ડ ફરીથી સેટ કરો",
+    "newPassword": "નવો પાસવર્ડ",
+    "confirmPassword": "પાસવર્ડ પુષ્ટિ કરો",
+    "reset": "ફરીથી સેટ કરો",
+    "passwordResetSuccess": "પાસવર્ડ સફળતાપૂર્વક ફરીથી સેટ થયો!",
+    "passwordResetError": "પાસવર્ડ ફરીથી સેટ કરવામાં ભૂલ"
   }
 }
