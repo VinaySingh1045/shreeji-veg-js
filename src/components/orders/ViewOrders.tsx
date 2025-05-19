@@ -113,7 +113,6 @@ const ViewOrders = () => {
     useEffect(() => {
         if (!orders || orders.length === 0) {
             setShowOrderTable(true);
-            console.log("Waiting for orders to load...");
             return;
         }
 
@@ -122,8 +121,6 @@ const ViewOrders = () => {
         const matchedOrder = orders.find(order =>
             Number(order.Bill_No) === Number(orderId)
         );
-
-        console.log("matchedOrder:", matchedOrder);
 
         if (matchedOrder) {
             setSearchTerm(orderId.toString());
@@ -493,7 +490,7 @@ const ViewOrders = () => {
     const debouncedSearchHandler = useMemo(() => {
         return debounce((value: string) => {
             handleSearchInputChange(value);
-        }, 500); // 500ms debounce
+        }, 500);
     }, [handleSearchInputChange]);
 
     return (

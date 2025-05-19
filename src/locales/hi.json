@@ -1,6 +1,6 @@
 {
   "login": {
-    "UserPhoneNo": "फोन नंबर",
+    "UserPhoneNo": "मोबाइल नंबर",
     "enterPhoneNo": "कृपया अपना फोन नंबर दर्ज करें!",
     "PhoneNoPlaceholder": "अपना फोन नंबर दर्ज करें",
     "password": "पासवर्ड",
@@ -38,7 +38,8 @@
     "unexpectedError": "कुछ गलत हो गया है",
     "otpSentSuccess": "ओटीपी सफलतापूर्वक भेजा गया!",
     "otpSendFail": "ओटीपी भेजने में विफल",
-    "enterMobileWarning": "कृपया पहले एक मान्य मोबाइल नंबर दर्ज करें"
+    "enterMobileWarning": "कृपया पहले एक मान्य मोबाइल नंबर दर्ज करें",
+    "bookPassWarning": "कृपया पहले पासवर्ड दर्ज करें"
   },
   "favorite": {
     "title": "पसंदीदा सब्ज़ियाँ",
@@ -124,7 +125,7 @@
     "approve": "स्वीकृत करें",
     "statusSuccess": "स्थिति सफलतापूर्वक अपडेट की गई",
     "statusError": "स्थिति अपडेट करने में त्रुटि",
-    "ApprovedList": "स्वीकृत सूची",
+    "ApprovedList": "अनुमोदन लंबित सूची",
     "UserList": "उपयोगकर्ता सूची",
     "SearchbyMobileNoorUsername": "मोबाइल नंबर या खाता नाम से खोजें",
     "Pleasefilltheapprovalcode": "कृपया स्वीकृति कोड भरें"
@@ -141,7 +142,7 @@
     "installApp": "ऐप इंस्टॉल करें"
   },
   "footer": {
-    "copyright": "द कोड सॉफ्ट।",
+    "copyright": "द कोड सॉफ्ट। संपर्क नंबर: 9265722877",
     "right": "सर्वाधिकार सुरक्षित।"
   },
   "languageChange": {

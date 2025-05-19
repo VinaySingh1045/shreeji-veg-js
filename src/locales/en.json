@@ -1,6 +1,6 @@
 {
   "login": {
-    "UserPhoneNo": "Phone No.",
+    "UserPhoneNo": "Mobile No.",
     "enterPhoneNo": "Please enter your PhoneNo!",
     "PhoneNoPlaceholder": "Enter your PhoneNo",
     "password": "Password",
@@ -38,7 +38,9 @@
     "unexpectedError": "An unexpected error occurred",
     "otpSentSuccess": "OTP sent successfully!",
     "otpSendFail": "Failed to send OTP",
-    "enterMobileWarning": "Please enter a valid mobile number first"
+    "enterMobileWarning": "Please enter a valid mobile number first",
+    "bookPassWarning": "Please enter a Password first",
+    "confirmPasswordWarning": "Please enter Confirm Password first"
   },
   "favorite": {
     "title": "Favorite Vegetables",
@@ -124,7 +126,7 @@
     "approve": "Approve",
     "statusSuccess": "Status updated successfully",
     "statusError": "Error updating status",
-    "ApprovedList": "Approved List",
+    "ApprovedList": "Pending Approval List",
     "UserList": "User List",
     "SearchbyMobileNoorUsername": "Search by Mobile No or Account Name",
     "Pleasefilltheapprovalcode": "Please fill the approval code"
@@ -141,7 +143,7 @@
     "installApp": "Install App"
   },
   "footer": {
-    "copyright": "The Code Soft. ",
+    "copyright": "The Code Soft. Contact No. 9265722877 ",
     "right": "All rights reserved."
   },
   "languageChange": {
@@ -172,18 +174,18 @@
   "forgotPassword": {
     "otpSentSuccess": "OTP sent successfully!",
     "FailedtosendOTP": "Failed to send OTP",
-   "Passwordupdatedsuccessfully!": "Password updated successfully!",
-   "Failedtoresetpassword": "Failed to reset password",
-   "ForgotPassword": "Forgot Password",
-   "MobileNumber": "Mobile Number",
-   "Pleaseenteryourmobilenumber": "Please enter your mobile number",
-   "Pleaseenteravalid10-digitmobilenumber": "Please enter a valid 10-digit mobile number",
-   "Entermobilenumber": "Enter mobile number",
-   "OTP": "OTP",
-   "PleaseentertheOTP": "Please enter the OTP",
-   "OTPmustbeexactly6digits": "OTP must be exactly 6 digits",
-   "EnterOTP": "Enter OTP",
-   "NewPassword": "New Password",
+    "Passwordupdatedsuccessfully!": "Password updated successfully!",
+    "Failedtoresetpassword": "Failed to reset password",
+    "ForgotPassword": "Forgot Password",
+    "MobileNumber": "Mobile Number",
+    "Pleaseenteryourmobilenumber": "Please enter your mobile number",
+    "Pleaseenteravalid10-digitmobilenumber": "Please enter a valid 10-digit mobile number",
+    "Entermobilenumber": "Enter mobile number",
+    "OTP": "OTP",
+    "PleaseentertheOTP": "Please enter the OTP",
+    "OTPmustbeexactly6digits": "OTP must be exactly 6 digits",
+    "EnterOTP": "Enter OTP",
+    "NewPassword": "New Password",
     "PleaseentertheNewPassword": "Please enter the new password",
     "passwordmustbe": "Password must be 5-20 characters with uppercase, lowercase & a special character",
     "ConfirmPassword": "Confirm Password",

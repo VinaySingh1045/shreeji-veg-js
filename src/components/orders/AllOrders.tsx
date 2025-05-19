@@ -48,10 +48,8 @@ const AllOrders = () => {
 
   const fetchUnits = async () => {
     const res = await GetUnits();
-    console.log("res", res);
     setUnits(res.data);
   }
-
 
   const fetchFreezeTime = async () => {
     try {
@@ -299,8 +297,6 @@ const AllOrders = () => {
         }),
     ];
 
-    console.log("details: ", details)
-
     const allQuantitiesZero = details.every(item => item.Inward === 0);
 
     if (details.length === 0 || allQuantitiesZero) {
@@ -318,7 +314,7 @@ const AllOrders = () => {
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
-
+    
     try {
       setAddLoding(true);
       await AddOrder(payload);
@@ -365,11 +361,6 @@ const AllOrders = () => {
         />
       ),
     },
-    // {
-    //   title: t('allOrders.unit'),
-    //   dataIndex: "Uni_Name",
-    //   key: "Uni_Name",
-    // },
     {
       title: t('allOrders.unit'),
       key: "unit",
@@ -428,6 +419,7 @@ const AllOrders = () => {
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
+
     try {
       setAddLoding(true);
       await UpdateOrder(payload);
