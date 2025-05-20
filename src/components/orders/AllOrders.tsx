@@ -310,7 +310,6 @@ const AllOrders = () => {
       details,
       Ac_Code: user?.Ac_Code,
       Our_Shop_Ac: user?.Our_Shop_Ac,
-      // Bill_No: billNo,
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };

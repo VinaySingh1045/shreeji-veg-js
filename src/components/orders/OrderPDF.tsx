@@ -64,12 +64,10 @@ const OrderPDF: React.FC<OrderPDFProps> = ({ orderData }) => {
                     <div style={{ border: "1px solid black", padding: "10px", width: "40%" }}>
                         <div style={{ display: "flex", gap: '40px', marginBottom: "10px", textAlign: "left" }}>
                             <p><strong>Order No:</strong> {orderData && orderData?.Bill_No}</p>
-                            {/* <p><strong>Dated:</strong>{orderData && orderData?.Bill_Date.split('T')[0]}</p> */}
                             <p><strong>Date:</strong> {orderData && dayjs(orderData?.Bill_Date).format('DD-MM-YYYY')}</p>
                         </div>
                         <div style={{ textAlign: "left" }}>
                             <p><strong>Delivery Address:</strong></p>
-                            {/* Add address here if needed */}
                         </div>
                     </div>
                 </div>
