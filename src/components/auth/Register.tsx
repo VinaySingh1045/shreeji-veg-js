@@ -157,7 +157,11 @@ const Register = () => {
                                     <Form.Item
                                         label={t("Regester.userName")}
                                         name="Ac_Name"
-                                        rules={[{ required: true, message: t("Regester.userName") + t("Regester.is required") }]}
+                                        rules={[
+                                            { required: true, message: t("Regester.userName") + t("Regester.is required") },
+                                            { min: 12, message: t("Regester.userName") + t("Regester.least") },
+                                            { max: 60, message: t("Regester.userName") + t("Regester.most") }
+                                        ]}
                                         normalize={(value: string) => value.replace(/[^a-zA-Z0-9\s]/g, "")}
                                     >
                                         <Input prefix={<UserOutlined />} placeholder={t("Regester.userNamePlaceholder")} size="large" autoComplete="off" />
@@ -173,7 +177,7 @@ const Register = () => {
                                                     alt="mobile"
                                                     style={{ width: '16px', height: '16px', marginRight: '4px', verticalAlign: 'middle' }}
                                                 />
-                                                {t("Regester.mobileNumber")}<br/>
+                                                {t("Regester.mobileNumber")}<br />
                                                 {t("Regester.asUserName")}
                                             </>
                                         }

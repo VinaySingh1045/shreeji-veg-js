@@ -17,6 +17,8 @@
   },
   "Regester": {
     "userName": "Account Name",
+    "least": "must be at least 12 characters",
+    "most": "must be at most 60 characters",
     "userNamePlaceholder": "Enter your account name",
     "mobileNumber": "WhatsApp Mobile No.",
     "asUserName": "(As User Name)",
