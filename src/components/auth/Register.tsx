@@ -1,5 +1,5 @@
 import { Button, Card, Col, Form, Input, message, Row } from "antd";
-import { UserOutlined, LockOutlined, SafetyOutlined, MobileOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, SafetyOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { RegisterApi, RequestOTP } from "../../services/authAPI";
@@ -165,7 +165,17 @@ const Register = () => {
                                 </Col>
                                 <Col xs={24} md={12}>
                                     <Form.Item
-                                        label={t("Regester.mobileNumber")}
+                                        label=
+                                        {
+                                            <>
+                                                <img
+                                                    src="/icons8-whatsapp-50.png"
+                                                    alt="mobile"
+                                                    style={{ width: '16px', height: '16px', marginRight: '4px', verticalAlign: 'middle' }}
+                                                />
+                                                {t("Regester.mobileNumber")}
+                                            </>
+                                        }
                                         name="Mobile_No"
                                         rules={[
                                             {
@@ -184,7 +194,7 @@ const Register = () => {
                                         ]}
                                     >
                                         <Input
-                                            prefix={<MobileOutlined />}
+                                            prefix={<WhatsAppOutlined />}
                                             placeholder={t("Regester.mobileNumberPlaceholder")}
                                             size="large"
                                             autoComplete="off"
@@ -206,6 +216,7 @@ const Register = () => {
                                                 message: t("Regester.Password: 5-20 chars, 1 upper, 1 lower & 1 special!")
                                             }
                                         ]}
+                                        hasFeedback
                                     >
                                         <Input.Password prefix={<LockOutlined />} placeholder={t("Regester.password")} size="large" autoComplete="off" />
                                     </Form.Item>
@@ -226,6 +237,7 @@ const Register = () => {
                                                 },
                                             })
                                         ]}
+                                        hasFeedback
                                     >
                                         <Input.Password prefix={<LockOutlined />} placeholder={t("Regester.confirmPassword")} size="large" autoComplete="new-password" />
                                     </Form.Item>
