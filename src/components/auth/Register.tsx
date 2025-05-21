@@ -173,7 +173,8 @@ const Register = () => {
                                                     alt="mobile"
                                                     style={{ width: '16px', height: '16px', marginRight: '4px', verticalAlign: 'middle' }}
                                                 />
-                                                {t("Regester.mobileNumber")}
+                                                {t("Regester.mobileNumber")}<br/>
+                                                {t("Regester.asUserName")}
                                             </>
                                         }
                                         name="Mobile_No"

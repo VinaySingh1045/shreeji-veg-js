@@ -18,7 +18,8 @@
   "Regester": {
     "userName": "खाता नाम",
     "userNamePlaceholder": "अपना खाता नाम दर्ज करें",
-    "mobileNumber": "व्हाट्सएप मोबाइल नंबर (यूज़र नेम के रूप में)",
+    "mobileNumber": "व्हाट्सएप मोबाइल नंबर",
+    "asUserName": "(यूज़र नेम के रूप में)",
     "mobileNumberPlaceholder": "अपना मोबाइल नंबर दर्ज करें",
     "password": "पासवर्ड",
     "confirmPassword": "पासवर्ड की पुष्टि करें",
