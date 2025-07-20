@@ -308,12 +308,12 @@ const AllOrders = () => {
       mode: "add",
       Ac_Id: userDetails ? userDetails?.Id : user?.Id,
       details,
-      Ac_Code: user?.Ac_Code,
-      Our_Shop_Ac: user?.Our_Shop_Ac,
+      Ac_Code: userDetails ? userDetails?.Ac_Code : user?.Ac_Code,
+      Our_Shop_Ac: userDetails ? userDetails?.Our_Shop_Ac : user?.Our_Shop_Ac,
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
-    
+    console.log("payload: ", payload);
     try {
       setAddLoding(true);
       await AddOrder(payload);
