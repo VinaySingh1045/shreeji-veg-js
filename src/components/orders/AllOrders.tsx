@@ -313,7 +313,7 @@ const AllOrders = () => {
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
     };
-    console.log("payload: ", payload);
+    
     try {
       setAddLoding(true);
       await AddOrder(payload);
