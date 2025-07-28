@@ -81,12 +81,12 @@ const ViewOrders = () => {
     const [showOrderTable, setShowOrderTable] = useState(false);
 
     useEffect(() => {
-      if(orders?.length === 0){
-        setFilteredOrders([]);
-        setSelectedOrderItems([]);
-      }
+        if (orders?.length === 0) {
+            setFilteredOrders([]);
+            setSelectedOrderItems([]);
+        }
     }, [orders])
-    
+
 
     const fetchUsers = async () => {
         try {
@@ -174,7 +174,7 @@ const ViewOrders = () => {
     }, []);
 
     useEffect(() => {
-        if (selectedDates  && user) {
+        if (selectedDates && user) {
             const payload = {
                 fromDate: selectedDates[0].format("YYYY-MM-DD"),
                 toDate: selectedDates[1].format("YYYY-MM-DD"),

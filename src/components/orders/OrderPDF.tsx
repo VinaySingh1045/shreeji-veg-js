@@ -48,11 +48,11 @@ const OrderPDF: React.FC<OrderPDFProps> = ({ orderData }) => {
                     <div style={{ border: "1px solid black", padding: "10px", width: "60%" }}>
                         <div style={{ marginBottom: "20px", textAlign: "left" }}>
                             <div style={{ justifyContent: "space-between", marginBottom: "5px" }}>
-                                <h1 style={{ fontSize: '18px', margin: 0 }}>
-                                    <strong>Nanalal sweet & caterers</strong>
-                                </h1>
-                                <p style={{ margin: 0 }}>Mob. No.: 9825430600</p>
-                                <p style={{ margin: 0 }}>Ph. No.: 0261 2894442</p>
+                                <p style={{ fontSize: '18px', margin: 0 }}>
+                                    <strong>{orderData.Ac_Name}</strong>
+                                </p>
+                                <p style={{ margin: 0 }}>Mob. No: 9825430600</p>
+                                <p style={{ margin: 0 }}>Ph. No: 0261 2894442</p>
                             </div>
                             <div>
                             </div>
@@ -71,7 +71,7 @@ const OrderPDF: React.FC<OrderPDFProps> = ({ orderData }) => {
                         </div>
                     </div>
                 </div>
-                <div/>
+                <div />
             </div>
 
             {/* Middle Section: Invoice Table */}
@@ -100,7 +100,7 @@ const OrderPDF: React.FC<OrderPDFProps> = ({ orderData }) => {
                             </tr>
                         ))}
                         {/* Add empty rows to fill page */}
-                        {Array.from({ length:22 - validItems.length }).map((_, i, arr) => {
+                        {Array.from({ length: 22 - validItems.length }).map((_, i, arr) => {
                             const isLastRow = i === arr.length - 1;
                             return (
                                 <tr key={`empty-${i}`}>
