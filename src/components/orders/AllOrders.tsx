@@ -124,55 +124,55 @@ const AllOrders = () => {
 
     if (isOrderMode) {
       const lowerSearch = searchText?.trim().toLowerCase() || "";
-      console.log("lowerSearch", lowerSearch);
-      // Maintain original order
-      // const orderItems = originalOrderItemIds
-      //   .map(id => mergedData.find(item => item.Itm_Id === id))
-      //   .filter((item): item is Vegetable => item !== undefined);
-      // // filter out undefined, if any
 
-      // if (lowerSearch) {
+      // Get orderItems once, in fixed order
+      const orderItemsMap = new Map<number, Vegetable>();
+      originalOrderItemIds.forEach(id => {
+        const found = mergedData.find(item => item.Itm_Id === id);
+        if (found) orderItemsMap.set(id, found);
+      });
 
-      //   const quantityItems: Vegetable[] = addedNonFavItemsOrder
-      //     .map(id => mergedData.find(item => item.Itm_Id === id))
-      //     .filter((item): item is Vegetable => item !== undefined);
+      const orderItems = Array.from(orderItemsMap.values());
 
-      //   const extraMatches = mergedData.filter(item =>
-      //     item?.Itm_Name?.toLowerCase().includes(lowerSearch) &&
-      //     !originalOrderItemIds.includes(item.Itm_Id ?? -1)
-      //   );
+      // Get quantity items (added after initial order), fixed once
+      const quantityItemsMap = new Map<number, Vegetable>();
+      addedNonFavItemsOrder.forEach(id => {
+        if (!originalOrderItemIds.includes(id)) {
+          const found = mergedData.find(item => item.Itm_Id === id);
+          if (found) quantityItemsMap.set(id, found);
+        }
+      });
 
-      //   const existingItems = filteredData.map(item => item.Itm_Id);
-      //   const newExtraMatches = extraMatches.filter(item =>
-      //     !existingItems.includes(item.Itm_Id ?? -1)
-      //   );
+      const quantityItems = Array.from(quantityItemsMap.values());
 
-      //   const merged = [...filteredData, ...newExtraMatches];
-      const orderItems = originalOrderItemIds
-        .map(id => mergedData.find(item => item.Itm_Id === id))
-        .filter((item): item is Vegetable => item !== undefined);
-      // filter out undefined, if any
+      let merged: Vegetable[] = [];
 
       if (lowerSearch) {
-        const extraMatches = mergedData.filter(item =>
-          item?.Itm_Name?.toLowerCase().includes(lowerSearch) &&
-          !originalOrderItemIds.includes(item.Itm_Id ?? -1)
+        // Always do full search on mergedData
+        const searchMatched = mergedData.filter(item =>
+          item.Itm_Name?.toLowerCase().includes(lowerSearch)
         );
 
-        const merged = [...orderItems, ...extraMatches];
-        setFilteredData(merged);
-      } else {
-        const quantityItems: Vegetable[] = addedNonFavItemsOrder
-          .filter(id => !originalOrderItemIds.includes(id))
-          .map(id => mergedData.find(item => item.Itm_Id === id))
-          .filter((item): item is Vegetable => item !== undefined);
+        // Make a Set of IDs already included (to avoid duplication)
+        const existingIds = new Set<number>([
+          ...orderItems.map(i => i.Itm_Id).filter((id): id is number => id !== undefined),
+          ...quantityItems.map(i => i.Itm_Id).filter((id): id is number => id !== undefined),
+        ]);
 
-        const merged = [...orderItems, ...quantityItems];
-        setFilteredData(merged);
+        // Get only those search results that are not already shown
+        const extraMatches = searchMatched.filter(item => item.Itm_Id !== undefined && !existingIds.has(item.Itm_Id));
+
+        // Merge all in consistent order
+        merged = [...orderItems, ...quantityItems, ...extraMatches];
+      } else {
+        merged = [...orderItems, ...quantityItems];
       }
 
+      setFilteredData(merged);
       return;
     }
+
+
     // normal search-based logic
     const searchMatched = mergedData.filter(item =>
       item?.Itm_Name?.toLowerCase().includes(lowerSearch)
@@ -565,6 +565,7 @@ const AllOrders = () => {
             <Table
               columns={columns}
               dataSource={filteredData}
+              rowKey={(record) => record.Itm_Id?.toString() || ""}
               loading={loading}
               pagination={{ pageSize: 20, showSizeChanger: false }}
               scroll={{ x: true }}
