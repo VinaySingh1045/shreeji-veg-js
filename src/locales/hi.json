@@ -87,7 +87,8 @@
     "orderUpdated": "ऑर्डर सफलतापूर्वक अपडेट किया गया",
     "orderAddFailed": "ऑर्डर जोड़ने में विफल",
     "orderUpdateFailed": "ऑर्डर अपडेट करने में विफल",
-    "addAtlestOne": "कृपया एक मात्रा दर्ज करें जो शून्य से अधिक हो।"
+    "addAtlestOne": "कृपया एक मात्रा दर्ज करें जो शून्य से अधिक हो।",
+    "address": "पता"
   },
   "viewOrders": {
     "account_code": "खाता कोड",

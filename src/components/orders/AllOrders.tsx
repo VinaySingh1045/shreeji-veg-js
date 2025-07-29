@@ -23,7 +23,7 @@ type Unit = {
 
 const AllOrders = () => {
 
-  const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean, Id: string, Our_Shop_Ac: boolean, Ac_Code: string } | null };
+  const { user } = useSelector((state: RootState) => state.auth) as { user: { Ac_Name?: string, isAdmin: boolean, Id: string, Our_Shop_Ac: boolean, Ac_Code: string, Mobile_No?: string } | null };
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const { favorites, loading, all } = useSelector((state: RootState) => state.vegetables);
@@ -46,6 +46,7 @@ const AllOrders = () => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [unitSelections, setUnitSelections] = useState<{ [itemId: string]: number }>({});
   const [addedNonFavItemsOrder, setAddedNonFavItemsOrder] = useState<number[]>([]);
+  const [address, setAddress] = useState<string>("");
 
   const fetchUnits = async () => {
     const res = await GetUnits();
@@ -252,6 +253,7 @@ const AllOrders = () => {
 
       SetBillNo(orderData.Bill_No || null);
       setLrNo(orderData.Order_Count || null);
+      setAddress(orderData.Address || "");
     }
   }, [orderData]);
 
@@ -347,8 +349,10 @@ const AllOrders = () => {
       details,
       Ac_Code: userDetails ? userDetails?.Ac_Code : user?.Ac_Code,
       Our_Shop_Ac: userDetails ? userDetails?.Our_Shop_Ac : user?.Our_Shop_Ac,
+      Mobile_No: userDetails?.Mobile_No || user?.Mobile_No || "",
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
+      Address: address,
     };
 
     try {
@@ -460,10 +464,12 @@ const AllOrders = () => {
         Ac_Id: orderData ? orderData?.Ac_Id : user?.Id,
         Ac_Code: orderData ? orderData?.Ac_Code : user?.Ac_Code,
         Our_Shop_Ac: orderData ? orderData?.Our_Shop_Ac : user?.Our_Shop_Ac,
+        Mobile_No: orderData?.Mobile_No || user?.Mobile_No || "",
         details,
         Id: Id,
         Order_Count: lrNo,
         Bill_Date: billDate.format("YYYY-MM-DD"),
+        Address: address,
       };
 
       try {
@@ -527,6 +533,15 @@ const AllOrders = () => {
                 size="small"
                 disabled
                 style={{ fontWeight: "bold", color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
+              />
+            </Form.Item>
+            <Form.Item label={t('allOrders.address')} colon={false} style={{ marginBottom: 0 }}>
+              <Input
+                placeholder={t('allOrders.address')}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                size="small"
+                style={{ color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
               />
             </Form.Item>
             {

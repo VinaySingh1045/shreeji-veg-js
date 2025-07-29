@@ -88,7 +88,8 @@
     "orderUpdated": "Order updated successfully",
     "orderAddFailed": "order not saved",
     "orderUpdateFailed": "order not saved",
-    "addAtlestOne": "Please enter at least one quantity greater than zero."
+    "addAtlestOne": "Please enter at least one quantity greater than zero.",
+    "address": "Address"
   },
   "viewOrders": {
     "account_code": "Account Code",
