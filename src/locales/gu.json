@@ -88,12 +88,15 @@
     "orderAddFailed": "ઓર્ડર ઉમેરવામાં નિષ્ફળ",
     "orderUpdateFailed": "ઓર્ડર અપડેટ કરવામાં નિષ્ફળ",
     "addAtlestOne": "કૃપા કરીને એક જથ્થો દાખલ કરો જે શૂન્ય કરતાં વધુ હોય.",
-    "address": "સરનામું"
+    "deliveryAddress1": "ડિલિવરી એડ્રેસ 1",
+    "deliveryAddress2": "ડિલિવરી એડ્રેસ 2",
+    "deliveryTime": "ડિલિવરી સમય"
   },
   "viewOrders": {
     "account_code": "ખાતાની કોડ",
     "account_name": "ખાતાનું નામ",
     "order_number": "ઓર્ડર નંબર",
+    "billType": "બિલ ટાઇપ",
     "order_date": "ઓર્ડર તારીખ",
     "action": "ક્રિયા",
     "invalidBillNo": "અમાન્ય બિલ નંબર",

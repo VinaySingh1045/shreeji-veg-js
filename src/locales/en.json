@@ -89,12 +89,15 @@
     "orderAddFailed": "order not saved",
     "orderUpdateFailed": "order not saved",
     "addAtlestOne": "Please enter at least one quantity greater than zero.",
-    "address": "Address"
+    "deliveryAddress1": "Delivery Address 1",
+    "deliveryAddress2": "Delivery Address 2",
+    "deliveryTime": "Delivery Time"
   },
   "viewOrders": {
     "account_code": "Account Code",
     "account_name": "Account Name",
     "order_number": "Order Number",
+    "billType": "Bill Type",
     "order_date": "Order Date",
     "action": "Action",
     "invalidBillNo": "Invalid Bill Number",

@@ -88,12 +88,15 @@
     "orderAddFailed": "ऑर्डर जोड़ने में विफल",
     "orderUpdateFailed": "ऑर्डर अपडेट करने में विफल",
     "addAtlestOne": "कृपया एक मात्रा दर्ज करें जो शून्य से अधिक हो।",
-    "address": "पता"
+    "deliveryAddress1": "डिलीवरी एड्रेस 1",
+    "deliveryAddress2": "डिलीवरी एड्रेस 2",
+    "deliveryTime": "डिलीवरी समय"
   },
   "viewOrders": {
     "account_code": "खाता कोड",
     "account_name": "खाता नाम",
     "order_number": "ऑर्डर नंबर",
+    "billType": "बिल टाइप",
     "order_date": "ऑर्डर तिथि",
     "action": "क्रिया",
     "invalidBillNo": "अमान्य बिल नंबर",

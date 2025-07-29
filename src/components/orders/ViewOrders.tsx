@@ -209,6 +209,11 @@ const ViewOrders = () => {
             key: "Bill_No",
         },
         {
+            title: t('viewOrders.billType'),
+            dataIndex: "Bill_Type",
+            key: "Bill_Type",
+        },
+        {
             title: t('viewOrders.order_date'),
             dataIndex: "Bill_Date",
             key: "Bill_Date",

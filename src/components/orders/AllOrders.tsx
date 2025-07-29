@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Input, Space, DatePicker, Form, Button, message, Spin, theme, Select } from "antd";
+import { Table, Input, Space, DatePicker, Form, Button, message, Spin, theme, Select, TimePicker } from "antd";
 import { fetchAllVegetables, fetchFavoriteVegetables } from "../../redux/actions/vegesAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import dayjs, { Dayjs } from "dayjs";
@@ -46,13 +46,15 @@ const AllOrders = () => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [unitSelections, setUnitSelections] = useState<{ [itemId: string]: number }>({});
   const [addedNonFavItemsOrder, setAddedNonFavItemsOrder] = useState<number[]>([]);
-  const [address, setAddress] = useState<string>("");
+  const [address1, setAddress1] = useState<string>("");
+  const [address2, setAddress2] = useState<string>("");
+  const [deliveryTime, setDeliveryTime] = useState<Dayjs | null>(null);
 
   const fetchUnits = async () => {
     const res = await GetUnits();
     setUnits(res.data);
   }
-
+console.log("orderData",orderData)
   const fetchFreezeTime = async () => {
     try {
       const response = await GetFreezeTime();
@@ -253,7 +255,9 @@ const AllOrders = () => {
 
       SetBillNo(orderData.Bill_No || null);
       setLrNo(orderData.Order_Count || null);
-      setAddress(orderData.Address || "");
+      setAddress1(orderData.Address1 || "");
+      setAddress2(orderData.Address2 || "");
+      setDeliveryTime(orderData.DeliveryTime ? dayjs(orderData.DeliveryTime, "hh:mm A") : null);
     }
   }, [orderData]);
 
@@ -352,7 +356,9 @@ const AllOrders = () => {
       Mobile_No: userDetails?.Mobile_No || user?.Mobile_No || "",
       Order_Count: lrNo,
       Bill_Date: billDate.format("YYYY-MM-DD"),
-      Address: address,
+      Address1: address1,
+      Address2: address2,
+      DeliveryTime: deliveryTime?.format("HH:mm A") || "",
     };
 
     try {
@@ -469,7 +475,9 @@ const AllOrders = () => {
         Id: Id,
         Order_Count: lrNo,
         Bill_Date: billDate.format("YYYY-MM-DD"),
-        Address: address,
+        Address1: address1,
+        Address2: address2,
+        DeliveryTime: deliveryTime?.format("HH:mm A") || "",
       };
 
       try {
@@ -535,11 +543,31 @@ const AllOrders = () => {
                 style={{ fontWeight: "bold", color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
               />
             </Form.Item>
-            <Form.Item label={t('allOrders.address')} colon={false} style={{ marginBottom: 0 }}>
+
+            <Form.Item label={t('allOrders.deliveryAddress1')} colon={false} style={{ marginBottom: 0 }}>
               <Input
-                placeholder={t('allOrders.address')}
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                placeholder={t('allOrders.deliveryAddress1')}
+                value={address1}
+                onChange={(e) => setAddress1(e.target.value)}
+                size="small"
+                style={{ color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
+              />
+            </Form.Item>
+            <Form.Item label={t('allOrders.deliveryAddress2')} colon={false} style={{ marginBottom: 0 }}>
+              <Input
+                placeholder={t('allOrders.deliveryAddress2')}
+                value={address2}
+                onChange={(e) => setAddress2(e.target.value)}
+                size="small"
+                style={{ color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
+              />
+            </Form.Item>
+            <Form.Item label={t('allOrders.deliveryTime')} colon={false} style={{ marginBottom: 0 }}>
+              <TimePicker
+                value={deliveryTime}
+                onChange={(time) => setDeliveryTime(time)}
+                format="hh:mm A"
+                use12Hours
                 size="small"
                 style={{ color: token.colorBgLayout === "White" ? "rgba(0, 0, 0, 0.85)" : "white" }}
               />
