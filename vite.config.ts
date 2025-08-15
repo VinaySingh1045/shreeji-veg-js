@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+   base: '/', 
   server: {
     allowedHosts: ['active-civet-deadly.ngrok-free.app'],
     // other options like port, proxy, etc.
